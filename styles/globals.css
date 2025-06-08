@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --geist-primary: #f5c615;
+  --geist-primary-50: #fff8e3;
+  --geist-primary-100: #ffe7b7;
+  --geist-primary-200: #ffd391;
+  --geist-primary-300: #ffc07a;
+  --geist-primary-400: #ffb95d;
+  --geist-primary-500: #f5c615;
+  --geist-primary-600: #f3a33b;
+  --geist-primary-700: #f09e31;
+  --geist-primary-800: #ee9023;
+  --geist-primary-900: #e7761f;
+  --geist-primary-950: #da6a1a;
+
+  --geist-secondary: #f5c615;
+  --geist-accent: #f5c615;
+  --geist-foreground: #fff;
+  --geist-background: #f5c615;
+}
+
+.page-gray-800 {
+  @apply text-gray-200;
+  background-color: #212121;
+}
+
+.page-gray-900 {
+  @apply text-gray-200;
+  background-color: #1e1e1e;
+}
+
+.page-gray-950 {
+  @apply text-gray-200;
+  background-color: #141414;
+}
+
+.footer-links a {
+  transition: color 0.2s ease-in-out;
+  @apply text-gray-200;
+  background-color: #212121;
+}
+
+.footer-links a:hover {
+  @apply text-primary;
+  background-color: #1e1e1e;
+}
+
+.breadcrumb-bg {
+  background-color: #ededed;
+}
+
+/* Animate ripple */
+.animate-ripple {
+  animation: ripple 1.5s ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.hero-bg {
+  background-image: url(/images/pine-geom.png);
+  background-position-y: 300px;
+}
+
+.oval-decor {
+  background-image: url(/images/circle-geom-light.png);
+  /* background-position-y: 100px;
+  background-position-x: 100px; */
+  background-repeat: no-repeat;
+  /* min-height: 400px; */
+  background-size: 40%;
+}
+
+.products-font {
+  font-family: "Lato", sans-serif;
+}
+
+.products-tab > div {
+  text-transform: uppercase;
+  /* font-family: "Lato", sans-serif; */
+  font-weight: 600;
+  font-size: 14px;
+  color: #000 !important;
+}
+
+.products-tab > span {
+  height: 4px !important;
+}
+
+.scaled-product-tile:hover {
+  transform: scale(1.01);
+  box-shadow: #00000020 0px 5px 30px !important;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1.3); /* Adjust the scale as needed */
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0.4;
+  }
+}

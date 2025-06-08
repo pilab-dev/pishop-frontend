@@ -1,0 +1,15 @@
+services:
+  pishop:
+    image: ghcr.io/pilab-dev/pishop:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8084:3000' # Maps host port 8080 to container port 8080. Change as needed.
+    # Add any other necessary configurations like volumes, environment variables, etc.
+    # For example, if you need to persist data:
+    volumes:
+      - pishop_data:/data
+# If you have any persistent data, define a volume:
+volumes:
+  pishop_data:
