@@ -8,14 +8,14 @@ import { Providers } from "./providers";
 import { HeaderSection } from "@/components/header-section";
 import { PageFooter } from "@/components/page-footer";
 import { fontSans } from "@/config/fonts";
-import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
+    default: "PiShop - The next generation of e-commerce",
+    template: `%s - PiShop`,
   },
-  description: siteConfig.description,
+  description:
+    "The next generation of e-commerce - Performance optimized, horizontal scalable, SEO friendly, and fully customizable.",
   icons: {
     icon: "/favicon.ico",
   },
@@ -39,7 +39,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>

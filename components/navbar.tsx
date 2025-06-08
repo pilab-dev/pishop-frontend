@@ -5,16 +5,12 @@ import {
   NavbarContent,
   NavbarItem,
   NavbarMenu,
-  NavbarMenuItem,
   NavbarMenuToggle,
 } from "@heroui/navbar";
-import { link as linkStyles } from "@heroui/theme";
-import clsx from "clsx";
 import NextLink from "next/link";
 
 import { GithubIcon, Logo } from "@/components/icons";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { siteConfig } from "@/config/site";
 
 export const Navbar = () => {
   return (
@@ -35,12 +31,12 @@ export const Navbar = () => {
           </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item) => (
+          {/* {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary  text-white data-[active=true]:font-medium"
+                  "data-[active=true]:text-primary  text-white data-[active=true]:font-medium",
                 )}
                 color="foreground"
                 href={item.href}
@@ -48,7 +44,7 @@ export const Navbar = () => {
                 {item.label}
               </NextLink>
             </NavbarItem>
-          ))}
+          ))} */}
         </ul>
       </NavbarContent>
 
@@ -74,7 +70,11 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Link isExternal aria-label="Github" href={siteConfig.links.github}>
+        <Link
+          isExternal
+          aria-label="Github"
+          href="https://github.com/pilab-dev/pishop-frontend"
+        >
           <GithubIcon className="text-default-500" />
         </Link>
         <ThemeSwitch />
@@ -83,7 +83,7 @@ export const Navbar = () => {
 
       <NavbarMenu>
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
+          {/* {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
                 color={
@@ -99,7 +99,7 @@ export const Navbar = () => {
                 {item.label}
               </Link>
             </NavbarMenuItem>
-          ))}
+          ))} */}
         </div>
       </NavbarMenu>
     </HeroUINavbar>

@@ -1,0 +1,101 @@
+# .github/workflows/deploy-kubernetes.yml
+name: 🚀 Deploy to Kubernetes
+
+on:
+  workflow_dispatch: # Allows manual triggering from the GitHub UI
+    inputs:
+      image_tag:
+        description: 'Specific image tag to deploy (e.g., 1.0.0, latest, beta, commit-sha)'
+        required: false
+        default: 'latest' # Default to 'latest' if not specified
+      namespace:
+        description: 'Kubernetes Namespace to deploy to (e.g., default, dev, staging, production)'
+        required: false
+        default: 'default'
+        type: choice
+        options:
+          - default
+          - staging
+          - production
+      environment:
+        description: 'GitHub Environment for deployment (e.g., dev, staging, production)'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - production
+
+env:
+  # Base name for your Docker image (e.g., your-username/your-repo-name)
+  IMAGE_NAME: pilab-dev/pishop-frontend
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, kubernetes] # Use your self-hosted runner labels
+    environment: ${{ inputs.environment }} # Link to a GitHub Environment
+    permissions:
+      contents: read # Only read access needed for manifest files
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+        # No token needed if not pushing changes
+
+      - name: ✨ Prepare Kubernetes Manifest for Deployment
+        id: prepare_manifest
+        run: |
+          # Construct the full image path with the selected tag
+          FULL_IMAGE_PATH="ghcr.io/${{ env.IMAGE_NAME }}:${{ inputs.image_tag }}"
+          
+          echo "Preparing deployment for image: ${FULL_IMAGE_PATH} in namespace: ${{ inputs.namespace }}"
+          
+          # IMPORTANT: This `sed` command performs an in-place replacement on your deployment.yaml.
+          # It replaces the entire image line for 'pivirt-ui-container'.
+          # Adjust 'pivirt-ui-container' if your container name is different.
+          # Make sure your deployment.yaml is in `kubernetes/deployment.yaml`.
+          
+          # Safety check: Ensure the file exists
+          if [ ! -f kubernetes/deployment.yaml ]; then
+            echo "Error: kubernetes/deployment.yaml not found!"
+            exit 1
+          fi
+
+          # Replace the image: line in the deployment manifest
+          sed -i "s|image: ghcr.io/${{ env.IMAGE_NAME }}:.*|image: ${FULL_IMAGE_PATH}|g" kubernetes/deployment.yaml
+          
+          # Replace the namespace in the deployment manifest (if defined there, good practice for multi-env)
+          # If your manifests use templating (like kustomize) for namespaces, adjust this.
+          # This assumes a 'namespace: ' line might exist in the deployment.yaml or a related file.
+          # If you don't define namespace in your YAML and rely on `kubectl apply -n <namespace>`,
+          # you can skip this sed command.
+          sed -i "s|namespace: .*|namespace: ${{ inputs.namespace }}|g" kubernetes/deployment.yaml || true # `|| true` to avoid error if no 'namespace' line
+          
+          echo "Updated kubernetes/deployment.yaml with image: ${FULL_IMAGE_PATH} and namespace: ${{ inputs.namespace }}"
+          echo "deployed_image=${FULL_IMAGE_PATH}" >> $GITHUB_OUTPUT
+          echo "deployed_namespace=${{ inputs.namespace }}" >> $GITHUB_OUTPUT
+
+      - name: 🚀 Apply Kubernetes Deployment
+        run: |
+          # The -n flag specifies the namespace. This is robust if your YAML doesn't hardcode it.
+          # If your YAML DOES hardcode the namespace, the `sed` command above should handle it.
+          kubectl apply -f kubernetes/deployment.yaml -n ${{ inputs.namespace }}
+          echo "Kubernetes deployment applied to namespace ${{ inputs.namespace }}."
+
+      - name: ✅ Verify Kubernetes Rollout Status
+        run: |
+          # Check rollout status for the deployment in the specified namespace
+          kubectl rollout status deployment/pivirt-ui-deployment --timeout=5m -n ${{ inputs.namespace }}
+          echo "Deployment rollout status checked for pivirt-ui-deployment in namespace ${{ inputs.namespace }}."
+
+      - name: 📢 Summary (Deployment)
+        run: |
+          echo "## 🎉 Deployment to Kubernetes Completed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 Deployment Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target Environment**: `${{ inputs.environment }}`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Kubernetes Namespace**: `${{ steps.prepare_manifest.outputs.deployed_namespace }}`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployed Image**: \`${{ steps.prepare_manifest.outputs.deployed_image }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployment Name**: `vite-app-deployment`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ✅ Rollout completed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY

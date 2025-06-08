@@ -1,0 +1,178 @@
+name: 🚀 Publish with Version Bump
+
+on:
+  workflow_dispatch: # Allows manual triggering from the GitHub UI
+    inputs:
+      version_type:
+        description: 'Type of version bump (major, minor, patch, rc, prepatch, preminor, premajor, prerelease)'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - rc
+          - prepatch
+          - preminor
+          - premajor
+          - prerelease
+      npm_tag:
+        description: 'NPM Tag for published package (e.g., latest, beta). Will also be used for GHCR.'
+        required: false
+        default: 'latest'
+
+env:
+  IMAGE_NAME: pilab-dev/pishop-frontend # Uses owner/repo-name as default
+
+jobs:
+  versioning-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Essential for pushing commits and tags
+      packages: write # Essential to push to GHCR
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Use GITHUB_TOKEN to allow pushing changes back to the repository
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0 # Fetch full history for proper git operations
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # Or your preferred Node.js version
+          cache: 'pnpm'
+
+      - name: 🗄️ Cache pnpm dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/node_modules
+            */.pnpm/store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🧹 Ensure clean working tree
+        run: |
+          # Remove any build artifacts or node_modules changes
+          git clean -fd
+          git checkout -- .
+          
+          # Check git status
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Working tree is not clean. Current status:"
+            git status
+            echo "Files that would be affected:"
+            git status --porcelain
+            exit 1
+          fi
+          echo "Working tree is clean ✅"
+
+      - name: ⬆️ Bump Version and Create Tag
+        id: bump_version # Give this step an ID to reference its outputs
+        run: |
+          # Configure Git for committing
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Get current version before bump
+          OLD_VERSION=$(node -p "require('./package.json').version")
+          echo "Current version: $OLD_VERSION"
+
+          # Bump version using yarn version command
+          # This command also updates yarn.lock and creates a git tag
+          yarn version --${{ inputs.version_type }} --message "Release: %s [skip ci]" --no-git-tag-version
+
+          # Get the new version after bump
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "New version: $NEW_VERSION"
+
+          # Create git tag manually
+          git add package.json
+          git commit -m "Release: $NEW_VERSION [skip ci]"
+          git tag "v$NEW_VERSION"
+
+          # Push the version commit and the new tag
+          git push
+          git push --tags
+
+          # Set outputs for subsequent steps
+          echo "old_version=$OLD_VERSION" >> $GITHUB_OUTPUT
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "npm_tag=${{ inputs.npm_tag }}" >> $GITHUB_OUTPUT
+
+      - name: 📦 Build Vite project
+        run: pnpm build # Ensure your package.json has a "build" script
+
+      - name: 🐳 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Get image tags
+        id: get_image_tags # Changed ID to avoid conflict with bump_version step
+        run: |
+          # Read version directly from package.json
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          NPM_TAG_FROM_INPUT="${{ inputs.npm_tag }}"
+
+          GHCR_IMAGE_BASE=${{ env.IMAGE_NAME }}
+          GHCR_TAG_NPM=ghcr.io/$GHCR_IMAGE_BASE:$NPM_TAG_FROM_INPUT
+          GHCR_TAG_VERSION=ghcr.io/$GHCR_IMAGE_BASE:$PACKAGE_VERSION
+          GHCR_TAG_SHA=ghcr.io/$GHCR_IMAGE_BASE:${{ github.sha }}
+
+          echo "Setting image tags:"
+          echo "  - NPM Tag: $GHCR_TAG_NPM"
+          echo "  - Version Tag: $GHCR_TAG_VERSION"
+          echo "  - SHA Tag: $GHCR_TAG_SHA"
+
+          echo "ghcr_tag_npm=$GHCR_TAG_NPM" >> $GITHUB_OUTPUT
+          echo "ghcr_tag_version=$GHCR_TAG_VERSION" >> $GITHUB_OUTPUT
+          echo "ghcr_tag_sha=$GHCR_TAG_SHA" >> $GITHUB_OUTPUT
+          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+
+      - name: 🏗️ Build and Push Docker image to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.get_image_tags.outputs.ghcr_tag_npm }}
+            ${{ steps.get_image_tags.outputs.ghcr_tag_version }}
+            ${{ steps.get_image_tags.outputs.ghcr_tag_sha }}
+            ${{ steps.get_image_tags.outputs.ghcr_tag_version }}
+            ${{ steps.get_image_tags.outputs.ghcr_tag_version }}-${{ github.sha }}
+          build-args: |
+            VITE_APP_VERSION=${{ steps.get_image_tags.outputs.package_version }}
+
+      - name: 📢 Summary
+        run: |
+          echo "## 🎉 Vite Application Published to GHCR!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Version Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package Version**: \`${{ steps.get_image_tags.outputs.package_version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Type**: \`${{ inputs.version_type }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **NPM Tag Input**: \`${{ inputs.npm_tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐳 Image Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Repository**: `${{ env.IMAGE_NAME }}`" >> $GITHUB_STEP_SUMMARY
+          echo "- **NPM Tag Image**: `${{ steps.get_image_tags.outputs.ghcr_tag_npm }}`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Tag Image**: `${{ steps.get_image_tags.outputs.ghcr_tag_version }}`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit SHA Tag Image**: `${{ steps.get_image_tags.outputs.ghcr_tag_sha }}`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
+          echo "- [GitHub Release](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.get_image_tags.outputs.package_version }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [GHCR Package Page](https://github.com/orgs/${{ github.repository_owner }}/packages/container/package/pivirt-ui)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📥 Pull Command" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ steps.get_image_tags.outputs.ghcr_tag_npm }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

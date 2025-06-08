@@ -69,15 +69,14 @@ PiShop consists of two main components:
 
 4. Start the development server:
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 ### Docker Deployment
 
-1. Build the images:
+1. Build the image:
    ```bash
    docker build -t ghcr.io/pilab-dev/pishop:latest .
-   docker build -t ghcr.io/pilab-dev/pishop-api:latest ./api
    ```
 
 2. Run with Docker Compose:
@@ -150,4 +149,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Made with ❤️ by the PiLab Team
+Made with ❤️ by the Progressive Innovation LAB Team
