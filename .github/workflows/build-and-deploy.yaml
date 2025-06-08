@@ -43,20 +43,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22' # Or your preferred Node.js version
-          cache: 'pnpm'
+          cache: 'yarn'
 
-      - name: 🗄️ Cache pnpm dependencies
+      - name: 🗄️ Cache Yarn dependencies
         uses: actions/cache@v3
         with:
           path: |
             **/node_modules
-            */.pnpm/store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+            */.yarn/cache
+            */.yarn/unplugged
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-
+            ${{ runner.os }}-yarn-
 
       - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: yarn install --frozen-lockfile
 
       - name: 🧹 Ensure clean working tree
         run: |
@@ -108,7 +109,7 @@ jobs:
           echo "npm_tag=${{ inputs.npm_tag }}" >> $GITHUB_OUTPUT
 
       - name: 📦 Build Vite project
-        run: pnpm build # Ensure your package.json has a "build" script
+        run: yarn build # Ensure your package.json has a "build" script
 
       - name: 🐳 Login to GitHub Container Registry
         uses: docker/login-action@v3
