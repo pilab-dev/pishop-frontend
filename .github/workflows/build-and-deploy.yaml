@@ -108,6 +108,9 @@ jobs:
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "npm_tag=${{ inputs.npm_tag }}" >> $GITHUB_OUTPUT
 
+      - name: 📥 Install & 📦 Build pishop-client (dependency)
+        run: cd lib/pishop-client && yarn install --frozen-lockfile && yarn build  
+
       - name: 📦 Build Vite project
         run: yarn build # Ensure your package.json has a "build" script
 
