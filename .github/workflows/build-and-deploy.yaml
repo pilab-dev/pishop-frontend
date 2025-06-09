@@ -99,20 +99,33 @@ jobs:
           git commit -m "Release: $NEW_VERSION [skip ci]"
           git tag "v$NEW_VERSION"
 
-          # Push the version commit and the new tag
-          git push
-          git push --tags
-
           # Set outputs for subsequent steps
           echo "old_version=$OLD_VERSION" >> $GITHUB_OUTPUT
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "npm_tag=${{ inputs.npm_tag }}" >> $GITHUB_OUTPUT
 
       - name: 📥 Install & 📦 Build pishop-client (dependency)
-        run: cd lib/pishop-client && yarn install --frozen-lockfile && yarn build  
+        id: pishop_client
+        run: |
+          cd lib/pishop-client
+          yarn install --frozen-lockfile
+          yarn build
+          CLIENT_VERSION=$(node -p "require('./package.json').version")
+          echo "client_version=$CLIENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Pishop Client Version: $CLIENT_VERSION"
 
       - name: 📦 Build Vite project
+        env: 
+          VITE_PISHOP_VERSION: ${{ steps.pishop_client.outputs.client_version }}
+          VITE_PISHOP_CLIENT_VERSION: ${{ steps.pishop_client.outputs.client_version }}
+          NEXT_PUBLIC_API_BASE: "http://shop.pilab.hu"
         run: yarn build # Ensure your package.json has a "build" script
+
+      - name: ⬆️ Push the version commit and the new tag
+        run: |
+          # Push the version commit and the new tag
+          git push
+          git push --tags
 
       - name: 🐳 Login to GitHub Container Registry
         uses: docker/login-action@v3
