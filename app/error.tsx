@@ -32,9 +32,9 @@ export default function Error({
           </p>
           <div className="pt-4">
             <button
-              onClick={() => reset()}
               className="px-6 py-2 bg-primary text-white  hover:bg-primary/80 
               transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              onClick={() => reset()}
             >
               Try Again
             </button>

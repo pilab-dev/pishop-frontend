@@ -41,12 +41,7 @@ const ProductTile: FC<{ product: any }> = ({ product }) => {
       >
         {product.name}
       </h3>
-      <p
-        className="products-font text-md uppercase 
-      text-gray-600 mb-6
-      md:text-md
-      "
-      >
+      <p className="products-font text-md uppercase text-gray-600 mb-6 md:text-md">
         Price:
         <span className="text-primary-600 font-semibold ml-1">
           {formatCurrency(product.price).trimEnd()},00
