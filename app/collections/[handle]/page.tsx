@@ -21,6 +21,23 @@ export async function generateMetadata(props: {
 
   return {
     title: collection.seo?.title || collection.title,
+    openGraph: {
+      title: collection.seo?.title || collection.title,
+      description:
+        collection.seo?.description ||
+        collection.description ||
+        `${collection.title} products`,
+    },
+    twitter: {
+      title: collection.seo?.title || collection.title,
+      description:
+        collection.seo?.description ||
+        collection.description ||
+        `${collection.title} products`,
+    },
+    alternates: {
+      canonical: `/collections/${collection.handle}`,
+    },
     description:
       collection.seo?.description ||
       collection.description ||

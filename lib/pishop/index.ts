@@ -1,8 +1,10 @@
-import { TAGS } from "@/lib/constants";
 import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+
 import { Cart, Collection, Menu, Page, Product } from "./types";
+
+import { TAGS } from "@/lib/constants";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
@@ -123,11 +125,13 @@ export async function updateCartContact(
 
 export async function getCollections(): Promise<Collection[]> {
   const response = await fetch(`${API_BASE}/api/collections`);
+
   return (await response.json()) as Collection[];
 }
 
 export async function getCollection(handle: string): Promise<Collection> {
   const response = await fetch(`${API_BASE}/api/collections/${handle}`);
+
   return (await response.json()) as Collection;
 }
 
@@ -140,6 +144,7 @@ export async function getProducts({
   reverse?: boolean;
   sortKey?: string;
 }): Promise<Product[]> {
+  // eslint-disable-next-line no-console
   console.log("ListProducts", query, reverse, sortKey);
   const response = await fetch(`${API_BASE}/api/products`);
 
@@ -164,24 +169,31 @@ export async function getCollectionProducts({
 
 export async function getProduct(handle: string): Promise<Product | undefined> {
   const response = await fetch(`${API_BASE}/api/product/${handle}`);
+
   return (await response.json()) as Product;
 }
 
 export async function getProductRecommendations(
   handle: string,
 ): Promise<Product[]> {
-  // const response = await fetch(`${API_BASE}/api/product/${handle}/recommendations`);
-  const response = await fetch(`${API_BASE}/api/products`);
+  // eslint-disable-next-line no-console
+  console.log("getProductRecommendations", handle);
+  const response = await fetch(
+    `${API_BASE}/api/products/${handle}/recommendations`,
+  );
+
   return (await response.json()) as Product[];
 }
 
 export async function getPage(handle: string): Promise<Page> {
   const response = await fetch(`${API_BASE}/api/pages/${handle}`);
+
   return (await response.json()) as Page;
 }
 
 export async function getPages(): Promise<Page[]> {
   const response = await fetch(`${API_BASE}/api/pages`);
+
   return (await response.json()) as Page[];
 }
 
@@ -212,7 +224,9 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   const isProductUpdate = productWebhooks.includes(topic);
 
   if (!secret || secret !== process.env.REVALIDATION_SECRET) {
+    // eslint-disable-next-line no-console
     console.error("Invalid revalidation secret.");
+
     return NextResponse.json({ status: 401 });
   }
 
