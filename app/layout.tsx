@@ -14,6 +14,9 @@ export const metadata: Metadata = {
     default: "PiShop - The next generation of e-commerce",
     template: `%s - PiShop`,
   },
+  alternates: {
+    canonical: "https://shop.pilab.hu",
+  },
   description:
     "The next generation of e-commerce - Performance optimized, horizontal scalable, SEO friendly, and fully customizable.",
   icons: {
@@ -38,12 +41,12 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "min-h-screen bg-background font-sans antialiased",
+          "bg-background font-sans antialiased",
           fontSans.variable,
         )}
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
+        <Providers themeProps={{ forcedTheme: "light" }}>
+          <div className="relative flex flex-col min-h-screen">
             <HeaderSection />
 
             {/* <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow"> */}

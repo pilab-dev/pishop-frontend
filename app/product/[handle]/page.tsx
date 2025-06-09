@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
+
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { WithContext, Product as SchemaProduct } from "schema-dts";
+import { cookies } from "next/headers";
+
+import { BaseProduct } from "./base-product";
+
+import { Configuration, ProductsApi, Product } from "@/lib/pishop-client";
+import { ProductProvider } from "@/components/product/product-context";
+import { Cart, CartProvider } from "@/components/cart/cart-context";
+import { getCart } from "@/components/cart/actions";
 
 // import { GridTileImage } from "@/components/grid/tile";
 // import { ProductProvider } from "@/components/product/product-context";
 // import { HIDDEN_PRODUCT_TAG } from "@/lib/constants";
-import { Configuration, ProductsApi, Product } from "@/lib/pishop-client";
-import Link from "next/link";
-import { WithContext, Product as SchemaProduct } from "schema-dts";
-import { BaseProduct } from "./base-product";
-import { ProductProvider } from "@/components/product/product-context";
-import { Cart, CartProvider } from "@/components/cart/cart-context";
-import { cookies } from "next/headers";
-import { getCart } from "@/components/cart/actions";
 
 const productsApi = new ProductsApi(
   new Configuration({
@@ -20,7 +23,11 @@ const productsApi = new ProductsApi(
 );
 
 const getProductRecommendations = async (id: string): Promise<Product[]> => {
+  // eslint-disable-next-line no-console
+  console.warn("getProductRecommendations not implemented", id);
+
   const recommendations: Product[] = [];
+
   return recommendations;
 };
 
@@ -65,7 +72,7 @@ export async function generateMetadata(props: {
 
   if (!product) return notFound();
 
-  const { url, width, height, altText: alt } = product.featuredImage || {};
+  // const { url, width, height, altText: alt } = product.featuredImage || {};
   // const indexable = !product.tags.includes(HIDDEN_PRODUCT_TAG);
   const indexable = true;
 
@@ -132,6 +139,7 @@ export default async function ProductPage(props: {
             },
           },
         };
+
         return result;
       })
     : Promise.resolve(undefined);
@@ -198,10 +206,10 @@ export default async function ProductPage(props: {
       <CartProvider cartPromise={cartPromise}>
         <>
           <script
-            type="application/ld+json"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify(productJsonLd),
             }}
+            type="application/ld+json"
           />
           <div className="mx-auto max-w-screen-2xl px-4">
             <BaseProduct product={product} />

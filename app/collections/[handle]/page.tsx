@@ -1,10 +1,11 @@
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+
 import { FancyTitle } from "@/components/fancy-title";
 import { BreadcrumbBar } from "@/components/products/breadcrumb-bar";
 import { ProductGrid } from "@/components/products/product-grid";
 import { SectionDecor } from "@/components/ui/section-decor";
 import { collectionsApi } from "@/lib/client";
-import { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 /**
  * Generate metadata for the collection page
@@ -62,6 +63,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
   if (res.some((r) => r.status === "rejected")) {
     const reason = res.find((r) => isRejected(r))?.reason;
 
+    // eslint-disable-next-line no-console
     console.error(`Failed to fetch collection or products for: ${handle}`, {
       reason,
     });
@@ -79,6 +81,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
 
   // ! If there is no collection or products, return not found
   if (!collection || !products) {
+    // eslint-disable-next-line no-console
     console.error("No collection or products found", {
       collection,
       products,
@@ -117,7 +120,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
             </h2>
           </section>
 
-          <ProductGrid variant="primary" products={gridProducts} />
+          <ProductGrid products={gridProducts} variant="primary" />
         </div>
       </div>
     </>

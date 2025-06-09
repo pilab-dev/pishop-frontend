@@ -1,6 +1,8 @@
+import { ImageResponse } from "next/og";
+import Image from "next/image";
+
 import LogoIcon from "@/components/icons/logo";
 import { Configuration, ProductsApi } from "@/lib/pishop-client";
-import { ImageResponse } from "next/og";
 
 const productsApi = new ProductsApi(
   new Configuration({
@@ -12,6 +14,7 @@ const getProduct = async (handle: string) => {
   const product = await productsApi.getProductByHandle({
     handle,
   });
+
   return product;
 };
 
@@ -60,12 +63,14 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
         <div tw="absolute flex inset-0 w-full h-full">
           {" "}
           {/* Cover the entire background */}
-          <img
+          <Image
+            alt={product?.title}
+            height={630}
             src={product?.images[0]?.url}
             tw="object-cover w-full h-full" // Ensure image covers the div
-            alt={product?.title}
+            width={1200}
           />
-          <div tw="absolute inset-0 bg-black/20"></div>{" "}
+          <div tw="absolute inset-0 bg-black/20" />{" "}
           {/* Subtle overlay for readability */}
         </div>
         {/* Content Container (Logo, Text, Price) */}
@@ -76,7 +81,7 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
           <p tw="text-4xl font-semibold text-white">{formattedPrice}</p>
 
           <div tw="absolute right-10 bottom-20 flex items-center mb-4">
-            <LogoIcon width="64" height="58" fill="white" />
+            <LogoIcon fill="white" height="58" width="64" />
           </div>
         </div>
         {/* Watermark (Example - replace with your actual watermark) */}
