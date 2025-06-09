@@ -79,6 +79,9 @@ export async function generateMetadata(props: {
   return {
     title: product.seo.title || product.title,
     description: product.seo.description || product.description,
+    alternates: {
+      canonical: `https://shop.pilab.hu/product/${product.handle}`,
+    },
     robots: {
       index: indexable,
       follow: indexable,

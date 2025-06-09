@@ -4,8 +4,6 @@ import {
   ProductsApi,
 } from "@/lib/pishop-client";
 
-const BASE_PATH = "http://localhost:8081/api";
-
 const headers = {
   "Content-Type": "application/json",
   "X-Shop-Id": "pishop-aggregated",
@@ -16,14 +14,14 @@ const headers = {
  */
 const productsApi = new ProductsApi(
   new Configuration({
-    basePath: BASE_PATH,
+    basePath: process.env.NEXT_PUBLIC_API_BASE,
     headers,
   }),
 );
 
 const collectionsApi = new CollectionsApi(
   new Configuration({
-    basePath: BASE_PATH,
+    basePath: process.env.NEXT_PUBLIC_API_BASE,
     headers,
   }),
 );
