@@ -4,10 +4,8 @@ export default function AboutLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <div className="inline-block max-w-lg text-center justify-center">
-        {children}
-      </div>
-    </section>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-16 px-4 sm:px-6 lg:px-8">
+      <div className=" mx-auto">{children}</div>
+    </div>
   );
 }

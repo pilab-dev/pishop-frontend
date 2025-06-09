@@ -122,6 +122,8 @@ jobs:
         run: yarn build # Ensure your package.json has a "build" script
 
       - name: ⬆️ Push the version commit and the new tag
+        if: success()
+        id: push_version_and_tag
         run: |
           # Push the version commit and the new tag
           git push
