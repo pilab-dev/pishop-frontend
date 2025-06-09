@@ -2,13 +2,7 @@ import { ImageResponse } from "next/og";
 import Image from "next/image";
 
 import LogoIcon from "@/components/icons/logo";
-import { Configuration, ProductsApi } from "@/lib/pishop-client";
-
-const productsApi = new ProductsApi(
-  new Configuration({
-    basePath: process.env.NEXT_PUBLIC_PISHOP_API_URL,
-  }),
-);
+import { productsApi } from "@/lib/client";
 
 const getProduct = async (handle: string) => {
   const product = await productsApi.getProductByHandle({

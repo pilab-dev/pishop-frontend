@@ -11,16 +11,11 @@ import { Configuration, ProductsApi, Product } from "@/lib/pishop-client";
 import { ProductProvider } from "@/components/product/product-context";
 import { Cart, CartProvider } from "@/components/cart/cart-context";
 import { getCart } from "@/components/cart/actions";
+import { productsApi } from "@/lib/client";
 
 // import { GridTileImage } from "@/components/grid/tile";
 // import { ProductProvider } from "@/components/product/product-context";
 // import { HIDDEN_PRODUCT_TAG } from "@/lib/constants";
-
-const productsApi = new ProductsApi(
-  new Configuration({
-    basePath: process.env.NEXT_PUBLIC_PISHOP_API_URL,
-  }),
-);
 
 const getProductRecommendations = async (id: string): Promise<Product[]> => {
   // eslint-disable-next-line no-console
@@ -145,7 +140,16 @@ export default async function ProductPage(props: {
     : Promise.resolve(undefined);
 
   const params = await props.params;
-  const product = await getProduct(params.handle);
+
+  let product: ShopifyProduct | undefined;
+
+  try {
+    product = await getProduct(params.handle);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+    return notFound();
+  }
 
   if (!product) return notFound();
 
