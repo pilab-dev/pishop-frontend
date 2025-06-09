@@ -1,5 +1,5 @@
-import { ImageResponse } from "next/og";
 import Image from "next/image";
+import { ImageResponse } from "next/og";
 
 import LogoIcon from "@/components/icons/logo";
 import { productsApi } from "@/lib/client";

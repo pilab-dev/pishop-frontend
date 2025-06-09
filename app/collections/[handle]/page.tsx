@@ -1,11 +1,14 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import NotFoundPage from "@/app/not-found";
 import { FancyTitle } from "@/components/fancy-title";
 import { BreadcrumbBar } from "@/components/products/breadcrumb-bar";
 import { ProductGrid } from "@/components/products/product-grid";
 import { SectionDecor } from "@/components/ui/section-decor";
 import { collectionsApi } from "@/lib/client";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import React from "react";
 
 /**
  * Generate metadata for the collection page
@@ -61,7 +64,9 @@ function isFulfilled<E>(
   return input.status === "fulfilled";
 }
 
-export default async function CollectionPage({ params }: CollectionPageProps) {
+const CollectionPageContent: React.FC<CollectionPageProps> = async ({
+  params,
+}) => {
   const { handle } = await params;
 
   // * Fetch the collection and products
@@ -141,5 +146,13 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
         </div>
       </div>
     </>
+  );
+};
+
+export default function CollectionPage(props: CollectionPageProps) {
+  return (
+    <ErrorBoundary errorComponent={NotFoundPage}>
+      <CollectionPageContent {...props} />
+    </ErrorBoundary>
   );
 }

@@ -1,17 +1,14 @@
-import type { Metadata } from "next";
-
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { WithContext, Product as SchemaProduct } from "schema-dts";
-import { cookies } from "next/headers";
-
-import { BaseProduct } from "./base-product";
-
-import { Configuration, ProductsApi, Product } from "@/lib/pishop-client";
-import { ProductProvider } from "@/components/product/product-context";
-import { Cart, CartProvider } from "@/components/cart/cart-context";
 import { getCart } from "@/components/cart/actions";
+import { Cart, CartProvider } from "@/components/cart/cart-context";
+import { ProductProvider } from "@/components/product/product-context";
 import { productsApi } from "@/lib/client";
+import { Product } from "@/lib/pishop-client";
+import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Product as SchemaProduct, WithContext } from "schema-dts";
+import { BaseProduct } from "./base-product";
 
 // import { GridTileImage } from "@/components/grid/tile";
 // import { ProductProvider } from "@/components/product/product-context";
