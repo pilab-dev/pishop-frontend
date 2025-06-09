@@ -1,4 +1,6 @@
 import { subtitle, title } from "@/components/primitives";
+import Link from "next/link";
+import { Card, FeatureCard } from "./components/Card";
 
 export default async function AboutPage() {
   return (
@@ -15,86 +17,62 @@ export default async function AboutPage() {
       </div>
 
       {/* Location & Presence */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 mb-12 transform hover:scale-105 transition-transform duration-300">
-        <div className="flex items-center mb-4">
-          <span className="text-4xl mr-4">🏛️</span>
-          <h2 className="text-3xl font-bold text-gray-900">Budapest Based</h2>
-        </div>
-        <p className="text-gray-600 leading-relaxed">
-          Strategically located in the heart of Budapest, we leverage our
-          central European position to provide efficient logistics and quick
-          delivery times to customers throughout Hungary and neighboring
-          countries.
-        </p>
-      </div>
+      <Card
+        icon="🏛️"
+        title="Budapest Based"
+        description="Strategically located in the heart of Budapest, we leverage our central European position to provide efficient logistics and quick delivery times to customers throughout Hungary and neighboring countries."
+        className="border border-gray-200 mb-12"
+      />
 
       {/* Services Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div className="text-blue-600 text-4xl mb-4">📦</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            Fulfillment Services
-          </h3>
-          <p className="text-gray-600">
-            Our state-of-the-art fulfillment center in Budapest handles storage,
-            packaging, and shipping, ensuring your products reach customers
-            quickly and in perfect condition.
-          </p>
-        </div>
-        <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div className="text-blue-600 text-4xl mb-4">🚚</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            Drop Shipping
-          </h3>
-          <p className="text-gray-600">
-            Streamline your business with our drop shipping solutions. We handle
-            inventory and shipping, while you focus on growing your customer
-            base.
-          </p>
-        </div>
-        <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div className="text-blue-600 text-4xl mb-4">🌍</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            International Shipping
-          </h3>
-          <p className="text-gray-600">
-            Reach customers across Europe with our reliable international
-            shipping network and customs expertise.
-          </p>
-        </div>
-        <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <div className="text-blue-600 text-4xl mb-4">📊</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            Analytics & Support
-          </h3>
-          <p className="text-gray-600">
-            Access detailed analytics and dedicated support to optimize your
-            business performance and customer satisfaction.
-          </p>
-        </div>
+        <Card
+          icon="📦"
+          title="Fulfillment Services"
+          description="Our state-of-the-art fulfillment center in Budapest handles storage, packaging, and shipping, ensuring your products reach customers quickly and in perfect condition."
+          className="border border-gray-200"
+        />
+        <Card
+          icon="🚚"
+          title="Drop Shipping"
+          description="Streamline your business with our drop shipping solutions. We handle inventory and shipping, while you focus on growing your customer base."
+          className="border border-gray-200"
+        />
+        <Card
+          icon="🌍"
+          title="International Shipping"
+          description="Reach customers across Europe with our reliable international shipping network and customs expertise."
+          className="border border-gray-200"
+        />
+        <Card
+          icon="📊"
+          title="Analytics & Support"
+          description="Access detailed analytics and dedicated support to optimize your business performance and customer satisfaction."
+          className="border border-gray-200"
+        />
       </div>
 
       {/* Why Choose Us */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 mb-12">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-6">
           Why Choose PiShop?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="text-4xl mb-2">⚡</div>
-            <h3 className="font-semibold mb-2">Fast Delivery</h3>
-            <p className="text-gray-600">Quick shipping across Hungary</p>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl mb-2">💎</div>
-            <h3 className="font-semibold mb-2">Quality Control</h3>
-            <p className="text-gray-600">Rigorous product inspection</p>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl mb-2">🤝</div>
-            <h3 className="font-semibold mb-2">Local Support</h3>
-            <p className="text-gray-600">Dedicated Hungarian team</p>
-          </div>
+          <FeatureCard
+            icon="⚡"
+            title="Fast Delivery"
+            description="Quick shipping across Hungary"
+          />
+          <FeatureCard
+            icon="💎"
+            title="Quality Control"
+            description="Rigorous product inspection"
+          />
+          <FeatureCard
+            icon="🤝"
+            title="Local Support"
+            description="Dedicated Hungarian team"
+          />
         </div>
       </div>
 
@@ -107,9 +85,15 @@ export default async function AboutPage() {
           Join our network of successful sellers and expand your reach across
           Hungary and Europe.
         </p>
-        <button className="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors duration-300 text-lg font-semibold">
+        <Link
+          href="/contact"
+          className="bg-primary text-white px-8 py-4 hover:bg-primary-700
+          active:focus:bg-primary-700
+          focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+          transition-colors duration-300 text-lg font-semibold"
+        >
           Become a Partner
-        </button>
+        </Link>
       </div>
     </>
   );

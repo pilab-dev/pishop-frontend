@@ -15,6 +15,7 @@ export function formatCurrency(
     // Add a colon after the currency symbol or code.
     const parts = formatter.formatToParts(amount);
     let currencyPart = parts.find((part) => part.type === "currency");
+
     if (currencyPart) {
       if (parts[0].type === "currency") {
         formatted = formatted.replace(currencyPart.value, currencyPart.value);
@@ -25,9 +26,12 @@ export function formatCurrency(
         );
       }
     }
+
     return formatted.replace("HUF", "");
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error formatting currency:", error);
+
     return amount.toString(); // Fallback to plain number if formatting fails.
   }
 }
