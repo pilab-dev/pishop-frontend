@@ -3,7 +3,7 @@
 import Price from "@/components/price";
 import { Product, ProductVariant } from "@/lib/pishop-client";
 import { FC } from "react";
-import { useProduct } from "./product-context";
+// import { useProduct } from "./product-context";
 
 type VariantPriceProps = {
   product: Product;
@@ -11,9 +11,9 @@ type VariantPriceProps = {
 
 export const VariantPrice: FC<VariantPriceProps> = ({ product }) => {
   const { variants } = product;
-  const { state } = useProduct();
+  // const { state } = useProduct();
 
-  console.log(product);
+  // console.log("product", product);
 
   // const variant = variants.find((variant: ProductVariant) =>
   //   variant.selectedOptions.every(
@@ -32,7 +32,7 @@ export const VariantPrice: FC<VariantPriceProps> = ({ product }) => {
     return (
       <Price
         amount={product.priceRange?.maxVariantPrice.amount.toString() || "0"}
-        currencyCode={product.priceRange?.maxVariantPrice.currencyCode || "USD"}
+        currencyCode={product.priceRange?.maxVariantPrice.currencyCode || "HUF"}
       />
     );
   }
