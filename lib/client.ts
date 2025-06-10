@@ -1,4 +1,5 @@
 import {
+  CartApi,
   CollectionsApi,
   Configuration,
   ProductsApi,
@@ -9,29 +10,22 @@ const headers = {
   "X-Shop-Id": "pishop-aggregated",
 };
 
+const basePath = process.env.NEXT_PUBLIC_API_BASE;
+const apiConfig = new Configuration({ basePath, headers });
+
 /**
  * @see https://github.com/pilab/pishop-client
  */
-const productsApi = new ProductsApi(
-  new Configuration({
-    basePath: process.env.NEXT_PUBLIC_API_BASE,
-    headers,
-  }),
-);
-
-const collectionsApi = new CollectionsApi(
-  new Configuration({
-    basePath: process.env.NEXT_PUBLIC_API_BASE,
-    headers,
-  }),
-);
+const productsApi = new ProductsApi(apiConfig);
+const collectionsApi = new CollectionsApi(apiConfig);
+const cartApi = new CartApi(apiConfig);
 
 interface MenuItem {
   title: string;
   path: string;
 }
 
-const categories: MenuItem[] = [
+const collections: MenuItem[] = [
   { title: "Headphone", path: "headphone" },
   { title: "Smart watch", path: "smartwatch" },
   { title: "Smartphone", path: "smartphone" },
@@ -43,8 +37,8 @@ const categories: MenuItem[] = [
 /**
  * @see https://github.com/pilab-dev/pishop-client
  */
-const getCategories = async () => {
-  return categories;
+const getCollections = async () => {
+  return collections;
 };
 
-export { collectionsApi, getCategories, productsApi };
+export { cartApi, collectionsApi, getCollections, productsApi };

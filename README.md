@@ -103,7 +103,7 @@ PiShop consists of two main components:
 
 ### Environment Variables
 
-- `NEXT_PUBLIC_PISHOP_API_URL`: API endpoint URL
+- `NEXT_PUBLIC_API_BASE`: API endpoint URL
 - `PORT`: Application port (default: 3000)
 
 ### Caching Configuration

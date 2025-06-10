@@ -1,4 +1,4 @@
-import { getCategories } from "@/lib/client";
+import { getCollections } from "@/lib/client";
 import Link from "next/link";
 import { FC } from "react";
 import {
@@ -159,7 +159,7 @@ const CopyrightSection = () => {
 };
 
 export const PageFooter = async () => {
-  const categories = await getCategories();
+  const categories = await getCollections();
 
   return (
     <footer className="w-full page-gray-800">

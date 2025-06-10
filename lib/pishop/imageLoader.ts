@@ -6,11 +6,16 @@ type ImageLoaderProps = {
 };
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+const domain = process.env.NEXT_PUBLIC_DOMAIN_NAME;
 
-export default function PiImageLoader({
+export default function PishopImageLoader({
   src,
   width,
   quality,
 }: ImageLoaderProps) {
-  return `${API_BASE}/api/image?url=${src}&w=${width}&q=${quality || 75}`;
+  if (!src.startsWith("http")) {
+    return `${API_BASE}/image?url=https://${domain}${src}&w=${width}&q=${quality || 75}`;
+  }
+
+  return `${API_BASE}/image?url=${src}&w=${width}&q=${quality || 75}`;
 }
