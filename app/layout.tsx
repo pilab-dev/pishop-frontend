@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import "@fontsource/lato";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import clsx from "clsx";
 import { Metadata, Viewport } from "next";
 
@@ -8,6 +9,8 @@ import { Providers } from "./providers";
 import { HeaderSection } from "@/components/header-section";
 import { PageFooter } from "@/components/page-footer";
 import { fontSans } from "@/config/fonts";
+
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 export const metadata: Metadata = {
   title: {
@@ -55,6 +58,7 @@ export default function RootLayout({
             <PageFooter />
           </div>
         </Providers>
+        <GoogleAnalytics gaId={gaId as string} />
       </body>
     </html>
   );

@@ -1,4 +1,4 @@
-import { getCategories } from "@/lib/client";
+import { getCollections } from "@/lib/client";
 import Link from "next/link";
 import { FaFacebook, FaInstagram, FaTwitter, FaUser } from "react-icons/fa";
 import { TfiHeart, TfiReload, TfiShoppingCart } from "react-icons/tfi";
@@ -47,7 +47,7 @@ const TopRow = () => {
 };
 
 export const HeaderSection = async () => {
-  const categories = await getCategories();
+  const categories = await getCollections();
 
   return (
     <div className="top-0 z-50 w-full page-gray-800">

@@ -6,8 +6,8 @@ type Route = {
   lastModified: string;
 };
 
-const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+const baseUrl = process.env.NEXT_PUBLIC_DOMAIN_NAME
+  ? `https://${process.env.NEXT_PUBLIC_DOMAIN_NAME}`
   : "http://localhost:3000";
 
 export const dynamic = "force-dynamic";

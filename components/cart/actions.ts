@@ -1,14 +1,11 @@
 "use server";
 
+import { cartApi } from "@/lib/client";
 import { TAGS } from "@/lib/constants";
-import { CartApi, CartItem, Configuration } from "@/lib/pishop-client";
+import { CartItem } from "@/lib/pishop-client";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
-const cartApi = new CartApi(
-  new Configuration({ basePath: process.env.NEXT_PUBLIC_PISHOP_API_URL }),
-);
 
 const addToCart = async (cartId: string, cartItemLines: CartItem[]) => {
   return cartApi.addCartItems({

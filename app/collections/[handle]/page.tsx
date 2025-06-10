@@ -82,17 +82,24 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
   // * Fetch the collection and products and wait for both to be resolved
   const res = await Promise.allSettled([collectionPromise, productsPromise]);
 
-  if (res.some((r) => r.status === "rejected")) {
-    const reason = res.find((r) => isRejected(r))?.reason;
+  try {
+    if (res.some((r) => r.status === "rejected")) {
+      const reason = res.find((r) => isRejected(r))?.reason;
 
+      // eslint-disable-next-line no-console
+      console.error(`Failed to fetch collection or products for: ${handle}`, {
+        reason,
+      });
+
+      throw new Error(`Failed to fetch collection or products for: ` + handle, {
+        cause: reason,
+      });
+    }
+  } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`Failed to fetch collection or products for: ${handle}`, {
-      reason,
-    });
+    console.error(error);
 
-    throw new Error(`Failed to fetch collection or products for: ` + handle, {
-      cause: reason,
-    });
+    return notFound();
   }
 
   // Get the collection and products
