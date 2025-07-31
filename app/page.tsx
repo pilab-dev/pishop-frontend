@@ -8,16 +8,10 @@ import { SectionDecor } from "@/components/ui/section-decor";
 import { productsApi } from "@/lib/client";
 
 export default async function Home() {
-  const prods = await productsApi.listProducts();
-
-  const products = prods.map((product) => ({
-    id: product.id,
-    handle: product.handle,
-    name: product.title,
-    price: product.price,
-    imageUrl: product.images[0].url,
-    description: product.descriptionHtml.substring(0, 200),
-  }));
+  const response = await productsApi.listProducts({
+    collectionId: "best-selling",
+    limit: 8,
+  });
 
   return (
     <>
@@ -36,11 +30,11 @@ export default async function Home() {
         <main>
           <div className="mx-auto max-w-7xl pt-5 px-2 md:px-6 flex-grow">
             <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-              <ProductGrid products={products} />
+              <ProductGrid products={response.products ?? []} />
             </section>
           </div>
 
-          <HotDealsSection products={products} />
+          <HotDealsSection products={response.products ?? []} />
 
           <BestSellersSection />
         </main>

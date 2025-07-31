@@ -1,14 +1,17 @@
-import { getCart } from "@/components/cart/actions";
-import { Cart, CartProvider } from "@/components/cart/cart-context";
-import { ProductProvider } from "@/components/product/product-context";
-import { productsApi } from "@/lib/client";
-import { Product } from "@/lib/pishop-client";
 import type { Metadata } from "next";
+
+import { Product, ProductAvailabilityStatusEnum } from "@pilab/pishop-client";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Product as SchemaProduct, WithContext } from "schema-dts";
+
 import { BaseProduct } from "./base-product";
+
+import { getCart } from "@/components/cart/actions";
+import { Cart, CartProvider } from "@/components/cart/cart-context";
+import { ProductProvider } from "@/components/product/product-context";
+import { productsApi } from "@/lib/client";
 
 // import { GridTileImage } from "@/components/grid/tile";
 // import { ProductProvider } from "@/components/product/product-context";
@@ -72,12 +75,12 @@ export async function generateMetadata(props: {
     url: `https://shop.pilab.hu/product/${product.handle}/opengraph-image`, // product.url,
     width: 1200,
     height: 630,
-    alt: product.seo.title || product.title,
+    alt: product.seo?.title || product.title,
   };
 
   return {
-    title: product.seo.title || product.title,
-    description: product.seo.description || product.description,
+    title: product.seo?.title || product.title,
+    description: product.seo?.description || product.description,
     alternates: {
       canonical: `https://shop.pilab.hu/product/${product.handle}`,
     },
@@ -91,7 +94,7 @@ export async function generateMetadata(props: {
     },
     openGraph: {
       images: [ogImage],
-      description: product.seo.description || product.description,
+      description: product.seo?.description || product.description,
     },
     other: {
       "og:site_name": "PiShop",
@@ -145,6 +148,7 @@ export default async function ProductPage(props: {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error);
+
     return notFound();
   }
 
@@ -165,9 +169,10 @@ export default async function ProductPage(props: {
     offers: [
       {
         "@type": "AggregateOffer",
-        availability: product.availableForSale
-          ? "https://schema.org/InStock"
-          : "https://schema.org/OutOfStock",
+        availability:
+          product.availability?.status === ProductAvailabilityStatusEnum.InStock
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
         priceCurrency: product.priceRange.minVariantPrice.currencyCode,
         highPrice: product.priceRange.maxVariantPrice.amount,
         lowPrice: product.priceRange.minVariantPrice.amount,
@@ -175,9 +180,10 @@ export default async function ProductPage(props: {
       },
       {
         "@type": "Offer",
-        availability: product.availableForSale
-          ? "https://schema.org/InStock"
-          : "https://schema.org/OutOfStock",
+        availability:
+          product.availability?.status === ProductAvailabilityStatusEnum.InStock
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
         name: product.title,
         priceCurrency: product.priceRange.minVariantPrice.currencyCode,
         price: product.priceRange.minVariantPrice.amount,
@@ -220,19 +226,20 @@ export default async function ProductPage(props: {
               <div className="prose dark:prose-invert">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {product.options &&
-                    Object.keys(product.options).map(
-                      (optName: keyof typeof product.options) => (
-                        <div key={optName}>
-                          <p className="mb-2 font-semibold">{optName}</p>
-                          <ul className="list-disc pl-4">
-                            {product.options?.[optName]}
-                            {/* {optName.values.map((value) => (
-                      <li key={value}>{value}</li>
-                    ))} */}
-                          </ul>
-                        </div>
-                      ),
-                    )}
+                    Object.keys(product.options).map((optName: string) => (
+                      <div key={optName}>
+                        <p className="mb-2 font-semibold">{optName}</p>
+                        <ul className="list-disc pl-4">
+                          <li key={`${optName}-value`}>
+                            {
+                              product.options?.find(
+                                (opt) => opt.name === optName,
+                              )?.value
+                            }
+                          </li>
+                        </ul>
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>

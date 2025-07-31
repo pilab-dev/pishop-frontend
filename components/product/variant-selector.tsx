@@ -1,8 +1,8 @@
 "use client";
 
-import clsx from "clsx";
 import { useProduct, useUpdateURL } from "@/components/product/product-context";
-import { ProductVariant } from "@/lib/pishop-client";
+import { ProductVariant } from "@pilab/pishop-client";
+import clsx from "clsx";
 
 type ProductOption = {
   id: string;

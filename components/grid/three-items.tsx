@@ -1,5 +1,5 @@
 import { GridTileImage } from "@/components/grid/tile";
-import type { Product } from "@/lib/pishop-client";
+import type { Product } from "@pilab/pishop-client";
 import Link from "next/link";
 
 type ThreeItemGridProps = {

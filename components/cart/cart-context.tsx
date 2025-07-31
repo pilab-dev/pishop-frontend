@@ -1,13 +1,7 @@
 "use client";
 
-import type { CartItem, Product, ProductVariant } from "@/lib/pishop-client";
-import React, {
-  createContext,
-  use,
-  useContext,
-  useMemo,
-  useOptimistic,
-} from "react";
+import type { CartItem, Product, ProductVariant } from "@pilab/pishop-client";
+import React, { createContext, use, useMemo, useOptimistic } from "react";
 
 export type Cart = {
   id: string | undefined;
@@ -89,7 +83,7 @@ function createOrUpdateCartItem(
   );
 
   return {
-    id: existingItem?.id,
+    id: existingItem?.id ?? "",
     quantity,
     cost: {
       totalAmount: {
@@ -102,9 +96,9 @@ function createOrUpdateCartItem(
       title: variant.title,
       selectedOptions: variant.selectedOptions,
       product: {
-        id: product.id,
-        handle: product.handle,
-        title: product.title,
+        id: product.id ?? "",
+        handle: product.handle ?? "",
+        title: product.title ?? "",
         featuredImage: product.featuredImage,
       },
     },

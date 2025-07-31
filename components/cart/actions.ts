@@ -2,7 +2,7 @@
 
 import { cartApi } from "@/lib/client";
 import { TAGS } from "@/lib/constants";
-import { CartItem } from "@/lib/pishop-client";
+import { CartItem } from "@pilab/pishop-client";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";

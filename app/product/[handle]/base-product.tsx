@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import { Gallery } from "@/components/product/gallery";
 import { ProductDescription } from "@/components/product/product-description";
-import { Product, ProductImage } from "@/lib/pishop-client";
+import { Product, ProductImage } from "@pilab/pishop-client";
 
 export const BaseProduct = ({ product }: { product: Product }) => {
   return (
