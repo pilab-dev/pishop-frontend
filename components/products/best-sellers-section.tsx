@@ -1,9 +1,11 @@
 "use client";
 
-import { Tab, Tabs } from "@heroui/tabs";
+import { TabsContent as Tab, Tabs } from "@ui/tabs";
 import { FC, PropsWithChildren, useEffect, useState } from "react";
+
 import { FancyTitle } from "../fancy-title";
 import { SectionDecor } from "../ui/section-decor";
+
 import ProductButtons from "./product-buttons";
 
 type BestSellersSectionProps = {};
@@ -28,14 +30,19 @@ export const BestSellersSection: FC<
 
           <Tabs
             aria-label="Tabs variants"
-            variant="underlined"
             color="primary"
-            selectedKey={selectedKey}
-            onSelectionChange={(e) => setSelectedKey(e as string)}
+            defaultValue={selectedKey}
+            // variant="underlined"
+            // onSelectionChange={(e) => setSelectedKey(e as string)}
           >
             {["Top20", "Headphones", "Laptop & PC", "Smartphone", "Watch"].map(
               (tab) => (
-                <Tab key={tab} title={tab} className="products-tab" />
+                <Tab
+                  key={tab}
+                  className="products-tab"
+                  title={tab}
+                  value={tab}
+                />
               ),
             )}
           </Tabs>
@@ -63,16 +70,16 @@ export const BestSellersSection: FC<
               <div className="mx-auto p-16 flex-1 max-h-[570px]">
                 <img
                   alt="Headphone"
-                  title="Headphone"
-                  src="/images/headphone.png"
                   className="h-full object-contain"
+                  src="/images/headphone.png"
+                  title="Headphone"
                 />
               </div>
 
               <div className="mx-auto">
                 <ProductButtons
-                  show
                   hideDetails
+                  show
                   handle="sms-audio-sms-ds-ywl-street"
                 />
               </div>
@@ -103,9 +110,9 @@ export const BestSellersSection: FC<
                 <div className="mx-auto flex-1 p-8 max-h-[200px]">
                   <img
                     alt="Headphone"
-                    title="Headphone"
-                    src="/images/headphone.png"
                     className="h-full object-contain"
+                    src="/images/headphone.png"
+                    title="Headphone"
                   />
                 </div>
 

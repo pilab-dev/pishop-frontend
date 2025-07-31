@@ -1,7 +1,10 @@
-import { getCollections } from "@/lib/client";
+import config from "@payload-config";
 import Link from "next/link";
+import { getPayload } from "payload";
 import { FaFacebook, FaInstagram, FaTwitter, FaUser } from "react-icons/fa";
 import { TfiHeart, TfiReload, TfiShoppingCart } from "react-icons/tfi";
+
+const payload = await getPayload({ config });
 
 const TopRow = () => {
   return (
@@ -29,15 +32,15 @@ const TopRow = () => {
       <div className="flex space-x-1 align-center items-center font-medium">
         <FaUser className="mr-2" />
         <Link
-          href="/login"
           className="text-white hover:underline hover:text-primary transition"
+          href="/login"
         >
           login
         </Link>
         <span className="text-slate-400 font-normal">or</span>
         <Link
-          href="/signup"
           className="text-white hover:underline hover:text-primary transition"
+          href="/signup"
         >
           signup
         </Link>
@@ -47,7 +50,25 @@ const TopRow = () => {
 };
 
 export const HeaderSection = async () => {
-  const categories = await getCollections();
+  const pages = await payload.find({
+    collection: "pages",
+    select: {
+      title: true,
+      slug: true,
+    },
+    limit: 10,
+  });
+
+  const categories = await payload.find({
+    collection: "categories",
+    select: {
+      title: true,
+      slug: true,
+    },
+    limit: 10,
+  });
+
+  console.log("Categories arrived", categories.docs);
 
   return (
     <div className="top-0 z-50 w-full page-gray-800">
@@ -63,6 +84,16 @@ export const HeaderSection = async () => {
               Home
             </Link>
           </li>
+          {pages.docs.map((page) => (
+            <li key={page.id}>
+              <Link
+                className="hover:text-primary transition-colors"
+                href={`/${page.slug}`}
+              >
+                {page.title}
+              </Link>
+            </li>
+          ))}
           <li>
             <Link
               className="hover:text-primary transition-colors"
@@ -89,27 +120,27 @@ export const HeaderSection = async () => {
         {/* This is the search box of the header section */}
         <div className="hidden md:flex flex-row flex-1 rounded-full bg-white border-gray-700 text-gray-900 max-w-[550px]">
           <select className="bg-transparent flex-shrink ml-6 focus:outline-none">
-            <option value="" disabled>
+            <option disabled value="">
               Select category
             </option>
             <option value="all">All</option>
           </select>
           <input
-            type="text"
-            placeholder="Search..."
             className="focus:outline-none px-4 py-2 w-full rounded-full"
+            placeholder="Search..."
+            type="text"
           />
           <button className="focus:outline-none px-4 py-2">
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
               className="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                fillRule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                 clipRule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                fillRule="evenodd"
               />
             </svg>
           </button>
@@ -119,9 +150,9 @@ export const HeaderSection = async () => {
       <div className="page-gray-950">
         <div className="max-w-[1280px] uppercase mx-auto px-5 py-4 flex flex-row justify-between items-center">
           <ul className="footer-links flex flex-col md:flex-row gap-10 text-sm font-bold">
-            {categories.map((category) => (
-              <li key={category.path}>
-                <Link href={`/collections/${category.path}`}>
+            {categories.docs.map((category) => (
+              <li key={category.slug}>
+                <Link href={`/collections/${category.slug}`}>
                   {category.title}
                 </Link>
               </li>

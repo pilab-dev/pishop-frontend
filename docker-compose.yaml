@@ -10,5 +10,27 @@ services:
       - '8084:3000' # Maps host port 8080 to container port 8080. Change as needed.
     volumes:
       - pishop-cache:/app/.next/cache
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+    container_name: pishop-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: mongopassword
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - pishop-network
+
 volumes:
-  pishop-cache: 
+  pishop-cache:
+  mongodb-data:
+
+networks:
+  pishop-network:
+    driver: bridge 

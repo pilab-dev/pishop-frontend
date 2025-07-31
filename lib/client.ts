@@ -35,4 +35,4 @@ const getCollections = async () => {
   return collections;
 };
 
-export { cartApi, collectionsApi, getCollections, productsApi };
+export { cartApi, getCollections, productsApi };
