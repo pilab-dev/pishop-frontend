@@ -1,6 +1,6 @@
 import { AddToCart } from "@/components/cart/add-to-cart";
 import Prose from "@/components/prose";
-import { Product } from "@/lib/pishop-client";
+import { Product } from "@pilab/pishop-client";
 import { FC } from "react";
 import { VariantPrice } from "./variant-price";
 import { VariantSelector } from "./variant-selector";

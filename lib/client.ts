@@ -1,9 +1,4 @@
-import {
-  CartApi,
-  CollectionsApi,
-  Configuration,
-  ProductsApi,
-} from "@/lib/pishop-client";
+import { CartApi, Configuration, ProductApi } from "@pilab/pishop-client";
 
 const headers = {
   "Content-Type": "application/json",
@@ -16,8 +11,7 @@ const apiConfig = new Configuration({ basePath, headers });
 /**
  * @see https://github.com/pilab/pishop-client
  */
-const productsApi = new ProductsApi(apiConfig);
-const collectionsApi = new CollectionsApi(apiConfig);
+const productsApi = new ProductApi(apiConfig);
 const cartApi = new CartApi(apiConfig);
 
 interface MenuItem {

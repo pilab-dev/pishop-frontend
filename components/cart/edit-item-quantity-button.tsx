@@ -1,9 +1,9 @@
 "use client";
 
-import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
-import clsx from "clsx";
 import { updateItemQuantity } from "@/components/cart/actions";
-import type { CartItem } from "@/lib/pishop-client";
+import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import type { CartItem } from "@pilab/pishop-client";
+import clsx from "clsx";
 import { useActionState } from "react";
 
 function SubmitButton({ type }: { type: "plus" | "minus" }) {

@@ -1,7 +1,7 @@
 "use client";
 
 import Price from "@/components/price";
-import { Product, ProductVariant } from "@/lib/pishop-client";
+import { Product, ProductVariant } from "@pilab/pishop-client";
 import { FC } from "react";
 // import { useProduct } from "./product-context";
 

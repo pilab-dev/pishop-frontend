@@ -1,18 +1,11 @@
+import { Product } from "@pilab/pishop-client";
 import { FC } from "react";
 import { FancyTitle } from "../fancy-title";
 import { SectionDecor } from "../ui/section-decor";
 import ProductButtons from "./product-buttons";
-import { Product } from "@/lib/pishop-client";
 
 type HotDealsSectionProps = {
-  products: {
-    id: string;
-    handle: string;
-    name: string;
-    description: string;
-    price: number;
-    imageUrl: string;
-  }[];
+  products: Product[];
 };
 
 export const HotDealsSection: FC<HotDealsSectionProps> = ({ products }) => {

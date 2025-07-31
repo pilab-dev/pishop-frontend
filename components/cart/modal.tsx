@@ -1,20 +1,32 @@
 "use client";
 
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import LoadingDots from "@/components/loading-dots";
 import Price from "@/components/price";
 import { DEFAULT_OPTION } from "@/lib/constants";
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 // import { createUrl } from "@/lib/utils";
+import {
+  Dialog,
+  DialogPanel,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { createCartAndSetCookie, redirectToCheckout } from "./actions";
-import { useCart } from "./useCart";
 import CloseCart from "./close-cart";
 import { DeleteItemButton } from "./delete-item-button";
 import { EditItemQuantityButton } from "./edit-item-quantity-button";
 import OpenCart from "./open-cart";
+import { useCart } from "./useCart";
+
+const createUrl = (path: string, params: URLSearchParams) => {
+  const url = new URL(path, process.env.NEXT_PUBLIC_PI_SHOP_URL);
+  url.search = params.toString();
+  return url.toString();
+};
 
 type MerchandiseSearchParams = {
   [key: string]: string;
@@ -51,7 +63,7 @@ export default function CartModal() {
       <button aria-label="Open cart" onClick={openCart}>
         <OpenCart quantity={cart?.totalQuantity} />
       </button>
-      {/* <Transition show={isOpen}>
+      <Transition show={isOpen}>
         <Dialog onClose={closeCart} className="relative z-50">
           <TransitionChild
             as={Fragment}
@@ -164,7 +176,9 @@ export default function CartModal() {
                               <div className="flex h-16 flex-col justify-between">
                                 <Price
                                   className="flex justify-end space-y-2 text-right text-sm"
-                                  amount={item.cost.totalAmount.amount}
+                                  amount={item.cost.totalAmount.amount.toFixed(
+                                    2,
+                                  )}
                                   currencyCode={
                                     item.cost.totalAmount.currencyCode
                                   }
@@ -222,7 +236,7 @@ export default function CartModal() {
             </DialogPanel>
           </TransitionChild>
         </Dialog>
-      </Transition> */}
+      </Transition>
     </>
   );
 }

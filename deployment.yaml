@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: pishop-frontend
-          image: ghcr.io/pilab-dev/pishop:latest
+          image: ghcr.io/pilab-dev/pishop-frontend:latest
           ports:
             - containerPort: 3000
           readinessProbe:
@@ -98,6 +98,7 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "200m"
+          imagePullPolicy: Always
       imagePullSecrets:
         - name: regcred
       volumes:

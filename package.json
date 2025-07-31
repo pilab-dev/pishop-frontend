@@ -1,5 +1,5 @@
 {
-  "name": "next-app-template",
+  "name": "@pishop/storefront",
   "version": "0.0.3",
   "private": true,
   "scripts": {
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@fontsource/lato": "^5.2.5",
+    "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@heroui/button": "2.2.16",
     "@heroui/code": "2.2.12",
@@ -24,19 +25,31 @@
     "@heroui/tabs": "^2.2.13",
     "@heroui/theme": "2.4.12",
     "@heroui/tooltip": "^2.2.13",
+    "@hookform/resolvers": "^5.2.1",
     "@next/third-parties": "^15.3.3",
+    "@pilab/pishop-client": "workspace:*",
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
     "@react-aria/ssr": "3.9.7",
     "@react-aria/visually-hidden": "3.8.20",
-    "clsx": "2.1.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "framer-motion": "11.13.1",
     "intl-messageformat": "^10.5.0",
     "lucide-react": "^0.513.0",
-    "next": "15.2.4",
+    "next": "^15.4.5",
     "next-themes": "^0.4.4",
     "prettier-plugin-tailwindcss": "^0.6.12",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-icons": "^5.5.0"
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-hook-form": "^7.61.1",
+    "react-icons": "^5.5.0",
+    "react-transition-group": "^4.4.5",
+    "tailwind-merge": "^3.3.0",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^4.0.14"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "15.0.4",
@@ -62,6 +75,7 @@
     "schema-dts": "^1.1.5",
     "tailwind-variants": "0.3.0",
     "tailwindcss": "3.4.16",
+    "turbo": "^2.5.5",
     "typescript": "5.6.3"
   }
 }
