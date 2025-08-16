@@ -6,11 +6,25 @@ import { FancyTitle } from "@/components/fancy-title";
 import { BreadcrumbBar } from "@/components/products/breadcrumb-bar";
 import { ProductGrid } from "@/components/products/product-grid";
 import { SectionDecor } from "@/components/ui/section-decor";
-import { productsApi } from "@/lib/client";
-import { Product } from "@pilab/pishop-client";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import React from "react";
 import NotFoundPage from "../../not-found";
+
+import config from "@/payload.config";
+import { getPayload } from "payload";
+
+const getCollectionByHandle = async (handle: string) => {
+  const payload = await getPayload({ config });
+
+  const result = await payload.find({
+    collection: "collections",
+    where: {
+      handle: handle,
+    },
+  });
+
+  return result;
+};
 
 /**
  * Generate metadata for the collection page
@@ -20,7 +34,9 @@ export async function generateMetadata(props: {
 }): Promise<Metadata> {
   const { handle } = await props.params;
 
-  const collection = await productsApi.getCollectionByHandle({ handle });
+  // const collection = await productsApi.getCollectionByHandle({ handle });
+
+  const collection = await getCollectionByHandle(handle);
 
   if (!collection) return notFound();
 

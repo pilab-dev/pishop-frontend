@@ -3,6 +3,7 @@ import { withPayload } from "@payloadcms/next/withPayload";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  turbopack: {},
   images: {
     // loader: "custom",
     // loaderFile: "./lib/pishop/imageLoader.ts",

@@ -1,12 +1,21 @@
+import config from "@/payload.config";
 import Image from "next/image";
 import { ImageResponse } from "next/og";
 
 import LogoIcon from "@/components/icons/logo";
-import { productsApi } from "@/lib/client";
+import { getPayload } from "payload";
 
-const getProduct = async (handle: string) => {
-  const product = await productsApi.getProductByHandle({
-    handle,
+export const getProductByHandle = async (handle: string) => {
+  const payload = await getPayload({ config });
+  const product = await payload.find({
+    collection: "products",
+    where: {
+      slug: {
+        equals: handle,
+      },
+    },
+    pagination: false,
+    limit: 1,
   });
 
   return product;
@@ -16,7 +25,7 @@ export const runtime = "edge";
 
 const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
   const params = await props.params;
-  const product = await getProduct(params.handle);
+  const product = await getProductByHandle(params.handle);
 
   if (!product) {
     // Handle cases where the product is not found.  Return a default image or error.

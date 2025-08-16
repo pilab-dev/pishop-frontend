@@ -12,16 +12,13 @@ import { BaseProduct } from "./base-product";
 const baseUrl = process.env.SITE_BASE_URL;
 
 // import { GridTileImage } from "@/components/grid/tile";
+import { getProductBySlug } from "@/lib/client";
 import { HIDDEN_PRODUCT_TAG } from "@/lib/constants";
-import { Product, ProductAvailabilityStatusEnum } from "@pilab/pishop-client";
-
-import productService from "@pishop/product-service";
+import { Product } from "@/payload-types";
 
 const getProductRecommendations = async (id: string): Promise<Product[]> => {
   // eslint-disable-next-line no-console
   console.warn("getProductRecommendations not implemented", id);
-
-  productService.;
 
   const recommendations: Product[] = [];
 
@@ -42,9 +39,10 @@ type ShopifyProduct = Product & {
 };
 
 const getProduct = async (handle: string): Promise<ShopifyProduct> => {
-  const product = await productsApi.getProductByHandle({
-    handle,
-  });
+  const product = getProductBySlug(handle);
+  if (!product) {
+    throw new Error(`product with handle: [${handle}] not found`);
+  }
 
   return {
     ...product,
@@ -60,7 +58,7 @@ const getProduct = async (handle: string): Promise<ShopifyProduct> => {
         currencyCode: product.priceRange?.minVariantPrice.currencyCode || "HUF",
       },
     },
-  };
+  } as ShopifyProduct;
 };
 
 export async function generateMetadata(props: {
@@ -76,17 +74,17 @@ export async function generateMetadata(props: {
   const indexable = !product.tags?.includes(HIDDEN_PRODUCT_TAG);
 
   const ogImage = {
-    url: `${baseUrl}/product/${product.handle}/opengraph-image`, // product.url,
+    url: `${baseUrl}/product/${product.slug}/opengraph-image`, // product.url,
     width: 1200,
     height: 630,
-    alt: product.seo?.title || product.title,
+    alt: product.meta?.title || product.title,
   };
 
   return {
-    title: product.seo?.title || product.title,
-    description: product.seo?.description || product.description,
+    title: product.meta?.title || product.title,
+    description: product.meta?.description || product.description,
     alternates: {
-      canonical: `${baseUrl}/product/${product.handle}`,
+      canonical: `${baseUrl}/product/${product.slug}`,
     },
     robots: {
       index: indexable,
@@ -98,13 +96,13 @@ export async function generateMetadata(props: {
     },
     openGraph: {
       images: [ogImage],
-      description: product.seo?.description || product.description,
+      description: product.meta?.description || product.description,
     },
     other: {
       "og:site_name": "PiShop",
       "og:type": "product",
       "product:brand": "Pilab",
-      "product:product_link": "https://shop.pilab.hu/product/" + product.handle,
+      "product:product_link": `${baseUrl}/${product.slug}`,
       "product:price": product.priceRange?.maxVariantPrice.amount || 0,
       "product:plural_title": product.title,
     },
@@ -145,16 +143,7 @@ export default async function ProductPage(props: {
 
   const params = await props.params;
 
-  let product: Product | undefined;
-
-  try {
-    product = await getProduct(params.handle);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
-
-    return notFound();
-  }
+  const product = await getProductBySlug(params.handle);
 
   if (!product) return notFound();
 
@@ -163,8 +152,8 @@ export default async function ProductPage(props: {
     "@type": "Product",
     name: product.title,
     description: product.description,
-    image: product.featuredImage.url,
-    url: `https://shop.pilab.hu/product/${product.handle}`,
+    // image: product.featuredImage.url,
+    url: `https://shop.pilab.hu/product/${product.slug}`,
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: product.rating || 0.0,
@@ -174,24 +163,24 @@ export default async function ProductPage(props: {
       {
         "@type": "AggregateOffer",
         availability:
-          product.availability?.status === ProductAvailabilityStatusEnum.InStock
+          product.availability?.status === "InStock"
             ? "https://schema.org/InStock"
             : "https://schema.org/OutOfStock",
         priceCurrency: product.priceRange?.minVariantPrice.currencyCode,
         highPrice: product.priceRange?.maxVariantPrice.amount,
         lowPrice: product.priceRange?.minVariantPrice.amount,
-        offerCount: product.variants.length || 1,
+        offerCount: product.variants?.length || 1,
       },
       {
         "@type": "Offer",
         availability:
-          product.availability?.status === ProductAvailabilityStatusEnum.InStock
+          product.availability?.status === "InStock"
             ? "https://schema.org/InStock"
             : "https://schema.org/OutOfStock",
         name: product.title,
         priceCurrency: product.priceRange?.minVariantPrice.currencyCode,
         price: product.priceRange?.minVariantPrice.amount,
-        url: `https://shop.pilab.hu/product/${product.handle}`,
+        url: `https://shop.pilab.hu/product/${product.slug}`,
         priceValidUntil: "2025-12-31",
       },
     ],
