@@ -39,6 +39,8 @@ export const RenderBlocks: React.FC<{
             if (Block) {
               return (
                 <Block
+                  /* @ts-expect-error there may be some mismatch between the expected types here */
+                  key={`block-${index}`}
                   {...block}
                   /* @ts-expect-error there may be some mismatch between the expected types here */
                   disableInnerContainer
