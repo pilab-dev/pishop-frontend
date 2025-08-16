@@ -1,8 +1,10 @@
 "use client";
 
 import { formatCurrency } from "@/lib/formatCurrrency";
-import { Product } from "@pilab/pishop-client";
+// import { Product } from "@pilab/pishop-client";
+import { Product } from "@/payload-types";
 import { useState } from "react";
+import { ImageMedia } from "../Media/ImageMedia";
 import ProductButtons from "./product-buttons";
 
 export type GridVariant = "primary" | "secondary" | "tertiary";
@@ -52,23 +54,29 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
         <span className="text-gray-400 italic">HUF</span>
       </p>
 
-      <img
-        src={product.featuredImage?.url}
+      <ImageMedia
+        alt={product.title}
+        resource={product.featuredImage.url}
+        className="w-full h-80 object-cover my-3 rounded-md md:h-80 lg:h-[250px]"
+      />
+
+      {/* <img
+        src={product.featuredImage?.url as string}
         alt={product.title}
         className="w-full h-80
         object-cover my-3 rounded-md 
         md:h-80 lg:h-[250px]"
-      />
+      /> */}
       <p
         className="products-font text-sm text-gray-600"
         dangerouslySetInnerHTML={{
-          __html: product.bodyHtml ?? product.description ?? "",
+          __html: product.description ?? "",
         }}
       />
 
       <div className="absolute bottom-0 left-0 right-0">
         <div className="flex flex-row justify-center">
-          <ProductButtons show={hover} handle={product.handle} />
+          <ProductButtons show={hover} handle={product.slug || ""} />
         </div>
       </div>
     </div>
@@ -88,8 +96,8 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
         gap: "2px",
       }}
     >
-      {products.map((product, index) => (
-        <ProductTile key={index} product={product} />
+      {Array.from({ length: 10 }).map((_, index) => (
+        <ProductTile key={index} product={products[0]} />
       ))}
     </div>
   );

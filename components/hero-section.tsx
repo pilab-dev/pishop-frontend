@@ -1,4 +1,4 @@
-import { productsApi } from "@/lib/client";
+import { getProductBySlug } from "@/lib/client";
 import { formatCurrency } from "@/lib/formatCurrrency";
 import Image from "next/image";
 import { FaCartPlus, FaEye } from "react-icons/fa";
@@ -6,9 +6,11 @@ import { HeroButton } from "./ui/hero-button";
 import { HeroImage } from "./ui/hero-image";
 
 export const HeroSection = async () => {
-  const product = await productsApi.getProductByHandle({
-    handle: "strong-yellow-bear",
-  });
+  const product = await getProductBySlug("strong-yellow-bear");
+
+  if (!product) {
+    return null;
+  }
 
   return (
     <div className="hero-bg w-full page-gray-900">
@@ -37,7 +39,8 @@ export const HeroSection = async () => {
                 <span
                   className="text-lg font-normal"
                   dangerouslySetInnerHTML={{
-                    __html: product.descriptionHtml.substring(0, 300),
+                    // That was descriptionHtml, but it's not working
+                    __html: product.description.substring(0, 300),
                   }}
                 />
               </div>
@@ -48,7 +51,7 @@ export const HeroSection = async () => {
                   icon={<FaEye fontSize={20} />}
                   text="View details"
                   buttonClasses="bg-gray-400"
-                  href={`/product/${product.handle}`}
+                  href={`/product/${product.slug}`}
                 />
 
                 <HeroButton
@@ -64,7 +67,7 @@ export const HeroSection = async () => {
               <Image
                 // src={product.images[1].url}
                 src="/images/fit-bear-yellow.webp"
-                alt={product.images[1].altText}
+                alt={product.featuredImage?.alt ?? ""}
                 width={1000}
                 height={1000}
               />

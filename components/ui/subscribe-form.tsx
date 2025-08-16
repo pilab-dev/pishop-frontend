@@ -2,6 +2,7 @@
 
 import { createRef } from "react";
 import { FancyTitle } from "../fancy-title";
+import { Input } from "./input";
 
 /**
  * Subscribe form
@@ -44,7 +45,7 @@ export const SubscribeForm = () => {
           </div>
 
           <div className="flex-1">
-            <input
+            <Input
               ref={ref}
               type="email"
               placeholder="Email address"

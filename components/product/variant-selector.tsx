@@ -1,14 +1,8 @@
 "use client";
 
 import { useProduct, useUpdateURL } from "@/components/product/product-context";
-import { ProductVariant } from "@pilab/pishop-client";
+import { ProductOption, ProductVariant } from "@pilab/pishop-client";
 import clsx from "clsx";
-
-type ProductOption = {
-  id: string;
-  name: string;
-  values: string[];
-};
 
 type Combination = {
   id: string;
@@ -27,7 +21,7 @@ export function VariantSelector({
   const updateURL = useUpdateURL();
   const hasNoOptionsOrJustOneOption =
     !options.length ||
-    (options.length === 1 && options[0]?.values.length === 1);
+    (options.length === 1 && options[0]?.value?.length === 1);
 
   if (hasNoOptionsOrJustOneOption) {
     return null;

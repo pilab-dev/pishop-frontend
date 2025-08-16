@@ -20,6 +20,19 @@
   --geist-accent: #f5c615;
   --geist-foreground: #fff;
   --geist-background: #f5c615;
+
+  --font-sans: "Inter", sans-serif;
+}
+
+.input[type="text"] {
+  @apply border-gray-200;
+  @apply text-gray-200;
+  @apply bg-gray-200;
+  @apply rounded-md;
+  @apply p-2;
+  @apply w-full;
+  @apply h-10;
+  @apply border-2;
 }
 
 .page-gray-800 {

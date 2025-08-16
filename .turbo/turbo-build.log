@@ -1,468 +1,58 @@
 
-[0m[2m[35m$[0m [2m[1mnext build[0m
-   [1m[38;2;173;127;168m▲ Next.js 15.2.4[39m[22m
+
+> @pishop/storefront@0.0.3 build /home/paalgyula/wspace/projects/pilab/pishop/apps/pishop-new
+> next build --turbo
+
+ [33m[1m⚠[22m[39m Warning: Found multiple lockfiles. Selecting /home/paalgyula/wspace/projects/pilab/pishop/pnpm-lock.yaml.
+   Consider removing the lockfiles at:
+   * /home/paalgyula/wspace/projects/pilab/pishop/apps/pishop-new/bun.lock
+
+(node:100516) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/paalgyula/wspace/projects/pilab/pishop/apps/pishop-new/next.config.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/paalgyula/wspace/projects/pilab/pishop/apps/pishop-new/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+   [1m[38;2;173;127;168m▲ Next.js 15.4.6[39m[22m (Turbopack)
    - Environments: .env.local, .env.production
+   - Experiments (use with caution):
+     [1m⨯[22m reactCompiler
 
  [37m[1m [22m[39m Creating an optimized production build ...
- [32m[1m✓[22m[39m Compiled successfully
-[?25l [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m..[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m...[39m[2K[1G [37m[1m [22m[39m Linting and checking validity of types  [36m.[39m[2K[1G[?25h
-./app/about/page.tsx
-1:1  Warning: There should be at least one empty line between import groups  import/order
-1:1  Warning: `@/components/primitives` import should occur after import of `./components/Card`  import/order
-2:1  Warning: There should be at least one empty line between import groups  import/order
-23:9  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-24:9  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-32:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-33:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-38:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-39:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-44:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-45:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-50:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-51:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-64:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-69:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-74:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-90:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
+(node:100645) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/paalgyula/wspace/projects/pilab/pishop/apps/pishop-new/next.config.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/paalgyula/wspace/projects/pilab/pishop/apps/pishop-new/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ⚠ Webpack is configured while Turbopack is not, which may cause problems.
+ ⚠ See instructions if you need to configure Turbopack:
+  https://nextjs.org/docs/app/api-reference/next-config-js/turbopack
 
-./app/api/revalidate/route.ts
-1:1  Warning: There should be at least one empty line between import groups  import/order
-2:1  Warning: `next/server` import should occur before import of `@/lib/pishop`  import/order
+ [33m[1m⚠[22m[39m Support for Turbopack builds is experimental. [1mWe don't recommend deploying mission-critical applications to production.[22m
 
-./app/collections/[handle]/error.tsx
-6:3  Warning: 'error' is defined but never used. Allowed unused args must match /^_.*?$/u.  @typescript-eslint/no-unused-vars
+- [1mTurbopack currently always builds production source maps for the browser. This will include project source code if deployed to production.[22m
+- It is expected that your bundle size might be different from `next build` with webpack. This will be improved as we work towards stability.
+- This build is without disk caching; subsequent builds will become faster when disk caching becomes available.
+- When comparing output to webpack builds, make sure to first clear the Next.js cache by deleting the `.next` directory.
 
-./app/collections/[handle]/page.tsx
-9:1  Warning: There should be at least one empty line between import groups  import/order
-10:1  Warning: `next/dist/client/components/error-boundary` import should occur before import of `@/app/not-found`  import/order
-11:1  Warning: `react` import should occur before import of `@/app/not-found`  import/order
+Provide feedback for Turbopack builds at https://github.com/vercel/next.js/discussions/77721
 
-./app/product/[handle]/base-product.tsx
-4:1  Warning: There should be at least one empty line between import groups  import/order
-5:1  Warning: `@pilab/pishop-client` import should occur before import of `@/components/product/gallery`  import/order
+> Build error occurred
+[Error [TurbopackInternalError]: Next.js package not found
 
-./app/product/[handle]/page.tsx
-1:1  Warning: `@/components/cart/actions` import should occur after import of `./base-product`  import/order
-2:1  Warning: `@/components/cart/cart-context` import should occur after import of `./base-product`  import/order
-3:1  Warning: `@/components/product/product-context` import should occur after import of `./base-product`  import/order
-4:1  Warning: There should be at least one empty line between import groups  import/order
-4:1  Warning: `@/lib/client` import should occur after import of `./base-product`  import/order
-5:1  Warning: There should be at least one empty line between import groups  import/order
-5:1  Warning: `@pilab/pishop-client` import should occur after type import of `next`  import/order
-6:1  Warning: There should be at least one empty line between import groups  import/order
-10:1  Warning: There should be at least one empty line between import groups  import/order
-148:5  Warning: Expected blank line before this statement.  padding-line-between-statements
-
-./app/sitemap.ts
-1:1  Warning: There should be at least one empty line between import groups  import/order
-2:1  Warning: `next` import should occur before import of `@/lib/pishop`  import/order
-
-./components/cart/actions.ts
-3:1  Warning: `@/lib/client` import should occur after import of `next/navigation`  import/order
-4:1  Warning: There should be at least one empty line between import groups  import/order
-4:1  Warning: `@/lib/constants` import should occur after import of `next/navigation`  import/order
-54:12  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
-83:12  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
-135:5  Warning: Unexpected console statement.  no-console
-136:5  Warning: Expected blank line before this statement.  padding-line-between-statements
-149:3  Warning: Expected blank line before this statement.  padding-line-between-statements
-
-./components/cart/add-to-cart.tsx
-3:1  Warning: `@/components/cart/actions` import should occur after import of `./useCart`  import/order
-4:1  Warning: There should be at least one empty line between import groups  import/order
-4:1  Warning: `@/components/product/product-context` import should occur after import of `./useCart`  import/order
-8:1  Warning: There should be at least one empty line between import groups  import/order
-34:9  Warning: Shorthand props must be listed before all other props  react/jsx-sort-props
-63:11  Warning: 'state' is assigned a value but never used.  @typescript-eslint/no-unused-vars
-
-./components/cart/cart-context.tsx
-3:1  Warning: There should be at least one empty line between import groups  import/order
-52:3  Warning: Expected blank line before this statement.  padding-line-between-statements
-56:9  Warning: 'newTotalAmount' is assigned a value but never used.  @typescript-eslint/no-unused-vars
-
-./components/cart/close-cart.tsx
-1:27  Warning: Replace `'@heroicons/react/24/outline'` with `"@heroicons/react/24/outline"`  prettier/prettier
-2:18  Warning: Replace `'clsx'` with `"clsx"`  prettier/prettier
-7:17  Warning: Replace `·className={clsx('h-6·transition-all·ease-in-out·hover:scale-110',·className)}` with `⏎········className={clsx(⏎··········"h-6·transition-all·ease-in-out·hover:scale-110",⏎··········className,⏎········)}⏎·····`  prettier/prettier
-
-./components/cart/delete-item-button.tsx
-3:1  Warning: There should be at least one empty line between import groups  import/order
-3:1  Warning: `@/components/cart/actions` import should occur after import of `react`  import/order
-4:1  Warning: There should be at least one empty line between import groups  import/order
-4:1  Warning: `@heroicons/react/24/outline` import should occur after type import of `@pilab/pishop-client`  import/order
-5:1  Warning: There should be at least one empty line between import groups  import/order
-28:9  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-29:9  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/cart/edit-item-quantity-button.tsx
-3:1  Warning: There should be at least one empty line between import groups  import/order
-3:1  Warning: `@/components/cart/actions` import should occur after import of `react`  import/order
-4:1  Warning: There should be at least one empty line between import groups  import/order
-4:1  Warning: `@heroicons/react/24/outline` import should occur after type import of `@pilab/pishop-client`  import/order
-5:1  Warning: There should be at least one empty line between import groups  import/order
-13:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-16:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/cart/modal.tsx
-3:1  Warning: `@/components/loading-dots` import should occur after import of `./useCart`  import/order
-4:1  Warning: `@/components/price` import should occur after import of `./useCart`  import/order
-5:1  Warning: There should be at least one empty line between import groups  import/order
-5:1  Warning: `@/lib/constants` import should occur after import of `./useCart`  import/order
-17:1  Warning: There should be at least one empty line between import groups  import/order
-27:3  Warning: Expected blank line before this statement.  padding-line-between-statements
-28:3  Warning: Expected blank line before this statement.  padding-line-between-statements
-67:17  Warning: Callbacks must be listed after all other props  react/jsx-sort-props
-77:56  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-147:37  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-148:37  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-153:37  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-160:35  Warning: Callbacks must be listed after all other props  react/jsx-sort-props
-179:35  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-190:37  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-200:37  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-214:25  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-226:25  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-251:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/cart/open-cart.tsx
-1:34  Warning: Replace `'@heroicons/react/24/outline'` with `"@heroicons/react/24/outline"`  prettier/prettier
-2:18  Warning: Replace `'clsx'` with `"clsx"`  prettier/prettier
-6:11  Warning: Insert `,`  prettier/prettier
-14:25  Warning: Replace `'h-4·transition-all·ease-in-out·hover:scale-110',·className` with `⏎··········"h-4·transition-all·ease-in-out·hover:scale-110",⏎··········className,⏎········`  prettier/prettier
-
-./components/cart/useCart.tsx
-1:1  Warning: There should be at least one empty line between import groups  import/order
-
-./components/grid/index.tsx
-1:18  Warning: Replace `'clsx'` with `"clsx"`  prettier/prettier
-3:43  Warning: Replace `'ul'` with `"ul"`  prettier/prettier
-5:8  Warning: Replace `·{...props}·className={clsx('grid·grid-flow-row·gap-4',·props.className)}` with `⏎······{...props}⏎······className={clsx("grid·grid-flow-row·gap-4",·props.className)}⏎····`  prettier/prettier
-11:47  Warning: Replace `'li'` with `"li"`  prettier/prettier
-13:8  Warning: Replace `·{...props}·className={clsx('aspect-square·transition-opacity',·props.className)}` with `⏎······{...props}⏎······className={clsx("aspect-square·transition-opacity",·props.className)}⏎····`  prettier/prettier
-
-./components/grid/three-items.tsx
-1:1  Warning: There should be at least one empty line between import groups  import/order
-1:1  Warning: `@/components/grid/tile` import should occur after import of `next/link`  import/order
-2:1  Warning: There should be at least one empty line between import groups  import/order
-27:11  Warning: Shorthand props must be listed before all other props  react/jsx-sort-props
-28:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-33:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-34:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-35:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-78:38  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-78:58  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-79:38  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-79:59  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-80:38  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/grid/tile.tsx
-2:1  Warning: There should be at least one empty line between import groups  import/order
-43:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-44:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-45:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/header-section.tsx
-1:1  Warning: There should be at least one empty line between import groups  import/order
-1:1  Warning: `@/lib/client` import should occur after import of `react-icons/tfi`  import/order
-33:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-40:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-92:30  Warning: Shorthand props must be listed before all other props  react/jsx-sort-props
-99:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-100:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-105:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-106:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-107:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-111:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-112:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/hero-section.tsx
-1:1  Warning: `@/lib/client` import should occur after import of `./ui/hero-image`  import/order
-2:1  Warning: There should be at least one empty line between import groups  import/order
-2:1  Warning: `@/lib/formatCurrrency` import should occur after import of `./ui/hero-image`  import/order
-4:1  Warning: There should be at least one empty line between import groups  import/order
-39:19  Warning: Reserved props must be listed before all other props  react/jsx-sort-props
-50:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-51:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-57:19  Warning: Shorthand props must be listed before all other props  react/jsx-sort-props
-67:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-69:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/icons/logo.tsx
-1:62  Warning: Replace `'svg'` with `"svg"`  prettier/prettier
-16:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-17:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-18:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-24:9  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-25:9  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-26:9  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-27:9  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/label.tsx
-1:1  Warning: There should be at least one empty line between import groups  import/order
-1:18  Warning: Replace `'clsx'` with `"clsx"`  prettier/prettier
-2:19  Warning: Replace `'./price'` with `"./price"`  prettier/prettier
-8:14  Warning: Replace `'bottom'` with `"bottom",`  prettier/prettier
-13:14  Warning: Replace `'bottom'·|·'center'` with `"bottom"·|·"center"`  prettier/prettier
-17:23  Warning: Replace `'absolute·bottom-0·left-0·flex·w-full·px-4·pb-4·@container/label',` with `⏎········"absolute·bottom-0·left-0·flex·w-full·px-4·pb-4·@container/label",⏎·······`  prettier/prettier
-18:9  Warning: Replace `'lg:px-20·lg:pb-[35%]':·position·===·'center'` with `··"lg:px-20·lg:pb-[35%]":·position·===·"center",`  prettier/prettier
-19:7  Warning: Replace `}` with `··},⏎······`  prettier/prettier
-22:86  Warning: Replace `{title}` with `⏎··········{title}⏎········`  prettier/prettier
-25:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/loading-dots.tsx
-1:18  Warning: Replace `'clsx'` with `"clsx"`  prettier/prettier
-3:14  Warning: Replace `'mx-[1px]·inline-block·h-1·w-1·animate-blink·rounded-md'` with `"mx-[1px]·inline-block·h-1·w-1·animate-blink·rounded-md"`  prettier/prettier
-9:35  Warning: Replace `'animation-delay-[200ms]'` with `"animation-delay-[200ms]"`  prettier/prettier
-10:35  Warning: Replace `'animation-delay-[400ms]'` with `"animation-delay-[400ms]"`  prettier/prettier
-
-./components/navbar.tsx
-19:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-21:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-58:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-65:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/page-footer.tsx
-1:1  Warning: There should be at least one empty line between import groups  import/order
-1:1  Warning: `@/lib/client` import should occur after import of `./ui/subscribe-form`  import/order
-4:1  Warning: There should be at least one empty line between import groups  import/order
-38:41  Warning: Reserved props must be listed before all other props  react/jsx-sort-props
-84:9  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
-87:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-89:11  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-101:42  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-105:37  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-110:37  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-135:28  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-138:28  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-141:28  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-144:28  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-149:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
-151:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/price.tsx
-1:18  Warning: Replace `'clsx'` with `"clsx"`  prettier/prettier
-6:18  Warning: Replace `'USD'` with `"USD"`  prettier/prettier
-7:24  Warning: Insert `,`  prettier/prettier
-13:26  Warning: Replace `'p'` with `"p"`  prettier/prettier
-14:38  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-16:14  Warning: Replace `'currency'` with `"currency"`  prettier/prettier
-18:24  Warning: Replace `'narrowSymbol'` with `"narrowSymbol",`  prettier/prettier
-20:10  Warning: Replace `·className={clsx('ml-1·inline',·currencyCodeClassName)}` with `⏎······className={clsx("ml-1·inline",·currencyCodeClassName)}⏎····`  prettier/prettier
-
-./components/product/gallery.tsx
-3:1  Warning: There should be at least one empty line between import groups  import/order
-5:1  Warning: There should be at least one empty line between import groups  import/order
-6:1  Warning: `next/image` import should occur before import of `@/components/grid/tile`  import/order
-30:13  Warning: Shorthand props must be listed before all other props  react/jsx-sort-props
-32:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-34:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-44:19  Warning: Expected blank line before this statement.  padding-line-between-statements
-46:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-47:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-51:15  Warning: Empty components are self-closing  react/self-closing-comp
-55:19  Warning: Expected blank line before this statement.  padding-line-between-statements
-57:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-58:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-77:21  Warning: Expected blank line before this statement.  padding-line-between-statements
-79:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-80:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-86:21  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-87:21  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/product/product-context.tsx
-30:5  Warning: Expected blank line before this statement.  padding-line-between-statements
-33:5  Warning: Expected blank line before this statement.  padding-line-between-statements
-46:5  Warning: Expected blank line before this statement.  padding-line-between-statements
-47:5  Warning: Expected blank line before this statement.  padding-line-between-statements
-52:5  Warning: Expected blank line before this statement.  padding-line-between-statements
-53:5  Warning: Expected blank line before this statement.  padding-line-between-statements
-72:3  Warning: Expected blank line before this statement.  padding-line-between-statements
-75:3  Warning: Expected blank line before this statement.  padding-line-between-statements
-83:5  Warning: Expected blank line before this statement.  padding-line-between-statements
-
-./components/product/product-description.tsx
-1:1  Warning: `@/components/cart/add-to-cart` import should occur after import of `./variant-selector`  import/order
-2:1  Warning: There should be at least one empty line between import groups  import/order
-2:1  Warning: `@/components/prose` import should occur after import of `./variant-selector`  import/order
-4:1  Warning: There should be at least one empty line between import groups  import/order
-
-./components/product/variant-price.tsx
-3:1  Warning: There should be at least one empty line between import groups  import/order
-3:1  Warning: `@/components/price` import should occur after import of `react`  import/order
-
-./components/product/variant-selector.tsx
-3:1  Warning: There should be at least one empty line between import groups  import/order
-3:1  Warning: `@/components/product/product-context` import should occur after import of `clsx`  import/order
-86:21  Warning: Expected blank line before this statement.  padding-line-between-statements
-88:19  Warning: Reserved props must be listed before all other props  react/jsx-sort-props
-89:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-90:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-92:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/products/best-sellers-section.tsx
-4:1  Warning: There should be at least one empty line between import groups  import/order
-6:1  Warning: There should be at least one empty line between import groups  import/order
-13:8  Warning: 'children' is defined but never used. Allowed unused args must match /^_.*?$/u.  @typescript-eslint/no-unused-vars
-17:5  Warning: Unexpected console statement.  no-console
-32:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-33:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-38:44  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-64:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
-67:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-68:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-75:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-104:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
-107:21  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-108:21  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/products/breadcrumb-bar.tsx
-21:31  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-24:15  Warning: Do not use an `<a>` element to navigate to `/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
-26:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-38:21  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-40:21  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-41:21  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-48:23  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-53:21  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/products/hot-deals-section.tsx
-2:1  Warning: There should be at least one empty line between import groups  import/order
-4:1  Warning: There should be at least one empty line between import groups  import/order
-23:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
-25:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-26:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-33:19  Warning: Reserved props must be listed before all other props  react/jsx-sort-props
-34:19  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-36:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
-38:21  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-39:21  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-75:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-76:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/products/product-buttons.tsx
-52:45  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-55:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-56:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-57:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-60:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-61:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-62:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-63:17  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-70:38  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-73:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-74:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-75:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-77:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-78:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-79:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-85:46  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-88:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-89:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-90:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-92:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-93:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-94:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-102:13  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-106:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-107:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-108:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-110:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-111:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-112:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/products/product-grid.tsx
-3:1  Warning: There should be at least one empty line between import groups  import/order
-3:1  Warning: `@/lib/formatCurrrency` import should occur after import of `./product-buttons`  import/order
-5:1  Warning: There should be at least one empty line between import groups  import/order
-27:7  Warning: Callbacks must be listed after all other props  react/jsx-sort-props
-28:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-29:7  Warning: Reserved props must be listed before all other props  react/jsx-sort-props
-55:7  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
-57:9  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-58:9  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-64:9  Warning: Reserved props must be listed before all other props  react/jsx-sort-props
-71:40  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/prose.tsx
-12:7  Warning: Reserved props must be listed before all other props  react/jsx-sort-props
-
-./components/theme-switch.tsx
-25:5  Warning: Expected an assignment or function call and instead saw an expression.  no-unused-expressions
-
-./components/ui/dialog.tsx
-1:13  Warning: Insert `;`  prettier/prettier
-3:31  Warning: Insert `;`  prettier/prettier
-4:58  Warning: Insert `;`  prettier/prettier
-5:33  Warning: Insert `;`  prettier/prettier
-7:33  Warning: Insert `;`  prettier/prettier
-9:36  Warning: Insert `;`  prettier/prettier
-11:46  Warning: Insert `;`  prettier/prettier
-13:44  Warning: Insert `;`  prettier/prettier
-15:42  Warning: Insert `;`  prettier/prettier
-25:16  Warning: Insert `,`  prettier/prettier
-29:3  Warning: Insert `;`  prettier/prettier
-30:1  Warning: Expected blank line before this statement.  padding-line-between-statements
-30:64  Warning: Insert `;`  prettier/prettier
-42:18  Warning: Insert `,`  prettier/prettier
-53:3  Warning: Insert `;`  prettier/prettier
-54:1  Warning: Expected blank line before this statement.  padding-line-between-statements
-54:64  Warning: Insert `;`  prettier/prettier
-63:16  Warning: Insert `,`  prettier/prettier
-67:2  Warning: Insert `;`  prettier/prettier
-68:1  Warning: Expected blank line before this statement.  padding-line-between-statements
-68:42  Warning: Insert `;`  prettier/prettier
-77:16  Warning: Insert `,`  prettier/prettier
-81:2  Warning: Insert `;`  prettier/prettier
-82:1  Warning: Expected blank line before this statement.  padding-line-between-statements
-82:42  Warning: Insert `;`  prettier/prettier
-92:16  Warning: Insert `,`  prettier/prettier
-96:3  Warning: Insert `;`  prettier/prettier
-97:1  Warning: Expected blank line before this statement.  padding-line-between-statements
-97:60  Warning: Insert `;`  prettier/prettier
-108:3  Warning: Insert `;`  prettier/prettier
-109:1  Warning: Expected blank line before this statement.  padding-line-between-statements
-109:72  Warning: Insert `;`  prettier/prettier
-122:2  Warning: Insert `;`  prettier/prettier
-
-./components/ui/hero-button.tsx
-29:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-30:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-43:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-62:7  Warning: Empty components are self-closing  react/self-closing-comp
-
-./components/ui/hero-image.tsx
-11:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-12:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/ui/section-decor.tsx
-7:7  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./components/ui/subscribe-form.tsx
-3:1  Warning: There should be at least one empty line between import groups  import/order
-16:5  Warning: Unexpected console statement.  no-console
-29:13  Warning: Visible, non-interactive elements with click handlers must have at least one keyboard listener.  jsx-a11y/click-events-have-key-events
-29:13  Warning: Elements with the 'button' interactive role must be tabbable.  jsx-a11y/interactive-supports-focus
-31:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-50:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-51:15  Warning: Props should be sorted alphabetically  react/jsx-sort-props
-
-./lib/utils.ts
-1:45  Warning: Insert `;`  prettier/prettier
-2:41  Warning: Insert `;`  prettier/prettier
-5:31  Warning: Insert `;`  prettier/prettier
-
-info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
-[?25l [36m.[39m [2K[1G [36m..[39m [2K[1G [36m...[39m [2K[1G [36m.[39m [2K[1G [36m..[39m [2K[1G [36m...[39m [2K[1G [36m.[39m [2K[1G [36m..[39m [2K[1G [36m...[39m [2K[1G [36m.[39m [2K[1G [36m..[39m [2K[1G [36m...[39m [2K[1G [36m.[39m [2K[1G [36m..[39m [2K[1G [36m...[39m [2K[1G [36m.[39m [2K[1G [36m..[39m [2K[1G [36m...[39m [2K[1G [36m.[39m [2K[1G [36m..[39m [2K[1G [36m...[39m [2K[1G [36m.[39m [2K[1G [36m..[39m [2K[1G [36m...[39m [2K[1G [36m.[39m [2K[1G [36m..[39m [2K[1G [36m...[39m [2K[1G [36m.[39m Failed to compile.
-
-./app/collections/[handle]/page.tsx:122:38
-Type error: Parameter 'product' implicitly has an 'any' type.
-
-[0m [90m 120 |[39m   }[0m
-[0m [90m 121 |[39m[0m
-[0m[31m[1m>[22m[39m[90m 122 |[39m   [36mconst[39m gridProducts [33m=[39m products[33m.[39mmap((product) [33m=>[39m {[0m
-[0m [90m     |[39m                                      [31m[1m^[22m[39m[0m
-[0m [90m 123 |[39m     [36mreturn[39m {[0m
-[0m [90m 124 |[39m       id[33m:[39m product[33m.[39mid[33m,[39m[0m
-[0m [90m 125 |[39m       name[33m:[39m product[33m.[39mtitle[33m,[39m[0m
-[2K[1G[?25hNext.js build worker exited with code: 1 and signal: null
-[?25l [36m.[39m [?25h[0m[31merror[0m[2m:[0m script [1m"build"[0m exited with code 1[0m
+Debug info:
+- Execution of TaskId { id: 2147483650 } transient failed
+- Execution of get_all_written_entrypoints_with_issues_operation failed
+- Execution of EntrypointsOperation::new failed
+- Execution of all_entrypoints_write_to_disk_operation failed
+- Execution of Project::emit_all_output_assets failed
+- Execution of *emit_assets failed
+- Execution of all_assets_from_entries_operation failed
+- Execution of *all_assets_from_entries failed
+- Execution of output_assets_operation failed
+- Execution of Project::get_all_endpoints failed
+- Execution of Project::entrypoints failed
+- Execution of AppProject::routes failed
+- Execution of directory_tree_to_entrypoints_internal failed
+- Execution of get_next_package failed
+- Next.js package not found] {
+  type: [32m'TurbopackInternalError'[39m
+}
+[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 1.[39m

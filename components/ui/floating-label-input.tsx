@@ -3,6 +3,7 @@ import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { Textarea } from "./textarea";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -45,9 +46,9 @@ type FloatingLabelInputProps = InputProps & { label?: string };
 const FloatingLabelInput = React.forwardRef<
   React.ElementRef<typeof FloatingInput>,
   React.PropsWithoutRef<FloatingLabelInputProps>
->(({ id, label, ...props }, ref) => {
+>(({ id, label, className, ...props }, ref) => {
   return (
-    <div className="relative">
+    <div className={cn("relative w-full", className)}>
       <FloatingInput ref={ref} id={id} {...props} />
       <FloatingLabel htmlFor={id}>{label}</FloatingLabel>
     </div>
@@ -56,4 +57,23 @@ const FloatingLabelInput = React.forwardRef<
 
 FloatingLabelInput.displayName = "FloatingLabelInput";
 
-export { FloatingInput, FloatingLabel, FloatingLabelInput };
+type FloatingLabelTextareaProps =
+  React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+    label?: string;
+  };
+
+const FloatingTextarea = React.forwardRef<
+  React.ElementRef<typeof Textarea>,
+  React.PropsWithoutRef<FloatingLabelTextareaProps>
+>(({ id, label, className, ...props }, ref) => {
+  return (
+    <div className={cn("relative w-full", className)}>
+      <Textarea ref={ref} id={id} {...props} />
+      <FloatingLabel htmlFor={id}>{label}</FloatingLabel>
+    </div>
+  );
+});
+
+FloatingTextarea.displayName = "FloatingTextarea";
+
+export { FloatingInput, FloatingLabel, FloatingLabelInput, FloatingTextarea };

@@ -60,7 +60,7 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
           <Image
             alt={product?.title}
             height={630}
-            src={product?.images[0]?.url}
+            src={product?.featuredImage?.url || ""}
             tw="object-cover w-full h-full" // Ensure image covers the div
             width={1200}
           />
@@ -91,7 +91,7 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
         {
           name: "Inter",
           data: await fetch(
-            new URL("../../../fonts/Inter-Bold.ttf", import.meta.url),
+            new URL("../../../../fonts/Inter-Bold.ttf", import.meta.url),
           ).then((res) => res.arrayBuffer()),
           style: "normal",
           weight: 700,
@@ -100,7 +100,7 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
           // Add another font for price if needed
           name: "Inter",
           data: await fetch(
-            new URL("../../../fonts/Inter-Regular.ttf", import.meta.url),
+            new URL("../../../../fonts/Inter-Regular.ttf", import.meta.url),
           ).then((res) => res.arrayBuffer()),
           style: "normal",
           weight: 400,
