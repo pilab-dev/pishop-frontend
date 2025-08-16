@@ -1,4 +1,4 @@
-import { HotDealsBlockComponent } from "@/blocks/HotDealsBlock/Component";
+import { RenderBlocks } from "@/blocks/RenderBlocks";
 import type { Page } from "@/payload-types";
 import config from "@payload-config";
 import { Metadata } from "next";
@@ -56,23 +56,9 @@ export default async function Page({ params }: { params: PagePropsPromise }) {
     return notFound();
   }
 
-  const elems = page.elements.map((val, idx) => {
-    switch (val.blockType) {
-      case "hotDealsBlock":
-        return <HotDealsBlockComponent key={`elems-${idx}`} {...val} />;
-      default:
-        return (
-          <div>
-            This is something else: {val.blockName} - {val.blockType}
-          </div>
-        );
-    }
-  });
-
   return (
-    <div>
-      {page?.title}
-      <div className="max-w-4xl mx-auto">{elems}</div>
-    </div>
+    <>
+      <RenderBlocks blocks={page.elements} />
+    </>
   );
 }

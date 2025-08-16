@@ -22,14 +22,14 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["./components/*"],
-      "@ui/*": ["./components/ui/*"],
-      "@payload-config": ["./payload.config.ts"],
-      "@/payload-types": ["./payload-types.ts"],
-      "@/fields/*": ["./fields/*"]
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@ui/*": ["./src/components/ui/*"],
+      "@payload-config": ["./src/payload.config.ts"],
+      "@/payload-types": ["./src/payload-types.ts"],
+      "@/fields/*": ["./src/fields/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "postcss.config.mjs", "payload.config.ts"],
   "exclude": ["node_modules"]
 }
