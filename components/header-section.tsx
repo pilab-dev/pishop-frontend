@@ -1,8 +1,11 @@
+import { Header } from "@/payload-types";
+import { getCachedGlobal } from "@/utilities/getGlobals";
 import config from "@payload-config";
 import Link from "next/link";
 import { getPayload } from "payload";
 import { FaFacebook, FaInstagram, FaTwitter, FaUser } from "react-icons/fa";
 import { TfiHeart, TfiReload, TfiShoppingCart } from "react-icons/tfi";
+import { CMSLink } from "./Link";
 
 const payload = await getPayload({ config });
 
@@ -50,6 +53,9 @@ const TopRow = () => {
 };
 
 export const HeaderSection = async () => {
+  const headerData: Header = await getCachedGlobal("header", 1)();
+
+  // TODO: This is a temporary solution to get the pages and categories.
   const pages = await payload.find({
     collection: "pages",
     select: {
@@ -68,7 +74,9 @@ export const HeaderSection = async () => {
     limit: 10,
   });
 
-  console.log("Categories arrived", categories.docs);
+  console.log("Header nav items received", headerData.navItems);
+
+  const navItems = headerData.navItems || [];
 
   return (
     <div className="top-0 z-50 w-full page-gray-800">
@@ -79,42 +87,15 @@ export const HeaderSection = async () => {
 
         {/* This is the menu of the header section */}
         <ul className="flex gap-10 *:text-md *:font-semibold uppercase">
-          <li>
-            <Link className="hover:text-primary transition-colors" href="/">
-              Home
-            </Link>
-          </li>
-          {pages.docs.map((page) => (
-            <li key={page.id}>
-              <Link
+          {navItems.map(({ link }, i) => (
+            <li key={i}>
+              <CMSLink
                 className="hover:text-primary transition-colors"
-                href={`/${page.slug}`}
-              >
-                {page.title}
-              </Link>
+                {...link}
+                appearance="inline"
+              />
             </li>
           ))}
-          <li>
-            <Link
-              className="hover:text-primary transition-colors"
-              href="/about"
-            >
-              About us
-            </Link>
-          </li>
-          <li>
-            <Link className="hover:text-primary transition-colors" href="/blog">
-              Blog
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="hover:text-primary transition-colors"
-              href="/contact"
-            >
-              Contact
-            </Link>
-          </li>
         </ul>
 
         {/* This is the search box of the header section */}
@@ -124,6 +105,11 @@ export const HeaderSection = async () => {
               Select category
             </option>
             <option value="all">All</option>
+            {categories.docs.map((category) => (
+              <option key={category.slug} value={category.slug || ""}>
+                {category.title}
+              </option>
+            ))}
           </select>
           <input
             className="focus:outline-none px-4 py-2 w-full rounded-full"

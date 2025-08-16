@@ -1,15 +1,15 @@
 // storage-adapter-import-placeholder
 import { mongooseAdapter } from "@payloadcms/db-mongodb"; // database-adapter-import
-
 import path from "path";
 import { buildConfig } from "payload";
 import sharp from "sharp"; // sharp-import
 import { fileURLToPath } from "url";
-
 import { Categories } from "./collections/Categories";
+import { Collections } from "./collections/Collections";
 import { Media } from "./collections/Media";
 import { Pages } from "./collections/Pages";
 import { Posts } from "./collections/Posts";
+import { Products } from "./collections/Products";
 import { Users } from "./collections/Users";
 import { defaultLexical } from "./fields/defaultLexical";
 import { Footer } from "./Footer/config";
@@ -25,10 +25,10 @@ export default buildConfig({
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below.
-      // beforeLogin: ["@/components/BeforeLogin"],
+      beforeLogin: ["@/components/BeforeLogin"],
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below.
-      // beforeDashboard: ["@/components/BeforeDashboard"],
+      beforeDashboard: ["@/components/BeforeDashboard"],
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -64,7 +64,7 @@ export default buildConfig({
     url: process.env.DATABASE_URI || "",
   }),
   // database-adapter-config-end
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Users, Products, Collections],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [

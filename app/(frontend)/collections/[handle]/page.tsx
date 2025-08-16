@@ -1,14 +1,16 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import NotFoundPage from "@/app/not-found";
+// import NotFoundPage from "@/app/not-found";
 import { FancyTitle } from "@/components/fancy-title";
 import { BreadcrumbBar } from "@/components/products/breadcrumb-bar";
 import { ProductGrid } from "@/components/products/product-grid";
 import { SectionDecor } from "@/components/ui/section-decor";
-import { collectionsApi } from "@/lib/client";
+import { productsApi } from "@/lib/client";
+import { Product } from "@pilab/pishop-client";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import React from "react";
+import NotFoundPage from "../../not-found";
 
 /**
  * Generate metadata for the collection page
@@ -18,7 +20,7 @@ export async function generateMetadata(props: {
 }): Promise<Metadata> {
   const { handle } = await props.params;
 
-  const collection = await collectionsApi.getCollectionByHandle({ handle });
+  const collection = await productsApi.getCollectionByHandle({ handle });
 
   if (!collection) return notFound();
 
@@ -38,9 +40,9 @@ export async function generateMetadata(props: {
         collection.description ||
         `${collection.title} products`,
     },
-    alternates: {
-      canonical: `/collections/${collection.handle}`,
-    },
+    // alternates: {
+    //   canonical: `/collections/${collection.handle}`,
+    // },
     description:
       collection.seo?.description ||
       collection.description ||
@@ -70,12 +72,12 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
   const { handle } = await params;
 
   // * Fetch the collection and products
-  const collectionPromise = collectionsApi.getCollectionByHandle({
+  const collectionPromise = productsApi.getCollectionByHandle({
     handle,
   });
 
   // * Fetch the collection and products
-  const productsPromise = collectionsApi.listCollectionProducts({
+  const productsPromise = productsApi.listCollectionProducts({
     handle,
   });
 
@@ -123,9 +125,15 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
     return {
       id: product.id,
       name: product.title,
-      description: product.descriptionHtml.substring(0, 200),
-      price: product.price,
-      imageUrl: product.images[0].url,
+      description: product.description,
+      price: product.priceRange?.minVariantPrice?.amount,
+      imageUrl: product.featuredImage?.url,
+      handle: product.handle,
+      title: product.title,
+      vendor: product.vendor,
+      productType: product.productType,
+      tags: product.tags,
+      variants: product.variants,
     };
   });
 
@@ -149,7 +157,10 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
             </h2>
           </section>
 
-          <ProductGrid products={gridProducts} variant="primary" />
+          <ProductGrid
+            products={gridProducts as unknown as Product[]}
+            variant="primary"
+          />
         </div>
       </div>
     </>

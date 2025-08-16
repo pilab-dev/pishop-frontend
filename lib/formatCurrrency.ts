@@ -14,7 +14,7 @@ export function formatCurrency(
 
     // Add a colon after the currency symbol or code.
     const parts = formatter.formatToParts(amount);
-    let currencyPart = parts.find((part) => part.type === "currency");
+    const currencyPart = parts.find((part) => part.type === "currency");
 
     if (currencyPart) {
       if (parts[0].type === "currency") {

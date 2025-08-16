@@ -1,4 +1,5 @@
-import { Product } from "@pilab/pishop-client";
+// import { Product } from "@pilab/pishop-client";
+import { Product } from "@/payload-types";
 import { FC } from "react";
 import { FancyTitle } from "../fancy-title";
 import { SectionDecor } from "../ui/section-decor";
@@ -74,7 +75,7 @@ export const HotDealsSection: FC<HotDealsSectionProps> = ({ products }) => {
               show
               noWishlist
               noCompare
-              handle={products[0].handle}
+              handle={products.length > 0 ? (products[0].slug ?? "") : ""}
             />
           </div>
         </div>

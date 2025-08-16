@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { FC } from "react";
 
 type FancyTitleProps = {
@@ -5,10 +6,7 @@ type FancyTitleProps = {
   className?: string;
 };
 
-export const FancyTitle: FC<FancyTitleProps> = ({
-  children,
-  className = "text-primary",
-}) => {
+export const FancyTitle: FC<FancyTitleProps> = ({ children, className }) => {
   const getFirstCharAndRest = (str: string) => {
     return [str[0], str.slice(1)];
   };
@@ -16,8 +14,8 @@ export const FancyTitle: FC<FancyTitleProps> = ({
   const [firstChar, rest] = getFirstCharAndRest(children);
 
   return (
-    <span className="whitespace-nowrap">
-      <span className={className}>{firstChar}</span>
+    <span className={cn("whitespace-nowrap", className)}>
+      <span className={cn("text-primary", className)}>{firstChar}</span>
       {rest}
     </span>
   );

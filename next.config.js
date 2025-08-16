@@ -4,12 +4,12 @@ import { withPayload } from "@payloadcms/next/withPayload";
 const nextConfig = {
   output: "standalone",
   images: {
-    loader: "custom",
-    loaderFile: "./lib/pishop/imageLoader.ts",
+    // loader: "custom",
+    // loaderFile: "./lib/pishop/imageLoader.ts",
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
-        protocol: "https",
+        // protocol: "https",
         hostname: "*",
         // pathname: '/images/**'
         // port: '8081'

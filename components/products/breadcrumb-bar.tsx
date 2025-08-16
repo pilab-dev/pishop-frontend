@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FC } from "react";
 import { FaHome } from "react-icons/fa";
 
@@ -21,14 +22,14 @@ export const BreadcrumbBar: FC<BreadcrumbBarProps> = ({ segments }) => {
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li className="inline-flex items-center">
-              <a
+              <Link
                 href="/"
                 className="inline-flex transition-colors items-center text-md font-medium 
                 text-gray-700 hover:text-primary dark:text-gray-400 dark:hover:text-white"
               >
                 <FaHome />
                 Home
-              </a>
+              </Link>
             </li>
             {segments.map((segment, index) => (
               <li key={index}>

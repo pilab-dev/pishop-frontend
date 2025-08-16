@@ -22,6 +22,10 @@ type ProductContextType = {
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
+/**
+ * Provides the product context to the children components.
+ * @returns ProductProvider
+ */
 export function ProductProvider({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams();
 
@@ -59,6 +63,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       updateOption,
       updateImage,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [state],
   );
 
@@ -67,6 +72,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Returns the product context. This is used to update the product state and
+ * get the current state, and update the URL with the new state.
+ * @returns ProductContextType
+ */
 export function useProduct() {
   const context = useContext(ProductContext);
   if (context === undefined) {
@@ -75,6 +85,10 @@ export function useProduct() {
   return context;
 }
 
+/**
+ * Updates the URL with the new state.
+ * @returns (state: ProductState) => void
+ */
 export function useUpdateURL() {
   const router = useRouter();
 

@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
 
-import { Product, ProductAvailabilityStatusEnum } from "@pilab/pishop-client";
+import { getCart } from "@/components/cart/actions";
+import { Cart, CartProvider } from "@/components/cart/cart-context";
+import { ProductProvider } from "@/components/product/product-context";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Product as SchemaProduct, WithContext } from "schema-dts";
-
 import { BaseProduct } from "./base-product";
 
-import { getCart } from "@/components/cart/actions";
-import { Cart, CartProvider } from "@/components/cart/cart-context";
-import { ProductProvider } from "@/components/product/product-context";
-import { productsApi } from "@/lib/client";
+const baseUrl = process.env.SITE_BASE_URL;
 
 // import { GridTileImage } from "@/components/grid/tile";
-// import { ProductProvider } from "@/components/product/product-context";
-// import { HIDDEN_PRODUCT_TAG } from "@/lib/constants";
+import { HIDDEN_PRODUCT_TAG } from "@/lib/constants";
+import { Product, ProductAvailabilityStatusEnum } from "@pilab/pishop-client";
+
+import productService from "@pishop/product-service";
 
 const getProductRecommendations = async (id: string): Promise<Product[]> => {
   // eslint-disable-next-line no-console
   console.warn("getProductRecommendations not implemented", id);
+
+  productService.;
 
   const recommendations: Product[] = [];
 
@@ -30,6 +32,9 @@ type ShopifyProduct = Product & {
   rating: number;
   ratingCount: number;
   priceRange: {
+    maxVariantPrice: {
+      amount: number;
+    };
     minVariantPrice: {
       amount: number;
     };
@@ -68,11 +73,10 @@ export async function generateMetadata(props: {
   if (!product) return notFound();
 
   // const { url, width, height, altText: alt } = product.featuredImage || {};
-  // const indexable = !product.tags.includes(HIDDEN_PRODUCT_TAG);
-  const indexable = true;
+  const indexable = !product.tags?.includes(HIDDEN_PRODUCT_TAG);
 
   const ogImage = {
-    url: `https://shop.pilab.hu/product/${product.handle}/opengraph-image`, // product.url,
+    url: `${baseUrl}/product/${product.handle}/opengraph-image`, // product.url,
     width: 1200,
     height: 630,
     alt: product.seo?.title || product.title,
@@ -82,7 +86,7 @@ export async function generateMetadata(props: {
     title: product.seo?.title || product.title,
     description: product.seo?.description || product.description,
     alternates: {
-      canonical: `https://shop.pilab.hu/product/${product.handle}`,
+      canonical: `${baseUrl}/product/${product.handle}`,
     },
     robots: {
       index: indexable,
@@ -141,7 +145,7 @@ export default async function ProductPage(props: {
 
   const params = await props.params;
 
-  let product: ShopifyProduct | undefined;
+  let product: Product | undefined;
 
   try {
     product = await getProduct(params.handle);
@@ -163,8 +167,8 @@ export default async function ProductPage(props: {
     url: `https://shop.pilab.hu/product/${product.handle}`,
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: product.rating || 9.5,
-      ratingCount: product.ratingCount || 29,
+      ratingValue: product.rating || 0.0,
+      ratingCount: product.ratingCount || 0,
     },
     offers: [
       {
@@ -173,9 +177,9 @@ export default async function ProductPage(props: {
           product.availability?.status === ProductAvailabilityStatusEnum.InStock
             ? "https://schema.org/InStock"
             : "https://schema.org/OutOfStock",
-        priceCurrency: product.priceRange.minVariantPrice.currencyCode,
-        highPrice: product.priceRange.maxVariantPrice.amount,
-        lowPrice: product.priceRange.minVariantPrice.amount,
+        priceCurrency: product.priceRange?.minVariantPrice.currencyCode,
+        highPrice: product.priceRange?.maxVariantPrice.amount,
+        lowPrice: product.priceRange?.minVariantPrice.amount,
         offerCount: product.variants.length || 1,
       },
       {
@@ -185,8 +189,8 @@ export default async function ProductPage(props: {
             ? "https://schema.org/InStock"
             : "https://schema.org/OutOfStock",
         name: product.title,
-        priceCurrency: product.priceRange.minVariantPrice.currencyCode,
-        price: product.priceRange.minVariantPrice.amount,
+        priceCurrency: product.priceRange?.minVariantPrice.currencyCode,
+        price: product.priceRange?.minVariantPrice.amount,
         url: `https://shop.pilab.hu/product/${product.handle}`,
         priceValidUntil: "2025-12-31",
       },

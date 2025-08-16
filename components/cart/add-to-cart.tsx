@@ -2,9 +2,9 @@
 
 import { addItem } from "@/components/cart/actions";
 import { useProduct } from "@/components/product/product-context";
-import { PlusIcon } from "@heroicons/react/24/outline";
 import { Product, ProductVariant } from "@pilab/pishop-client";
 import clsx from "clsx";
+import { PlusIcon } from "lucide-react";
 import { useActionState } from "react";
 import { useCart } from "./useCart";
 
@@ -66,7 +66,7 @@ export function AddToCart({ product }: { product: Product }) {
   // const variant = variants.find((variant: ProductVariant) =>
   //   variant.selectedOptions.every((option) => option.value === state[option.name.toLowerCase()])
   // );
-  var variant = undefined as ProductVariant | undefined;
+  const variant = undefined as ProductVariant | undefined;
 
   const defaultVariantId = variants.length === 1 ? variants[0]?.id : undefined;
   const selectedVariantId = variant?.id || defaultVariantId;

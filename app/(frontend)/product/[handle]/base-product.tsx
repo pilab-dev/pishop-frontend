@@ -2,7 +2,7 @@ import { Suspense } from "react";
 
 import { Gallery } from "@/components/product/gallery";
 import { ProductDescription } from "@/components/product/product-description";
-import { Product, ProductImage } from "@pilab/pishop-client";
+import { Product } from "@pilab/pishop-client";
 
 export const BaseProduct = ({ product }: { product: Product }) => {
   return (
@@ -14,10 +14,12 @@ export const BaseProduct = ({ product }: { product: Product }) => {
           }
         >
           <Gallery
-            images={product.images.slice(0, 5).map((image: ProductImage) => ({
-              src: image.url,
-              altText: image.altText,
-            }))}
+            images={
+              product.images?.slice(0, 5).map((image) => ({
+                src: image.url,
+                altText: image.altText,
+              })) || []
+            }
           />
         </Suspense>
       </div>

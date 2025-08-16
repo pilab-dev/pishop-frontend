@@ -5,10 +5,10 @@ import { HotDealsSection } from "@/components/products/hot-deals-section";
 import { ProductGrid } from "@/components/products/product-grid";
 import { TopSalesSection } from "@/components/products/top-sales-seection";
 import { SectionDecor } from "@/components/ui/section-decor";
-import { productsApi } from "@/lib/client";
+import { listProductsByCollection } from "@/lib/client";
 
 export default async function Home() {
-  const response = await productsApi.listProducts({
+  const products = await listProductsByCollection({
     collectionId: "best-selling",
     limit: 8,
   });
@@ -30,11 +30,11 @@ export default async function Home() {
         <main>
           <div className="mx-auto max-w-7xl pt-5 px-2 md:px-6 flex-grow">
             <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-              <ProductGrid products={response.products ?? []} />
+              <ProductGrid products={products ?? []} />
             </section>
           </div>
 
-          <HotDealsSection products={response.products ?? []} />
+          <HotDealsSection products={products ?? []} />
 
           <BestSellersSection />
         </main>
