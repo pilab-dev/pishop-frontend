@@ -85,7 +85,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
             )}
 
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <motion.button
                   animate="visible"
                   className="bg-blue-800 text-white p-3 drop-shadow rounded-full hover:bg-primary/90"
@@ -103,7 +103,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
             </Tooltip>
 
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <motion.button
                   animate="visible"
                   className="bg-blue-800 text-white p-3 shadow-sm rounded-full hover:bg-primary/90"
@@ -121,7 +121,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
             </Tooltip>
 
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <motion.button
                   animate="visible"
                   className="bg-blue-800 text-white p-3 shadow-sm rounded-full hover:bg-primary/90"
