@@ -257,6 +257,28 @@ export const Products: CollectionConfig<"products"> = {
       },
     },
     ...slugField(),
+    {
+      name: "layout",
+      type: "select",
+      defaultValue: "default",
+      options: [
+        {
+          label: "Default",
+          value: "default",
+        },
+        {
+          label: "Custom Mdx",
+          value: "customMdx",
+        },
+      ],
+    },
+    {
+      name: "customMdx",
+      type: "richText",
+      admin: {
+        condition: (data) => data.layout === "customMdx",
+      },
+    },
   ],
   hooks: {
     // afterChange: [revalidatePost],
