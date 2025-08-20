@@ -1,3 +1,4 @@
+import { BentoBox, BentoBoxItem } from "@/components/BentoBox";
 import { FancyTitle } from "@/components/fancy-title";
 import { HeroSection } from "@/components/hero-section";
 import { BestSellersSection } from "@/components/products/best-sellers-section";
@@ -8,7 +9,7 @@ import { listProductsByCollection } from "@/lib/client";
 import { permanentRedirect } from "next/navigation";
 
 export default async function Home() {
-  return permanentRedirect("/home");
+  // return permanentRedirect("/home");
 
   const products = await listProductsByCollection({
     collectionId: "best-selling",
@@ -18,6 +19,17 @@ export default async function Home() {
   return (
     <>
       <HeroSection />
+      <BentoBox className="max-w-[1280px] mx-auto">
+        <BentoBoxItem className="col-span-1 md:col-span-2 row-span-1 md:row-span-2">
+          <h2 className="text-2xl font-bold">Featured Product</h2>
+        </BentoBoxItem>
+        <BentoBoxItem>
+          <h2 className="text-xl font-bold">New Arrivals</h2>
+        </BentoBoxItem>
+        <BentoBoxItem>
+          <h2 className="text-xl font-bold">On Sale</h2>
+        </BentoBoxItem>
+      </BentoBox>
 
       {/* <TopSalesSection /> */}
 

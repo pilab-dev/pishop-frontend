@@ -12,9 +12,11 @@ import { BaseProduct } from "./base-product";
 const baseUrl = process.env.SITE_BASE_URL;
 
 import { GridTileImage } from "@/components/grid/tile";
+import { BreadcrumbBar } from "@/components/products/breadcrumb-bar";
 import { getProductBySlug } from "@/lib/client";
+import { getCategoryAncestors } from "@/lib/category-helpers";
 import { HIDDEN_PRODUCT_TAG } from "@/lib/constants";
-import { Product } from "@/payload-types";
+import { Category, Product } from "@/payload-types";
 import config from "@/payload.config";
 import { getPayload } from "payload";
 
@@ -180,10 +182,24 @@ export default async function ProductPage(props: {
     },
   } satisfies WithContext<SchemaProduct>;
 
+  const primaryCategory = product.categories?.[0] as Category | undefined;
+  let ancestors: Category[] = [];
+  if (primaryCategory) {
+    ancestors = await getCategoryAncestors(primaryCategory);
+  }
+
+  const breadcrumbSegments = ancestors.map((category) => ({
+    name: category.title,
+    href: `/collections/${category.slug}`,
+  }));
+
   return (
     <ProductProvider>
       <CartProvider cartPromise={cartPromise}>
         <>
+          {breadcrumbSegments.length > 0 && (
+            <BreadcrumbBar segments={breadcrumbSegments} />
+          )}
           <script
             dangerouslySetInnerHTML={{
               __html: JSON.stringify(productJsonLd),
