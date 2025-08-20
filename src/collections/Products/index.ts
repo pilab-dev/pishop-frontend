@@ -61,7 +61,7 @@ export const Products: CollectionConfig<"products"> = {
       url: ({ data, req }) => {
         const path = generatePreviewPath({
           slug: typeof data?.slug === "string" ? data.slug : "",
-          collection: "posts",
+          collection: "products",
           req,
         });
 
@@ -71,7 +71,7 @@ export const Products: CollectionConfig<"products"> = {
     preview: (data, { req }) =>
       generatePreviewPath({
         slug: typeof data?.slug === "string" ? data.slug : "",
-        collection: "posts",
+        collection: "products",
         req,
       }),
     useAsTitle: "title",
@@ -146,7 +146,7 @@ export const Products: CollectionConfig<"products"> = {
         {
           fields: [
             {
-              name: "relatedPosts",
+              name: "relatedProducts",
               type: "relationship",
               admin: {
                 position: "sidebar",
@@ -159,7 +159,7 @@ export const Products: CollectionConfig<"products"> = {
                 };
               },
               hasMany: true,
-              relationTo: "posts",
+              relationTo: "products",
             },
             {
               name: "categories",
