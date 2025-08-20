@@ -1,7 +1,8 @@
 import { withPayload } from "@payloadcms/next/withPayload";
+import createMDX from "@next/mdx";
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+let nextConfig = {
   output: "standalone",
   turbopack: {},
   images: {
@@ -22,4 +23,9 @@ const nextConfig = {
   },
 };
 
+const withMDX = createMDX({
+  // Add markdown plugins here, as desired
+});
+
+nextConfig = withMDX(nextConfig);
 export default withPayload(nextConfig);
