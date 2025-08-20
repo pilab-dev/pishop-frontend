@@ -21,6 +21,19 @@ export const Categories: CollectionConfig = {
       type: "text",
       required: true,
     },
+    {
+      name: "parent",
+      type: "relationship",
+      relationTo: "categories",
+      hasMany: false,
+      admin: {
+        position: "sidebar",
+      },
+    },
+    {
+      name: "fields",
+      type: "json",
+    },
     ...slugField(),
   ],
 };

@@ -123,6 +123,22 @@ export const Products: CollectionConfig<"products"> = {
       required: true,
     },
     {
+      name: 'images',
+      type: 'array',
+      fields: [
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'alt',
+          type: 'text',
+        }
+      ]
+    },
+    {
       name: "priceRange",
       type: "group",
       fields: [

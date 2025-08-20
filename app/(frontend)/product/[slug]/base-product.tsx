@@ -9,8 +9,8 @@ export const BaseProduct = ({ product }: { product: Product }) => {
         <Gallery
           images={
             product.images?.slice(0, 5).map((image) => ({
-              src: image.url,
-              altText: image.altText,
+              src: (typeof image.image === 'object' ? image.image.url : '') || '',
+              altText: image.alt || '',
             })) || []
           }
         />
