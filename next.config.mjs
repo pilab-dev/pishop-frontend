@@ -1,17 +1,17 @@
-import { withPayload } from "@payloadcms/next/withPayload";
+import { withPayload } from '@payloadcms/next/withPayload'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  output: 'standalone',
   turbopack: {},
   images: {
     // loader: "custom",
     // loaderFile: "./lib/pishop/imageLoader.ts",
-    formats: ["image/avif", "image/webp"],
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         // protocol: "https",
-        hostname: "*",
+        hostname: '*',
         // pathname: '/images/**'
         // port: '8081'
       },
@@ -20,6 +20,6 @@ const nextConfig = {
   experimental: {
     reactCompiler: false,
   },
-};
+}
 
-export default withPayload(nextConfig);
+export default withPayload(nextConfig)

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { getCart } from "@/components/cart/actions";
-import { Cart, CartProvider } from "@/components/cart/cart-context";
+import { CartProvider } from "@/components/cart/cart-context";
 import { ProductProvider } from "@/components/product/product-context";
 import { cookies } from "next/headers";
 import Link from "next/link";
@@ -13,8 +13,8 @@ const baseUrl = process.env.SITE_BASE_URL;
 
 import { GridTileImage } from "@/components/grid/tile";
 import { BreadcrumbBar } from "@/components/products/breadcrumb-bar";
-import { getProductBySlug } from "@/lib/client";
 import { getCategoryAncestors } from "@/lib/category-helpers";
+import { getProductBySlug } from "@/lib/client";
 import { HIDDEN_PRODUCT_TAG } from "@/lib/constants";
 import { Category, Product } from "@/payload-types";
 import config from "@/payload.config";
@@ -51,8 +51,16 @@ export async function generateMetadata(props: {
 
   if (!product) return notFound();
 
+  // Check if the product has a tag that indicates it should not be indexed
+  const tagFieldContainsHiddenTag = (tags: typeof product.tags | undefined) => {
+    if (tags && Array.isArray(tags)) {
+      return tags.some((tag) => tag.tag === HIDDEN_PRODUCT_TAG);
+    }
+    return false;
+  };
+
   // const { url, width, height, altText: alt } = product.featuredImage || {};
-  const indexable = !product.tags?.includes(HIDDEN_PRODUCT_TAG);
+  const indexable = !tagFieldContainsHiddenTag(product.tags);
 
   const ogImage = {
     url: `${baseUrl}/product/${product.slug}/opengraph-image`, // product.url,
@@ -97,6 +105,7 @@ export default async function ProductPage(props: {
 
   const cartPromise = cartId
     ? getCart(cartId).then((cart) => {
+        /* @ts-ignore */
         const result: Cart = {
           id: cart.id!,
           checkoutUrl: cart.checkoutUrl!,
@@ -150,7 +159,8 @@ export default async function ProductPage(props: {
         priceCurrency: product.priceRange?.minVariantPrice.currencyCode,
         highPrice: product.priceRange?.maxVariantPrice.amount,
         lowPrice: product.priceRange?.minVariantPrice.amount,
-        offerCount: product.variants?.length || 1,
+        // offerCount: product.variants?.length || 1,
+        offerCount: 1,
       },
       {
         "@type": "Offer",
@@ -213,7 +223,7 @@ export default async function ProductPage(props: {
               <h2 className="mb-4 text-2xl font-bold">Specifikáció</h2>
               <div className="prose dark:prose-invert">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  {product.options &&
+                  {/* {product.options &&
                     Object.keys(product.options).map((optName: string) => (
                       <div key={optName}>
                         <p className="mb-2 font-semibold">{optName}</p>
@@ -227,7 +237,7 @@ export default async function ProductPage(props: {
                           </li>
                         </ul>
                       </div>
-                    ))}
+                    ))} */}
                 </div>
               </div>
             </div>
@@ -268,6 +278,7 @@ async function RelatedProducts({ id }: { id: string }) {
                   currencyCode:
                     product.priceRange?.maxVariantPrice.currencyCode || "HUF",
                 }}
+                /* @ts-ignore */
                 src={
                   typeof product.featuredImage?.url === "object"
                     ? product.featuredImage?.url.url

@@ -76,7 +76,7 @@ export const HeaderSection = async () => {
     limit: 10,
   });
 
-  if (!Boolean(headerData.navItems)) {
+  if (!headerData.navItems) {
     console.log("there are no navItems set in admin");
   }
 

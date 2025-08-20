@@ -1,28 +1,27 @@
-"use client";
+'use client'
 
-import { formatCurrency } from "@/lib/formatCurrrency";
-// import { Product } from "@pilab/pishop-client";
-import { Product } from "@/payload-types";
-import { useState } from "react";
-import { ImageMedia } from "../Media/ImageMedia";
-import ProductButtons from "./product-buttons";
+import { formatCurrency } from '@/lib/formatCurrrency'
+import { Product } from '@/payload-types'
+import { useState } from 'react'
+import { ImageMedia } from '../Media/ImageMedia'
+import ProductButtons from './product-buttons'
 
-export type GridVariant = "primary" | "secondary" | "tertiary";
+export type GridVariant = 'primary' | 'secondary' | 'tertiary'
 
 export type ProductTileProps = {
-  product: Product;
-};
+  product: Product
+}
 
 const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
-  const [hover, setHover] = useState(false);
+  const [hover, setHover] = useState(false)
 
   const handleMouseEnter = () => {
-    setHover(true);
-  };
+    setHover(true)
+  }
 
   const handleMouseLeave = () => {
-    setHover(false);
-  };
+    setHover(false)
+  }
 
   return (
     <div
@@ -46,11 +45,9 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
       <p className="products-font text-md uppercase text-gray-600 mb-6 md:text-md">
         Price:
         <span className="text-primary-600 font-semibold ml-1">
-          {formatCurrency(
-            product.priceRange?.minVariantPrice?.amount ?? 0,
-          ).trimEnd()}
+          {formatCurrency(product.priceRange?.minVariantPrice?.amount ?? 0).trimEnd()}
           ,00
-        </span>{" "}
+        </span>{' '}
         <span className="text-gray-400 italic">HUF</span>
       </p>
 
@@ -70,35 +67,35 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
       <p
         className="products-font text-sm text-gray-600"
         dangerouslySetInnerHTML={{
-          __html: product.description ?? "",
+          __html: product.description ?? '',
         }}
       />
 
       <div className="absolute bottom-0 left-0 right-0">
         <div className="flex flex-row justify-center">
-          <ProductButtons show={hover} handle={product.slug || ""} />
+          <ProductButtons show={hover} handle={product.slug || ''} />
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 type ProductGridProps = {
-  products: Product[];
-  variant?: GridVariant;
-};
+  products: Product[]
+  variant?: GridVariant
+}
 
 export const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
   return (
     <div
       className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
       style={{
-        gap: "2px",
+        gap: '2px',
       }}
     >
       {Array.from({ length: 10 }).map((_, index) => (
         <ProductTile key={index} product={products[0]} />
       ))}
     </div>
-  );
-};
+  )
+}

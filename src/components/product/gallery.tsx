@@ -29,8 +29,8 @@ export function Gallery({
             className="h-full w-full object-contain"
             fill
             sizes="(min-width: 1024px) 66vw, 100vw"
-            alt={images[imageIndex]?.altText as string}
-            src={images[imageIndex]?.src as string}
+            alt={images[imageIndex]?.altText}
+            src={images[imageIndex]?.src}
             priority={true}
           />
         )}
