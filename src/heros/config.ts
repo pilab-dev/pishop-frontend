@@ -35,6 +35,14 @@ export const hero: Field = {
           label: 'Low Impact',
           value: 'lowImpact',
         },
+        {
+          label: 'Centered Impact',
+          value: 'centeredImpact',
+        },
+        {
+          label: 'Side-by-side',
+          value: 'sideBySide',
+        },
       ],
       required: true,
     },
@@ -62,7 +70,8 @@ export const hero: Field = {
       name: 'media',
       type: 'upload',
       admin: {
-        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact'].includes(type),
+        condition: (_, { type } = {}) =>
+          ['highImpact', 'mediumImpact', 'centeredImpact', 'sideBySide'].includes(type),
       },
       relationTo: 'media',
       required: true,

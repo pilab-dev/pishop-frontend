@@ -13,58 +13,75 @@ import NotFoundPage from "../../not-found";
 import config from "@/payload.config";
 import { getPayload } from "payload";
 
-const getCollectionBySlug = cache(async (slug: string) => {
-  const payload = await getPayload({ config });
+import { Collection, Product } from "@/payload-types";
 
-  const result = await payload.find({
-    collection: "collections",
-    where: {
-      slug: {
-        equals: slug,
+const getCollectionBySlug = cache(
+  async (
+    slug: string,
+  ): Promise<{ collection: Collection; products: Product[] }> => {
+    const payload = await getPayload({ config });
+
+    const collectionResult = await payload.find({
+      collection: "collections",
+      where: {
+        slug: {
+          equals: slug,
+        },
       },
-    },
-  });
+      limit: 1,
+      depth: 1,
+    });
 
-  return result;
-});
+    if (!collectionResult.docs.length) {
+      notFound();
+    }
+
+    const collection = collectionResult.docs[0];
+
+    const productsResult = await payload.find({
+      collection: "products",
+      where: {
+        "collection.slug": {
+          equals: slug,
+        },
+      },
+      depth: 2,
+    });
+
+    return {
+      collection,
+      products: productsResult.docs,
+    };
+  },
+);
 
 /**
  * Generate metadata for the collection page
  */
 export async function generateMetadata(props: {
-  params: Promise<{ stlug: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const params = await props.params;
-  const slug = params.stlug as string;
-  // const collection = await productsApi.getCollectionByHandle({ handle });
+  const slug = params.slug as string;
 
-  const collection = await getCollectionBySlug(slug);
+  const { collection } = await getCollectionBySlug(slug);
 
   if (!collection) return notFound();
 
   return {
-    title: collection.seo?.title || collection.title,
+    title: collection.title,
+    description: collection.description,
     openGraph: {
-      title: collection.seo?.title || collection.title,
-      description:
-        collection.seo?.description ||
-        collection.description ||
-        `${collection.title} products`,
+      title: collection.title,
+      description: collection.description || `${collection.title} products`,
     },
     twitter: {
-      title: collection.seo?.title || collection.title,
-      description:
-        collection.seo?.description ||
-        collection.description ||
-        `${collection.title} products`,
+      title: collection.title,
+      description: collection.description || `${collection.title} products`,
     },
-    // alternates: {
-    //   canonical: `/collections/${collection.handle}`,
-    // },
-    description:
-      collection.seo?.description ||
-      collection.description ||
-      `${collection.title} products`,
+    alternates: {
+      canonical: `/collections/${collection.slug}`,
+    },
   };
 }
 
@@ -74,70 +91,12 @@ type CollectionPageProps = {
   }>;
 };
 
-const isRejected = (
-  input: PromiseSettledResult<unknown>,
-): input is PromiseRejectedResult => input.status === "rejected";
-
-function isFulfilled<E>(
-  input: PromiseSettledResult<E>,
-): input is PromiseFulfilledResult<E> {
-  return input.status === "fulfilled";
-}
-
 const CollectionPageContent: React.FC<CollectionPageProps> = async ({
   params,
 }) => {
   const { slug } = await params;
 
-  // * Fetch the collection and products
-  const collectionPromise = productsApi.getCollectionByHandle({
-    handle: slug,
-  });
-
-  // * Fetch the collection and products
-  const productsPromise = productsApi.listCollectionProducts({
-    handle: slug,
-  });
-
-  // * Fetch the collection and products and wait for both to be resolved
-  const res = await Promise.allSettled([collectionPromise, productsPromise]);
-
-  try {
-    if (res.some((r) => r.status === "rejected")) {
-      const reason = res.find((r) => isRejected(r))?.reason;
-
-      // eslint-disable-next-line no-console
-      console.error(`Failed to fetch collection or products for: ${slug}`, {
-        reason,
-      });
-
-      throw new Error(`Failed to fetch collection or products for: ` + slug, {
-        cause: reason,
-      });
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error);
-
-    return notFound();
-  }
-
-  // Get the collection and products
-  const [collection, products] = [
-    isFulfilled(res[0]) ? res[0].value : null,
-    isFulfilled(res[1]) ? res[1].value : null,
-  ];
-
-  // ! If there is no collection or products, return not found
-  if (!collection || !products) {
-    // eslint-disable-next-line no-console
-    console.error("No collection or products found", {
-      collection,
-      products,
-    });
-
-    return notFound();
-  }
+  const { collection, products } = await getCollectionBySlug(slug);
 
   const gridProducts = products.map((product) => {
     return {
@@ -145,13 +104,12 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
       name: product.title,
       description: product.description,
       price: product.priceRange?.minVariantPrice?.amount,
-      imageUrl: product.featuredImage?.url,
-      handle: product.handle,
+      imageUrl:
+        typeof product.featuredImage?.url === "object"
+          ? product.featuredImage?.url.url
+          : product.featuredImage?.url,
+      slug: product.slug,
       title: product.title,
-      vendor: product.vendor,
-      productType: product.productType,
-      tags: product.tags,
-      variants: product.variants,
     };
   });
 
@@ -161,7 +119,7 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
         segments={[
           {
             name: collection.title,
-            href: `/collections/${collection.handle}`,
+            href: `/collections/${collection.slug}`,
           },
         ]}
       />
@@ -175,10 +133,7 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
             </h2>
           </section>
 
-          <ProductGrid
-            products={gridProducts as unknown as Product[]}
-            variant="primary"
-          />
+          <ProductGrid products={gridProducts} variant="primary" />
         </div>
       </div>
     </>
