@@ -183,6 +183,7 @@ export interface Page {
 export interface FeaturedProductsProps {
   products: {
     product?: (string | null) | Product;
+    tileType?: 'default' | null;
     id?: string | null;
   }[];
   id?: string | null;
@@ -1120,6 +1121,7 @@ export interface FeaturedProductsPropsSelect<T extends boolean = true> {
     | T
     | {
         product?: T;
+        tileType?: T;
         id?: T;
       };
   id?: T;

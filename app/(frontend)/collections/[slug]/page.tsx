@@ -7,36 +7,38 @@ import { BreadcrumbBar } from "@/components/products/breadcrumb-bar";
 import { ProductGrid } from "@/components/products/product-grid";
 import { SectionDecor } from "@/components/ui/section-decor";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import React from "react";
+import React, { cache } from "react";
 import NotFoundPage from "../../not-found";
 
 import config from "@/payload.config";
 import { getPayload } from "payload";
 
-const getCollectionByHandle = async (handle: string) => {
+const getCollectionBySlug = cache(async (slug: string) => {
   const payload = await getPayload({ config });
 
   const result = await payload.find({
     collection: "collections",
     where: {
-      handle: handle,
+      slug: {
+        equals: slug,
+      },
     },
   });
 
   return result;
-};
+});
 
 /**
  * Generate metadata for the collection page
  */
 export async function generateMetadata(props: {
-  params: Promise<{ handle: string }>;
+  params: Promise<{ stlug: string }>;
 }): Promise<Metadata> {
-  const { handle } = await props.params;
-
+  const params = await props.params;
+  const slug = params.stlug as string;
   // const collection = await productsApi.getCollectionByHandle({ handle });
 
-  const collection = await getCollectionByHandle(handle);
+  const collection = await getCollectionBySlug(slug);
 
   if (!collection) return notFound();
 
@@ -68,7 +70,7 @@ export async function generateMetadata(props: {
 
 type CollectionPageProps = {
   params: Promise<{
-    handle: string;
+    slug: string;
   }>;
 };
 
@@ -85,16 +87,16 @@ function isFulfilled<E>(
 const CollectionPageContent: React.FC<CollectionPageProps> = async ({
   params,
 }) => {
-  const { handle } = await params;
+  const { slug } = await params;
 
   // * Fetch the collection and products
   const collectionPromise = productsApi.getCollectionByHandle({
-    handle,
+    handle: slug,
   });
 
   // * Fetch the collection and products
   const productsPromise = productsApi.listCollectionProducts({
-    handle,
+    handle: slug,
   });
 
   // * Fetch the collection and products and wait for both to be resolved
@@ -105,11 +107,11 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
       const reason = res.find((r) => isRejected(r))?.reason;
 
       // eslint-disable-next-line no-console
-      console.error(`Failed to fetch collection or products for: ${handle}`, {
+      console.error(`Failed to fetch collection or products for: ${slug}`, {
         reason,
       });
 
-      throw new Error(`Failed to fetch collection or products for: ` + handle, {
+      throw new Error(`Failed to fetch collection or products for: ` + slug, {
         cause: reason,
       });
     }
