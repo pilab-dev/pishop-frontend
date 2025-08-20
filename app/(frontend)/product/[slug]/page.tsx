@@ -11,62 +11,41 @@ import { BaseProduct } from "./base-product";
 
 const baseUrl = process.env.SITE_BASE_URL;
 
-// import { GridTileImage } from "@/components/grid/tile";
+import { GridTileImage } from "@/components/grid/tile";
 import { getProductBySlug } from "@/lib/client";
 import { HIDDEN_PRODUCT_TAG } from "@/lib/constants";
 import { Product } from "@/payload-types";
+import config from "@/payload.config";
+import { getPayload } from "payload";
 
 const getProductRecommendations = async (id: string): Promise<Product[]> => {
-  // eslint-disable-next-line no-console
-  console.warn("getProductRecommendations not implemented", id);
+  const payload = await getPayload({ config });
+  const product = await payload.findByID({
+    collection: "products",
+    id,
+    depth: 2,
+  });
 
-  const recommendations: Product[] = [];
+  const relatedProducts = product?.relatedProducts as Product[];
 
-  return recommendations;
+  return relatedProducts || [];
 };
 
-type ShopifyProduct = Product & {
-  rating: number;
-  ratingCount: number;
-  priceRange: {
-    maxVariantPrice: {
-      amount: number;
-    };
-    minVariantPrice: {
-      amount: number;
-    };
-  };
-};
-
-const getProduct = async (handle: string): Promise<ShopifyProduct> => {
-  const product = getProductBySlug(handle);
+const getProduct = async (slug: string): Promise<Product> => {
+  const product = await getProductBySlug(slug);
   if (!product) {
-    throw new Error(`product with handle: [${handle}] not found`);
+    throw new Error(`product with slug: [${slug}] not found`);
   }
 
-  return {
-    ...product,
-    rating: 9.5,
-    ratingCount: 29,
-    priceRange: {
-      maxVariantPrice: {
-        amount: product.priceRange?.maxVariantPrice.amount || 0,
-        currencyCode: product.priceRange?.maxVariantPrice.currencyCode || "HUF",
-      },
-      minVariantPrice: {
-        amount: product.priceRange?.minVariantPrice.amount || 0,
-        currencyCode: product.priceRange?.minVariantPrice.currencyCode || "HUF",
-      },
-    },
-  } as ShopifyProduct;
+  return product;
 };
 
 export async function generateMetadata(props: {
-  params: Promise<{ handle: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const params = await props.params;
 
-  const product = await getProduct(params.handle);
+  const product = await getProduct(params.slug);
 
   if (!product) return notFound();
 
@@ -110,7 +89,7 @@ export async function generateMetadata(props: {
 }
 
 export default async function ProductPage(props: {
-  params: Promise<{ handle: string }>;
+  params: Promise<{ slug: string }>;
 }) {
   const cartId = (await cookies()).get("cartId")?.value;
 
@@ -143,7 +122,7 @@ export default async function ProductPage(props: {
 
   const params = await props.params;
 
-  const product = await getProductBySlug(params.handle);
+  const product = await getProductBySlug(params.slug);
 
   if (!product) return notFound();
 
@@ -257,15 +236,15 @@ async function RelatedProducts({ id }: { id: string }) {
       <ul className="flex w-full gap-4 overflow-x-auto pt-1">
         {relatedProducts.map((product) => (
           <li
-            key={product.handle}
-            className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
+            key={product.slug}
+            className="aspect-square w-full flex-none min-[475px]:w-12 sm:w-1/3 md:w-1/4 lg:w-1/5"
           >
             <Link
               className="relative h-full w-full"
-              href={`/product/${product.handle}`}
+              href={`/product/${product.slug}`}
               prefetch={true}
             >
-              {/* <GridTileImage
+              <GridTileImage
                 alt={product.title}
                 label={{
                   title: product.title,
@@ -273,10 +252,14 @@ async function RelatedProducts({ id }: { id: string }) {
                   currencyCode:
                     product.priceRange?.maxVariantPrice.currencyCode || "HUF",
                 }}
-                src={product.featuredImage?.url}
+                src={
+                  typeof product.featuredImage?.url === "object"
+                    ? product.featuredImage?.url.url
+                    : product.featuredImage?.url
+                }
                 fill
                 sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
-              /> */}
+              />
             </Link>
           </li>
         ))}
