@@ -6,13 +6,15 @@ export function GridTileImage({
   isInteractive = true,
   active,
   label,
+  src,
   ...props
 }: {
+  src?: string;
   isInteractive?: boolean;
   active?: boolean;
   label?: {
     title: string;
-    amount: string;
+    amount: string | number;
     currencyCode: string;
     position?: "bottom" | "center";
   };
@@ -28,12 +30,13 @@ export function GridTileImage({
         },
       )}
     >
-      {props.src ? (
+      {src ? (
         <Image
           className={clsx("relative h-full w-full object-contain", {
             "transition duration-300 ease-in-out group-hover:scale-105":
               isInteractive,
           })}
+          src={src}
           {...props}
         />
       ) : null}

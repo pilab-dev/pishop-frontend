@@ -29,7 +29,7 @@ export function formatCurrency(
 
     return formatted.replace("HUF", "");
   } catch (error) {
-    // eslint-disable-next-line no-console
+     
     console.error("Error formatting currency:", error);
 
     return amount.toString(); // Fallback to plain number if formatting fails.

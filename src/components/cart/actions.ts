@@ -46,7 +46,7 @@ export async function removeItem(prevState: any, merchandiseId: string) {
       return "Error fetching cart";
     }
 
-    const lineItem = cart.lines!.find(
+    const lineItem = cart.lines.find(
       (line) => line.merchandise?.id === merchandiseId,
     );
 
@@ -86,7 +86,7 @@ export async function updateItemQuantity(
       return "Error fetching cart";
     }
 
-    const lineItem = cart.lines!.find(
+    const lineItem = cart.lines.find(
       (line) => line.merchandise?.id === merchandiseId,
     );
 
@@ -127,7 +127,7 @@ export async function redirectToCheckout() {
   const cartId = (await cookies()).get("cartId")?.value;
   const cart = await getCart(cartId!);
 
-  redirect(cart!.checkoutUrl!);
+  redirect(cart.checkoutUrl);
 }
 
 export async function createCartAndSetCookie() {

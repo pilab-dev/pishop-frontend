@@ -171,7 +171,7 @@ const getPageFooter = async () => {
 export const PageFooter = async () => {
   const categories =
     (await getPageFooter())?.map((c) => ({
-      title: c.link.label as string,
+      title: c.link.label,
       path: "",
     })) || [];
 

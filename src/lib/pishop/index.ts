@@ -144,7 +144,7 @@ export async function getProducts({
   reverse?: boolean;
   sortKey?: string;
 }): Promise<Product[]> {
-  // eslint-disable-next-line no-console
+   
   console.log("ListProducts", query, reverse, sortKey);
   const response = await fetch(`${API_BASE}/api/products`);
 
@@ -176,7 +176,7 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
 export async function getProductRecommendations(
   handle: string,
 ): Promise<Product[]> {
-  // eslint-disable-next-line no-console
+   
   console.log("getProductRecommendations", handle);
   const response = await fetch(
     `${API_BASE}/api/products/${handle}/recommendations`,
@@ -224,7 +224,7 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   const isProductUpdate = productWebhooks.includes(topic);
 
   if (!secret || secret !== process.env.REVALIDATION_SECRET) {
-    // eslint-disable-next-line no-console
+     
     console.error("Invalid revalidation secret.");
 
     return NextResponse.json({ status: 401 });

@@ -9,7 +9,7 @@ type UseClickableCardType<T extends HTMLElement> = {
     ref: RefObject<T | null>
   }
   link: {
-    ref: RefObject<HTMLAnchorElement | null>
+    ref: RefObject<HTMLAnchorElement | undefined>
   }
 }
 
@@ -26,7 +26,7 @@ function useClickableCard<T extends HTMLElement>({
 }: Props): UseClickableCardType<T> {
   const router = useRouter()
   const card = useRef<T>(null)
-  const link = useRef<HTMLAnchorElement>(null)
+  const link = useRef<HTMLAnchorElement | undefined>(undefined)
   const timeDown = useRef<number>(0)
   const hasActiveParent = useRef<boolean>(false)
   const pressedButton = useRef<number>(0)

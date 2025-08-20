@@ -42,8 +42,8 @@ export interface Cart {
   };
 }
 
-const getCartFromCookie = (): Cart | undefined => {
-  const cartCookie = cookies().get("mock_cart")?.value;
+const getCartFromCookie = async (): Promise<Cart | undefined> => {
+  const cartCookie = (await cookies()).get("mock_cart")?.value;
   if (cartCookie) {
     try {
       return JSON.parse(cartCookie);
@@ -54,8 +54,8 @@ const getCartFromCookie = (): Cart | undefined => {
   return undefined;
 };
 
-const setCartCookie = (cart: Cart) => {
-  cookies().set("mock_cart", JSON.stringify(cart));
+const setCartCookie = async (cart: Cart) => {
+  (await cookies()).set("mock_cart", JSON.stringify(cart));
 };
 
 const createCart = async (): Promise<Cart> => {
@@ -75,7 +75,7 @@ const createCart = async (): Promise<Cart> => {
 };
 
 const getCart = async ({ cartId }: { cartId: string }): Promise<Cart> => {
-  let cart = getCartFromCookie();
+  let cart = await getCartFromCookie();
   if (!cart || cart.id !== cartId) {
     // If the cart in cookie doesn't match the id, or doesn't exist, create a new one
     // In a real scenario, we might fetch it from a DB.
@@ -151,7 +151,7 @@ const updateCartItems = async ({
   cartItemLine,
 }: {
   cartId: string;
-  cartItemLine: { id: string, merchandiseId: string; quantity: number }[];
+  cartItemLine: { id: string; merchandiseId: string; quantity: number }[];
 }): Promise<Cart> => {
   const cart = await getCart({ cartId });
 
@@ -174,8 +174,7 @@ const updateCartItems = async ({
 const recalculateCartTotals = (cart: Cart) => {
   cart.totalQuantity = cart.lines.reduce((sum, item) => sum + item.quantity, 0);
   const totalAmount = cart.lines.reduce(
-    (sum, item) =>
-      sum + item.cost.totalAmount.amount * item.quantity,
+    (sum, item) => sum + item.cost.totalAmount.amount * item.quantity,
     0,
   );
   const currencyCode = cart.lines[0]?.cost.totalAmount.currencyCode || "USD";

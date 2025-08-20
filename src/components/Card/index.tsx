@@ -1,84 +1,76 @@
-'use client'
-import { cn } from '@/utilities/ui'
-import useClickableCard from '@/utilities/useClickableCard'
-import Link from 'next/link'
-import React, { Fragment } from 'react'
+"use client";
+import { Media } from "@/components/Media";
+import type { Post } from "@/payload-types";
+import { cn } from "@/utilities/ui";
+import Link from "next/link";
+import React from "react";
 
-import type { Post } from '@/payload-types'
-
-import { Media } from '@/components/Media'
-
-export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title'>
+export type CardPostData = Pick<Post, "slug" | "categories" | "meta" | "title">;
 
 export const Card: React.FC<{
-  alignItems?: 'center'
-  className?: string
-  doc?: CardPostData
-  relationTo?: 'posts'
-  showCategories?: boolean
-  title?: string
-}> = (props) => {
-  const { card, link } = useClickableCard({})
-  const { className, doc, relationTo, showCategories, title: titleFromProps } = props
+  className?: string;
+  doc?: CardPostData;
+  relationTo?: "posts";
+  showCategories?: boolean;
+  title?: string;
+}> = ({
+  className,
+  doc,
+  relationTo,
+  showCategories,
+  title: titleFromProps,
+}) => {
+  const { slug, categories, meta, title } = doc || {};
+  const { description, image: metaImage } = meta || {};
 
-  const { slug, categories, meta, title } = doc || {}
-  const { description, image: metaImage } = meta || {}
-
-  const hasCategories = categories && Array.isArray(categories) && categories.length > 0
-  const titleToUse = titleFromProps || title
-  const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
-  const href = `/${relationTo}/${slug}`
+  const hasCategories = categories?.length || 0 > 0;
+  const titleToUse = titleFromProps || title;
+  const href = `/${relationTo}/${slug}`;
 
   return (
     <article
       className={cn(
-        'border border-border rounded-lg overflow-hidden bg-card hover:cursor-pointer',
+        "border border-border rounded-lg overflow-hidden bg-card",
         className,
       )}
-      ref={card.ref}
     >
-      <div className="relative w-full ">
-        {!metaImage && <div className="">No image</div>}
-        {metaImage && typeof metaImage !== 'string' && <Media resource={metaImage} size="33vw" />}
+      <div className="relative w-full">
+        {metaImage && typeof metaImage !== "string" ? (
+          <Media resource={metaImage} size="33vw" />
+        ) : (
+          <div>No image</div>
+        )}
       </div>
+
       <div className="p-4">
         {showCategories && hasCategories && (
           <div className="uppercase text-sm mb-4">
-            {showCategories && hasCategories && (
-              <div>
-                {categories?.map((category, index) => {
-                  if (typeof category === 'object') {
-                    const { title: titleFromCategory } = category
-
-                    const categoryTitle = titleFromCategory || 'Untitled category'
-
-                    const isLast = index === categories.length - 1
-
-                    return (
-                      <Fragment key={index}>
-                        {categoryTitle}
-                        {!isLast && <Fragment>, &nbsp;</Fragment>}
-                      </Fragment>
-                    )
-                  }
-
-                  return null
-                })}
-              </div>
+            {categories?.map(
+              (category, index) =>
+                typeof category === "object" && (
+                  <span key={index}>
+                    {category.title || "Untitled category"}
+                    {index < categories.length - 1 && ", "}
+                  </span>
+                ),
             )}
           </div>
         )}
+
         {titleToUse && (
           <div className="prose">
             <h3>
-              <Link className="not-prose" href={href} ref={link.ref}>
-                {titleToUse}
-              </Link>
+              <Link href={href}>{titleToUse}</Link>
             </h3>
           </div>
         )}
-        {description && <div className="mt-2">{description && <p>{sanitizedDescription}</p>}</div>}
+
+        {description && (
+          <div className="mt-2">
+            <p>{description.replace(/\s/g, " ")}</p>
+          </div>
+        )}
       </div>
     </article>
-  )
-}
+  );
+};

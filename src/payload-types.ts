@@ -65,7 +65,9 @@ export interface Config {
   auth: {
     users: UserAuthOperations;
   };
-  blocks: {};
+  blocks: {
+    hotDealsBlock: HotDealsBlock;
+  };
   collections: {
     pages: Page;
     posts: Post;
@@ -147,48 +149,16 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages".
+ * via the `definition` "HotDealsBlock".
  */
-export interface Page {
-  id: string;
-  title: string;
-  elements: (
-    | FeaturedProductsProps
-    | HotDealsBlock
-    | CallToActionBlock
-    | ContentBlock
-    | MediaBlock
-    | ArchiveBlock
-    | FormBlock
-  )[];
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-    description?: string | null;
-  };
-  publishedAt?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FeaturedProductsProps".
- */
-export interface FeaturedProductsProps {
+export interface HotDealsBlock {
   products: {
     product?: (string | null) | Product;
-    tileType?: 'default' | null;
     id?: string | null;
   }[];
   id?: string | null;
   blockName?: string | null;
-  blockType: 'featuredProducts';
+  blockType: 'hotDealsBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -199,6 +169,15 @@ export interface Product {
   title: string;
   collection: (string | Collection)[];
   availableForSale?: boolean | null;
+  /**
+   * Tags are used to filter products in the store.
+   */
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
   description: string;
   featuredImage: {
     url: string | Media;
@@ -409,16 +388,106 @@ export interface Category {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "HotDealsBlock".
+ * via the `definition` "pages".
  */
-export interface HotDealsBlock {
+export interface Page {
+  id: string;
+  title: string;
+  elements: (
+    | FeaturedProductsProps
+    | HotDealsBlock
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+  )[];
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
+  hero: {
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'centeredImpact' | 'sideBySide';
+    richText?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    links?:
+      | {
+          link: {
+            type?: ('reference' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            url?: string | null;
+            label: string;
+            /**
+             * Choose how the link should be rendered.
+             */
+            appearance?: ('default' | 'outline') | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    media?: (string | null) | Media;
+  };
+  markdown?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  publishedAt?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedProductsProps".
+ */
+export interface FeaturedProductsProps {
   products: {
     product?: (string | null) | Product;
+    tileType?: 'default' | null;
     id?: string | null;
   }[];
   id?: string | null;
   blockName?: string | null;
-  blockType: 'hotDealsBlock';
+  blockType: 'featuredProducts';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1121,6 +1190,29 @@ export interface PagesSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  hero?:
+    | T
+    | {
+        type?: T;
+        richText?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                    appearance?: T;
+                  };
+              id?: T;
+            };
+        media?: T;
+      };
+  markdown?: T;
   publishedAt?: T;
   slug?: T;
   slugLock?: T;
@@ -1417,6 +1509,12 @@ export interface ProductsSelect<T extends boolean = true> {
   title?: T;
   collection?: T;
   availableForSale?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
   description?: T;
   featuredImage?:
     | T
