@@ -1,19 +1,25 @@
+import { withPayload } from "@payloadcms/next/withPayload";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  turbopack: {},
   images: {
-    loader: "custom",
-    loaderFile: "./lib/pishop/imageLoader.ts",
+    // loader: "custom",
+    // loaderFile: "./lib/pishop/imageLoader.ts",
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
-        protocol: "https",
+        // protocol: "https",
         hostname: "*",
         // pathname: '/images/**'
         // port: '8081'
       },
     ],
   },
+  experimental: {
+    reactCompiler: false,
+  },
 };
 
-module.exports = nextConfig;
+export default withPayload(nextConfig);
