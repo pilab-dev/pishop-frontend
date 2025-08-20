@@ -9,7 +9,7 @@ export const FeaturedProductsBlock: Block = {
       name: "products",
       label: "Products to display",
       type: "array",
-      // defaultValue: [{}, {}, {}],
+      defaultValue: [{}, {}, {}],
       maxRows: 3,
       minRows: 3,
       fields: [
@@ -17,6 +17,17 @@ export const FeaturedProductsBlock: Block = {
           name: "product",
           type: "relationship",
           relationTo: "products",
+        },
+        {
+          name: "tileType",
+          type: "select",
+          options: [
+            {
+              label: "Default",
+              value: "default",
+            },
+          ],
+          defaultValue: "default",
         },
       ],
       required: true,

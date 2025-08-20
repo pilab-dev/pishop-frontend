@@ -1,4 +1,5 @@
 import { RenderBlocks } from "@/blocks/RenderBlocks";
+import { LivePreviewListener } from "@/components/LivePreviewListener";
 import type { Page } from "@/payload-types";
 import config from "@payload-config";
 import { Metadata } from "next";
@@ -58,6 +59,7 @@ export default async function Page({ params }: { params: PagePropsPromise }) {
 
   return (
     <>
+      <LivePreviewListener />
       <RenderBlocks blocks={page.elements} />
     </>
   );
