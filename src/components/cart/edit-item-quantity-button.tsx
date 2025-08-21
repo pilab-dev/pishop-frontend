@@ -1,9 +1,10 @@
 "use client";
 
 import { updateItemQuantity } from "@/components/cart/actions";
-import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
-import type { CartItem } from "@pilab/pishop-client";
+import { CartItem } from "@/lib/cart";
+
 import clsx from "clsx";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import { useActionState } from "react";
 
 function SubmitButton({ type }: { type: "plus" | "minus" }) {
@@ -40,12 +41,12 @@ export function EditItemQuantityButton({
 }) {
   const [message, formAction] = useActionState(updateItemQuantity, null);
   const payload = {
-    merchandiseId: item.merchandise!.id,
-    quantity: type === "plus" ? item.quantity! + 1 : item.quantity! - 1,
+    merchandiseId: item.merchandise.id,
+    quantity: type === "plus" ? item.quantity + 1 : item.quantity - 1,
   };
   const actionWithVariant = formAction.bind(null, {
-    merchandiseId: item.merchandise!.id!,
-    quantity: type === "plus" ? item.quantity! + 1 : item.quantity! - 1,
+    merchandiseId: item.merchandise.id,
+    quantity: type === "plus" ? item.quantity + 1 : item.quantity - 1,
   });
 
   return (

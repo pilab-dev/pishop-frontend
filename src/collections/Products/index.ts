@@ -95,6 +95,20 @@ export const Products: CollectionConfig<"products"> = {
       defaultValue: true,
     },
     {
+      name: "tags",
+      type: "array",
+      fields: [
+        {
+          name: "tag",
+          type: "text",
+          required: true,
+        },
+      ],
+      admin: {
+        description: "Tags are used to filter products in the store.",
+      },
+    },
+    {
       name: "description",
       type: "text",
       required: true,
@@ -121,6 +135,22 @@ export const Products: CollectionConfig<"products"> = {
       name: "bodyHtml",
       type: "richText",
       required: true,
+    },
+    {
+      name: "images",
+      type: "array",
+      fields: [
+        {
+          name: "image",
+          type: "upload",
+          relationTo: "media",
+          required: true,
+        },
+        {
+          name: "alt",
+          type: "text",
+        },
+      ],
     },
     {
       name: "priceRange",

@@ -1,18 +1,18 @@
 "use client";
 
-import type { CartItem, Product, ProductVariant } from "@pilab/pishop-client";
+import { Cart, CartItem } from "@/lib/cart";
+import { Product } from "@/lib/pishop/types";
+// import type { CartItem, Product, ProductVariant } from "@pilab/pishop-client";
 import React, { createContext, use, useMemo, useOptimistic } from "react";
 
-export type Cart = {
-  id: string | undefined;
-  checkoutUrl: string;
-  totalQuantity: number;
-  lines: CartItem[];
-  cost: {
-    subtotalAmount: { amount: string; currencyCode: string };
-    totalAmount: { amount: string; currencyCode: string };
-    totalTaxAmount: { amount: string; currencyCode: string };
+type ProductVariant = {
+  id: string;
+  title: string;
+  price: {
+    amount: string;
+    currencyCode: string;
   };
+  selectedOptions: { name: string; value: string }[];
 };
 
 type UpdateType = "plus" | "minus" | "delete";
@@ -48,11 +48,11 @@ function updateCartItem(
   if (updateType === "delete") return null;
 
   const newQuantity =
-    updateType === "plus" ? item.quantity! + 1 : item.quantity! - 1;
+    updateType === "plus" ? item.quantity + 1 : item.quantity - 1;
   if (newQuantity === 0) return null;
 
   const singleItemAmount =
-    Number(item.cost!.totalAmount!.amount) / item.quantity!;
+    Number(item.cost.totalAmount.amount) / item.quantity;
   const newTotalAmount = calculateItemCost(
     newQuantity,
     singleItemAmount.toString(),
@@ -64,7 +64,7 @@ function updateCartItem(
     cost: {
       ...item.cost,
       totalAmount: {
-        ...item.cost!.totalAmount!,
+        ...item.cost.totalAmount,
         // amount: newTotalAmount,
       },
     },
@@ -76,7 +76,7 @@ function createOrUpdateCartItem(
   variant: ProductVariant,
   product: Product,
 ): CartItem {
-  const quantity = existingItem ? existingItem.quantity! + 1 : 1;
+  const quantity = existingItem ? existingItem.quantity + 1 : 1;
   const totalAmount = calculateItemCost(
     quantity,
     variant.price.amount.toString(),
@@ -95,11 +95,18 @@ function createOrUpdateCartItem(
       id: variant.id,
       title: variant.title,
       selectedOptions: variant.selectedOptions,
+      /* @ts-ignore */
       product: {
         id: product.id ?? "",
-        handle: product.handle ?? "",
+        slug: product.handle ?? "",
         title: product.title ?? "",
-        featuredImage: product.featuredImage,
+        featuredImage: {
+          url: product.featuredImage?.url ?? "",
+          // width: product.featuredImage?.width ?? 0,
+          // height: product.featuredImage?.height ?? 0,
+          // altText: product.featuredImage?.altText ?? "",
+          alt: product.featuredImage?.altText || "",
+        },
       },
     },
   };
@@ -108,12 +115,12 @@ function createOrUpdateCartItem(
 function updateCartTotals(
   lines: CartItem[],
 ): Pick<Cart, "totalQuantity" | "cost"> {
-  const totalQuantity = lines.reduce((sum, item) => sum + item.quantity!, 0);
+  const totalQuantity = lines.reduce((sum, item) => sum + item.quantity, 0);
   const totalAmount = lines.reduce(
-    (sum, item) => sum + Number(item.cost!.totalAmount!.amount),
+    (sum, item) => sum + Number(item.cost.totalAmount.amount),
     0,
   );
-  const currencyCode = lines[0]?.cost!.totalAmount!.currencyCode ?? "USD";
+  const currencyCode = lines[0]?.cost.totalAmount.currencyCode ?? "USD";
 
   return {
     totalQuantity,
@@ -127,7 +134,7 @@ function updateCartTotals(
 
 function createEmptyCart(): Cart {
   return {
-    id: undefined,
+    id: "",
     checkoutUrl: "",
     totalQuantity: 0,
     lines: [],

@@ -37,3 +37,4 @@ next-env.d.ts
 
 # Ignore uploaded assets
 /public/media
+.eslintcache

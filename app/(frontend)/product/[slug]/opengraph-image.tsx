@@ -18,10 +18,8 @@ export const getProductByHandle = async (handle: string) => {
     limit: 1,
   });
 
-  return product;
+  return product.docs[0];
 };
-
-export const runtime = "edge";
 
 const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
   const params = await props.params;
@@ -69,7 +67,7 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
           <Image
             alt={product?.title}
             height={630}
-            src={product?.featuredImage?.url || ""}
+            src={typeof product?.featuredImage?.url === 'object' ? product?.featuredImage?.url.url || "" : product?.featuredImage?.url || ""}
             tw="object-cover w-full h-full" // Ensure image covers the div
             width={1200}
           />
