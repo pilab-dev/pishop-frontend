@@ -70,7 +70,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
                     role="link"
                     data-href={`/product/${handle}`}
                     onClick={handleNavigateTo(
-                      Boolean(handle) ? `/product/${handle}` : undefined,
+                      handle ? `/product/${handle}` : undefined,
                     )}
                     transition={{ delay: 0, duration: 0.1 }}
                     variants={buttonVariants}

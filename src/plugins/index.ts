@@ -90,5 +90,8 @@ export const plugins: Plugin[] = [
       },
     },
   }),
-  payloadCloudPlugin(),
 ]
+
+// if (process.env.PAYLOAD_CLOUD_API_KEY) {
+//   plugins.push(payloadCloudPlugin())
+// }

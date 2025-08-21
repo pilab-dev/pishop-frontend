@@ -70,14 +70,14 @@ export async function generateMetadata(props: {
 
   return {
     title: collection.title,
-    description: collection.description,
+    description: collection.title,
     openGraph: {
       title: collection.title,
-      description: collection.description || `${collection.title} products`,
+      description: `${collection.title} products`,
     },
     twitter: {
       title: collection.title,
-      description: collection.description || `${collection.title} products`,
+      description: `${collection.title} products`,
     },
     alternates: {
       canonical: `/collections/${collection.slug}`,
@@ -97,21 +97,6 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
   const { slug } = await params;
 
   const { collection, products } = await getCollectionBySlug(slug);
-
-  const gridProducts = products.map((product) => {
-    return {
-      id: product.id,
-      name: product.title,
-      description: product.description,
-      price: product.priceRange?.minVariantPrice?.amount,
-      imageUrl:
-        typeof product.featuredImage?.url === "object"
-          ? product.featuredImage?.url.url
-          : product.featuredImage?.url,
-      slug: product.slug,
-      title: product.title,
-    };
-  });
 
   return (
     <>
@@ -133,7 +118,7 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
             </h2>
           </section>
 
-          <ProductGrid products={gridProducts} variant="primary" />
+          <ProductGrid products={products} variant="primary" />
         </div>
       </div>
     </>

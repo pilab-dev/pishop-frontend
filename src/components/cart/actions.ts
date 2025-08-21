@@ -1,39 +1,13 @@
 "use server";
 
-import { cartApi } from "@/lib/client";
+import { mockedCartApi } from "@/lib/cart";
 import { TAGS } from "@/lib/constants";
-import { CartItemLine } from "@pilab/pishop-client";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-const addToCart = async (cartId: string, cartItemLines: CartItemLine[]) => {
-  return cartApi.addCartItems({
-    cartId: cartId,
-    cartItemLine: cartItemLines,
-  });
-};
-
 export const getCart = async (cartId: string) => {
-  return cartApi.getCart({ cartId });
-};
-
-const removeFromCart = async (cartId: string, items: string[]) => {
-  return cartApi.removeCartItems({
-    cartId: cartId,
-    requestBody: items,
-  });
-};
-
-const updateCart = async (cartId: string, items: CartItemLine[]) => {
-  return cartApi.updateCartItems({
-    cartId: cartId,
-    cartItemLine: items,
-  });
-};
-
-const createCart = async () => {
-  return await cartApi.createCart();
+  return mockedCartApi.getCart({ cartId });
 };
 
 export async function addItem(
@@ -47,9 +21,10 @@ export async function addItem(
   }
 
   try {
-    await addToCart(cartId, [
-      { merchandiseId: selectedVariantId, quantity: 1 },
-    ]);
+    await mockedCartApi.addCartItems({
+      cartId,
+      cartItemLines: [{ merchandiseId: selectedVariantId, quantity: 1 }],
+    });
     revalidateTag(TAGS.cart);
   } catch (e: unknown) {
     console.error(e);
@@ -71,12 +46,15 @@ export async function removeItem(prevState: any, merchandiseId: string) {
       return "Error fetching cart";
     }
 
-    const lineItem = cart.lines!.find(
+    const lineItem = cart.lines.find(
       (line) => line.merchandise?.id === merchandiseId,
     );
 
     if (lineItem && lineItem.id) {
-      await removeFromCart(cartId, [lineItem.id]);
+      await mockedCartApi.removeCartItems({
+        cartId,
+        requestBody: [lineItem.id],
+      });
       revalidateTag(TAGS.cart);
     } else {
       return "Item not found in cart";
@@ -108,25 +86,34 @@ export async function updateItemQuantity(
       return "Error fetching cart";
     }
 
-    const lineItem = cart.lines!.find(
+    const lineItem = cart.lines.find(
       (line) => line.merchandise?.id === merchandiseId,
     );
 
     if (lineItem && lineItem.id) {
       if (quantity === 0) {
-        await removeFromCart(cartId, [lineItem.id]);
+        await mockedCartApi.removeCartItems({
+          cartId,
+          requestBody: [lineItem.id],
+        });
       } else {
-        await updateCart(cartId, [
-          {
-            id: lineItem.id,
-            merchandiseId: merchandiseId,
-            quantity,
-          },
-        ]);
+        await mockedCartApi.updateCartItems({
+          cartId,
+          cartItemLine: [
+            {
+              id: lineItem.id,
+              merchandiseId: merchandiseId,
+              quantity,
+            },
+          ],
+        });
       }
     } else if (quantity > 0) {
       // If the item doesn't exist in the cart and quantity > 0, add it
-      await addToCart(cartId, [{ merchandiseId: merchandiseId, quantity }]);
+      await mockedCartApi.addCartItems({
+        cartId,
+        cartItemLines: [{ merchandiseId: merchandiseId, quantity }],
+      });
     }
 
     revalidateTag(TAGS.cart);
@@ -140,10 +127,12 @@ export async function redirectToCheckout() {
   const cartId = (await cookies()).get("cartId")?.value;
   const cart = await getCart(cartId!);
 
-  redirect(cart!.checkoutUrl!);
+  redirect(cart.checkoutUrl);
 }
 
 export async function createCartAndSetCookie() {
-  const { cartId } = await createCart();
-  (await cookies()).set("cartId", cartId!);
+  const { id: cartId } = await mockedCartApi.createCart();
+  if (cartId) {
+    (await cookies()).set("cartId", cartId);
+  }
 }
