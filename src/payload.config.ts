@@ -75,7 +75,7 @@ export default buildConfig({
   ],
   secret: process.env.PAYLOAD_SECRET || '',
   auth: {
-    jwtOrder: ['Bearer'],
+    jwtOrder: ['Bearer', 'cookie', 'JWT'],
   },
   sharp,
   typescript: {

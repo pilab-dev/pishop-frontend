@@ -28,7 +28,7 @@ COPY .next/static ./.next/static
 VOLUME ["/app/.next/cache"]
 
 # Set environment variables
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Expose the default port
 EXPOSE 3000

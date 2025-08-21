@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
-    "start": "next start",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint . --cache --fix",
     "payload": "cross-env payload generate:types"
   },

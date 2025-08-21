@@ -93,8 +93,8 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
         gap: '2px',
       }}
     >
-      {Array.from({ length: 10 }).map((_, index) => (
-        <ProductTile key={index} product={products[0]} />
+      {products.map((product, index) => (
+        <ProductTile key={index} product={product} />
       ))}
     </div>
   )
