@@ -1,20 +1,19 @@
-import { BentoBox, BentoBoxItem } from "@/components/BentoBox";
-import { FancyTitle } from "@/components/fancy-title";
-import { HeroSection } from "@/components/hero-section";
-import { BestSellersSection } from "@/components/products/best-sellers-section";
-import { HotDealsSection } from "@/components/products/hot-deals-section";
-import { ProductGrid } from "@/components/products/product-grid";
-import { SectionDecor } from "@/components/ui/section-decor";
-import { listProductsByCollection } from "@/lib/client";
-import { permanentRedirect } from "next/navigation";
+import { BentoBox, BentoBoxItem } from '@/components/BentoBox'
+import { FancyTitle } from '@/components/fancy-title'
+import { HeroSection } from '@/components/hero-section'
+import { BestSellersSection } from '@/components/products/best-sellers-section'
+import { HotDealsSection } from '@/components/products/hot-deals-section'
+import { ProductGrid } from '@/components/products/product-grid'
+import { SectionDecor } from '@/components/ui/section-decor'
+import { listProductsByCollection } from '@/lib/client'
 
 export default async function Home() {
   // return permanentRedirect("/home");
 
   const products = await listProductsByCollection({
-    collectionId: "best-selling",
+    collectionId: 'best-selling',
     limit: 8,
-  });
+  })
 
   return (
     <>
@@ -54,5 +53,5 @@ export default async function Home() {
         </main>
       </div>
     </>
-  );
+  )
 }

@@ -51,6 +51,8 @@ const listProductsByCollection = async ({ collectionId, limit }: ListProductsByC
     pagination: false,
   })
 
+  console.info('Result received', products)
+
   return products.docs
 }
 

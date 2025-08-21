@@ -1,6 +1,7 @@
 services:
-  pishop-frontend:
-    image: ghcr.io/pilab-dev/pishop-frontend:latest
+  pishop:
+    # image: ghcr.io/pilab-dev/pishop-frontend:latest
+    container_name: pishop
     build:
       context: .
       dockerfile: Dockerfile
@@ -12,25 +13,26 @@ services:
       - pishop-cache:/app/.next/cache
     depends_on:
       - mongodb
+    networks:
+      - pishop-network
 
   mongodb:
     image: mongo
-    container_name: pishop-mongodb
+    container_name: pishop_mongodb
     restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: mongoadmin
-      MONGO_INITDB_ROOT_PASSWORD: mongopassword
+    env_file:
+      - .env.local
     ports:
       - '27017:27017'
     volumes:
-      - mongodb-data:/data/db
+      - mongodb_data:/data/db
     networks:
       - pishop-network
 
 volumes:
   pishop-cache:
-  mongodb-data:
+  mongodb_data:
 
 networks:
   pishop-network:
-    driver: bridge 
+    driver: bridge
