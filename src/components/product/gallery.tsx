@@ -24,7 +24,7 @@ export function Gallery({
   return (
     <form>
       <div className="relative aspect-square h-full max-h-[550px] w-full overflow-hidden">
-        {images[imageIndex] && (
+        {images[imageIndex] ? (
           <Image
             className="h-full w-full object-contain"
             fill
@@ -32,7 +32,15 @@ export function Gallery({
             alt={images[imageIndex]?.altText}
             src={images[imageIndex]?.src}
             priority={true}
+            itemProp="image"
           />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gray-100 dark:bg-gray-800">
+            <div className="text-center">
+              <div className="mb-2 text-6xl text-gray-400">📷</div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">No image available</p>
+            </div>
+          </div>
         )}
 
         {images.length > 1 ? (

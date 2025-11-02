@@ -1,0 +1,44 @@
+.tags-field-component {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tags-field-component__description {
+  color: var(--theme-elevation-500);
+  font-size: 0.9rem;
+}
+
+.tags-field-component__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tags-field-component__chip {
+  align-items: center;
+  background: var(--theme-elevation-100);
+  border-radius: 9999px;
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+}
+
+.tags-field-component__chip-text {
+  font-size: 0.85rem;
+}
+
+.tags-field-component__chip-remove {
+  background: none;
+  border: none;
+  color: var(--theme-elevation-600);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0;
+}
+
+.tags-field-component__chip-remove:hover {
+  color: var(--theme-elevation-900);
+}
+
+

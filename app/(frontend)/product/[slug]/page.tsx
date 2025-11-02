@@ -1,9 +1,6 @@
 import type { Metadata } from 'next'
 
-import { getCart } from '@/components/cart/actions'
-import { CartProvider } from '@/components/cart/cart-context'
 import { ProductProvider } from '@/components/product/product-context'
-import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Product as SchemaProduct, WithContext } from 'schema-dts'
@@ -13,31 +10,24 @@ const baseUrl = process.env.SITE_BASE_URL
 
 import { GridTileImage } from '@/components/grid/tile'
 import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
-import { getCategoryAncestors } from '@/lib/category-helpers'
-import { getProductBySlug } from '@/lib/client'
+import { Footer } from '@/Footer/Component'
+import { client } from '@/lib/client'
+import type { Product as GraphQLProduct } from '@/lib/client/types'
 import { HIDDEN_PRODUCT_TAG } from '@/lib/constants'
-import { Category, Product } from '@/payload-types'
-import config from '@/payload.config'
-import { getPayload } from 'payload'
 
-const getProductRecommendations = async (id: string): Promise<Product[]> => {
-  const payload = await getPayload({ config })
-  const product = await payload.findByID({
-    collection: 'products',
-    id,
-    depth: 2,
-  })
-
-  const relatedProducts = product?.relatedProducts as Product[]
-
-  return relatedProducts || []
+const getProductRecommendations = async (id: string): Promise<GraphQLProduct[]> => {
+  try {
+    const products = await client.getProducts({ limit: 4 })
+    return products.filter((p) => p.id !== id).slice(0, 4)
+  } catch (error) {
+    console.error('Error fetching product recommendations:', error)
+    return []
+  }
 }
 
-const getProduct = async (slug: string): Promise<Product> => {
-  const product = await getProductBySlug(slug)
-  if (!product) {
-    throw new Error(`product with slug: [${slug}] not found`)
-  }
+const getProduct = async (slug: string): Promise<GraphQLProduct> => {
+  const product = await client.getProduct(slug)
+  if (!product) return notFound()
 
   return product
 }
@@ -52,26 +42,28 @@ export async function generateMetadata(props: {
   if (!product) return notFound()
 
   // Check if the product has a tag that indicates it should not be indexed
-  const tagFieldContainsHiddenTag = (tags: typeof product.tags | undefined) => {
+  const tagFieldContainsHiddenTag = (tags: string[] | undefined) => {
     if (tags && Array.isArray(tags)) {
-      return tags.some((tag) => tag.tag === HIDDEN_PRODUCT_TAG)
+      return tags.includes(HIDDEN_PRODUCT_TAG)
     }
     return false
   }
 
-  // const { url, width, height, altText: alt } = product.featuredImage || {};
   const indexable = !tagFieldContainsHiddenTag(product.tags)
+  const featuredImage = product.images?.[0]
 
   const ogImage = {
-    url: `${baseUrl}/product/${product.slug}/opengraph-image`, // product.url,
-    width: 1200,
-    height: 630,
-    alt: product.meta?.title || product.title,
+    url: featuredImage?.url
+      ? `${baseUrl}${featuredImage.url}`
+      : `${baseUrl}/product/${product.slug}/opengraph-image`,
+    width: featuredImage?.width || 1200,
+    height: featuredImage?.height || 630,
+    alt: featuredImage?.altText || product.name,
   }
 
   return {
-    title: product.meta?.title || product.title,
-    description: product.meta?.description || product.description,
+    title: product.name,
+    description: product.description || product.shortDescription || '',
     alternates: {
       canonical: `${baseUrl}/product/${product.slug}`,
     },
@@ -85,90 +77,44 @@ export async function generateMetadata(props: {
     },
     openGraph: {
       images: [ogImage],
-      description: product.meta?.description || product.description,
+      description: product.description || product.shortDescription || '',
     },
     other: {
       'og:site_name': 'PiShop',
       'og:type': 'product',
       'product:brand': 'Pilab',
-      'product:product_link': `${baseUrl}/${product.slug}`,
-      'product:price': product.priceRange?.maxVariantPrice.amount || 0,
-      'product:plural_title': product.title,
+      'product:product_link': `${baseUrl}/product/${product.slug}`,
+      'product:price': product.basePrice.amount.toString(),
+      'product:plural_title': product.name,
     },
   }
 }
 
 export default async function ProductPage(props: { params: Promise<{ slug: string }> }) {
-  const cartId = (await cookies()).get('cartId')?.value
-
-  const cartPromise = cartId
-    ? getCart(cartId).then((cart) => {
-        /* @ts-ignore */
-        const result: Cart = {
-          id: cart.id!,
-          checkoutUrl: cart.checkoutUrl!,
-          totalQuantity: cart.totalQuantity!,
-          lines: cart.lines!,
-          cost: {
-            subtotalAmount: {
-              amount: '0',
-              currencyCode: 'HUF',
-            },
-            totalAmount: {
-              amount: '0',
-              currencyCode: 'HUF',
-            },
-            totalTaxAmount: {
-              amount: '0',
-              currencyCode: 'HUF',
-            },
-          },
-        }
-
-        return result
-      })
-    : Promise.resolve(undefined)
-
   const params = await props.params
 
-  const product = await getProductBySlug(params.slug)
+  const product = await getProduct(params.slug)
 
   if (!product) return notFound()
+
+  const isInStock = product.inventory
+    ? (product.inventory.quantity && product.inventory.quantity > 0) ||
+      product.inventory.allowBackorder
+    : false
 
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: product.title,
-    description: product.description,
-    // image: product.featuredImage.url,
+    name: product.name,
+    description: product.description || product.shortDescription,
+    image: product.images?.[0]?.url,
     url: `https://shop.pilab.hu/product/${product.slug}`,
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: product.rating || 0.0,
-      ratingCount: product.ratingCount || 0,
-    },
     offers: [
       {
-        '@type': 'AggregateOffer',
-        availability:
-          product.availability?.status === 'InStock'
-            ? 'https://schema.org/InStock'
-            : 'https://schema.org/OutOfStock',
-        priceCurrency: product.priceRange?.minVariantPrice.currencyCode,
-        highPrice: product.priceRange?.maxVariantPrice.amount,
-        lowPrice: product.priceRange?.minVariantPrice.amount,
-        // offerCount: product.variants?.length || 1,
-        offerCount: 1,
-      },
-      {
         '@type': 'Offer',
-        availability:
-          product.availability?.status === 'InStock'
-            ? 'https://schema.org/InStock'
-            : 'https://schema.org/OutOfStock',
-        name: product.title,
-        priceCurrency: product.priceRange?.minVariantPrice.currencyCode,
-        price: product.priceRange?.minVariantPrice.amount,
+        availability: isInStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        priceCurrency: product.basePrice.currencyCode,
+        price: product.basePrice.amount.toString(),
         url: `https://shop.pilab.hu/product/${product.slug}`,
         priceValidUntil: '2025-12-31',
       },
@@ -177,72 +123,48 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
       '@type': 'Brand',
       name: 'Pilab',
     },
-    sku: product.id,
-    review: {
-      '@type': 'Review',
-      author: 'Pilab',
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: product.rating || 9.5,
-        bestRating: 10,
-        worstRating: 0,
-      },
-    },
+    sku: product.sku || product.id,
   } satisfies WithContext<SchemaProduct>
 
-  const primaryCategory = product.categories?.[0] as Category | undefined
-  let ancestors: Category[] = []
-  if (primaryCategory) {
-    ancestors = await getCategoryAncestors(primaryCategory)
-  }
-
-  const breadcrumbSegments = ancestors.map((category) => ({
-    name: category.title,
-    href: `/collections/${category.slug}`,
-  }))
+  const breadcrumbSegments: Array<{ name: string; href: string }> = []
 
   return (
     <ProductProvider>
-      <CartProvider cartPromise={cartPromise}>
-        <>
-          {breadcrumbSegments.length > 0 && <BreadcrumbBar segments={breadcrumbSegments} />}
-          <script
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify(productJsonLd),
-            }}
-            type="application/ld+json"
-          />
-          <div className="mx-auto max-w-screen-2xl px-4">
-            <BaseProduct product={product} />
+      <>
+        {breadcrumbSegments.length > 0 && <BreadcrumbBar segments={breadcrumbSegments} />}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(productJsonLd),
+          }}
+          type="application/ld+json"
+        />
+        <div className="mx-auto max-w-screen-2xl px-4">
+          <BaseProduct product={product} />
 
+          {product.description && (
             <div className="py-8">
               <h2 className="mb-4 text-2xl font-bold">Specifikáció</h2>
               <div className="prose dark:prose-invert">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  {/* {product.options &&
-                    Object.keys(product.options).map((optName: string) => (
-                      <div key={optName}>
-                        <p className="mb-2 font-semibold">{optName}</p>
-                        <ul className="list-disc pl-4">
-                          <li key={`${optName}-value`}>
-                            {
-                              product.options?.find(
-                                (opt) => opt.name === optName,
-                              )?.value
-                            }
-                          </li>
-                        </ul>
-                      </div>
-                    ))} */}
+                  <div>
+                    <p className="mb-2 font-semibold">Leírás</p>
+                    <p>{product.description}</p>
+                  </div>
+                  {product.inventory && (
+                    <div>
+                      <p className="mb-2 font-semibold">Raktáron</p>
+                      <p>{product.inventory.quantity || 0} db</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
+          )}
 
-            <RelatedProducts id={product.id} />
-          </div>
-          {/* <Footer /> */}
-        </>
-      </CartProvider>
+          <RelatedProducts id={product.id} />
+        </div>
+        <Footer />
+      </>
     </ProductProvider>
   )
 }
@@ -267,18 +189,13 @@ async function RelatedProducts({ id }: { id: string }) {
               prefetch={true}
             >
               <GridTileImage
-                alt={product.title}
+                alt={product.name}
                 label={{
-                  title: product.title,
-                  amount: product.priceRange?.maxVariantPrice?.amount || 0,
-                  currencyCode: product.priceRange?.maxVariantPrice?.currencyCode || 'HUF',
+                  title: product.name,
+                  amount: product.basePrice.amount.toString(),
+                  currencyCode: product.basePrice.currencyCode,
                 }}
-                /* @ts-ignore */
-                src={
-                  typeof product.featuredImage?.url === 'object'
-                    ? product.featuredImage?.url.url
-                    : product.featuredImage?.url
-                }
+                src={product.images?.[0]?.url || ''}
                 fill
                 sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"
               />

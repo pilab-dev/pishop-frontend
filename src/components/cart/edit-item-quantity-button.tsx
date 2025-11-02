@@ -1,65 +1,80 @@
-"use client";
+'use client'
 
-import { updateItemQuantity } from "@/components/cart/actions";
-import { CartItem } from "@/lib/cart";
+import { memo, useCallback, useTransition } from 'react'
 
-import clsx from "clsx";
-import { MinusIcon, PlusIcon } from "lucide-react";
-import { useActionState } from "react";
+import clsx from 'clsx'
+import { MinusIcon, PlusIcon } from 'lucide-react'
+import { toast } from 'sonner'
 
-function SubmitButton({ type }: { type: "plus" | "minus" }) {
+import { useCartStore } from '@/store/cart-store'
+
+const QuantityButton = memo(function QuantityButton({
+  type,
+  disabled,
+  onClick,
+}: {
+  type: 'plus' | 'minus'
+  disabled: boolean
+  onClick: () => void
+}) {
   return (
     <button
-      type="submit"
-      aria-label={
-        type === "plus" ? "Increase item quantity" : "Reduce item quantity"
-      }
+      type="button"
+      aria-label={type === 'plus' ? 'Increase item quantity' : 'Reduce item quantity'}
+      onClick={onClick}
+      disabled={disabled}
       className={clsx(
-        "ease flex h-full min-w-[36px] max-w-[36px] flex-none items-center justify-center rounded-full p-2 transition-all duration-200 hover:border-neutral-800 hover:opacity-80",
+        'ease flex h-full min-w-[36px] max-w-[36px] flex-none items-center justify-center rounded-full p-2 transition-all duration-200 hover:border-neutral-800 hover:opacity-80',
         {
-          "ml-auto": type === "minus",
+          'ml-auto': type === 'minus',
         },
+        disabled && 'cursor-not-allowed opacity-60',
       )}
     >
-      {type === "plus" ? (
+      {type === 'plus' ? (
         <PlusIcon className="h-4 w-4 dark:text-neutral-500" />
       ) : (
         <MinusIcon className="h-4 w-4 dark:text-neutral-500" />
       )}
     </button>
-  );
-}
+  )
+})
 
-export function EditItemQuantityButton({
-  item,
+export const EditItemQuantityButton = memo(function EditItemQuantityButton({
+  itemId,
+  currentQuantity,
   type,
-  optimisticUpdate,
 }: {
-  item: CartItem;
-  type: "plus" | "minus";
-  optimisticUpdate: any;
+  itemId: string
+  currentQuantity: number
+  type: 'plus' | 'minus'
 }) {
-  const [message, formAction] = useActionState(updateItemQuantity, null);
-  const payload = {
-    merchandiseId: item.merchandise.id,
-    quantity: type === "plus" ? item.quantity + 1 : item.quantity - 1,
-  };
-  const actionWithVariant = formAction.bind(null, {
-    merchandiseId: item.merchandise.id,
-    quantity: type === "plus" ? item.quantity + 1 : item.quantity - 1,
-  });
+  const { updateItemQuantity, isLoading } = useCartStore()
+  const [isPending, startTransition] = useTransition()
+
+  const nextQuantity = type === 'plus' ? currentQuantity + 1 : currentQuantity - 1
+
+  const handleClick = useCallback(() => {
+    startTransition(async () => {
+      try {
+        if (nextQuantity <= 0) {
+          await updateItemQuantity(itemId, nextQuantity)
+          toast.success('Item removed from cart', { duration: 2000 })
+        } else {
+          await updateItemQuantity(itemId, nextQuantity)
+          toast.success(`Quantity updated to ${nextQuantity}`, { duration: 2000 })
+        }
+      } catch (error) {
+        toast.error('Failed to update quantity', { duration: 3000 })
+      }
+    })
+  }, [updateItemQuantity, itemId, nextQuantity])
 
   return (
-    <form
-      action={async () => {
-        await optimisticUpdate(payload.merchandiseId, type);
-        actionWithVariant();
-      }}
-    >
-      <SubmitButton type={type} />
-      <p aria-live="polite" className="sr-only" role="status">
-        {message}
-      </p>
-    </form>
-  );
-}
+    <QuantityButton
+      type={type}
+      onClick={handleClick}
+      disabled={isPending || isLoading || nextQuantity < 0}
+    />
+  )
+})

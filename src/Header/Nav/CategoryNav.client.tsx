@@ -34,12 +34,12 @@ export const CategoryNavClient: React.FC<CategoryNavClientProps> = ({ categoryTr
             {categoryTree.map(category => (
               <div key={category.id} className="flex flex-col gap-2">
                 <h3 className="font-bold text-lg mb-2 border-b pb-2">
-                  <Link href={`/collections/${category.slug}`} onClick={() => setIsOpen(false)}>{category.title}</Link>
+                  <Link href={`/collections/${category.slug}`} onClick={() => setIsOpen(false)}>{category.name}</Link>
                 </h3>
                 <ul className='space-y-2'>
                   {category.children?.map(child => (
                     <li key={child.id}>
-                      <Link href={`/collections/${child.slug}`} onClick={() => setIsOpen(false)} className='hover:underline'>{child.title}</Link>
+                      <Link href={`/collections/${child.slug}`} onClick={() => setIsOpen(false)} className='hover:underline'>{child.name}</Link>
                     </li>
                   ))}
                 </ul>
@@ -52,7 +52,7 @@ export const CategoryNavClient: React.FC<CategoryNavClientProps> = ({ categoryTr
                             {typeof product.featuredImage?.url === 'object' &&
                                 <Media resource={product.featuredImage.url} className='w-full h-32 object-cover rounded-md mb-2' />
                             }
-                            <span className='text-center text-sm font-semibold'>{product.title}</span>
+                            <span className='text-center text-sm font-semibold'>{product.name}</span>
                         </div>
                     </Link>
                 ))}

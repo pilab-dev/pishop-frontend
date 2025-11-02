@@ -11,3 +11,13 @@ export const RowLabel: React.FC<RowLabelProps> = () => {
 
   return <div>{label}</div>
 }
+
+export const CollectionRowLabel: React.FC<RowLabelProps> = () => {
+  const data = useRowLabel<NonNullable<Header['collectionItems']>[number]>()
+
+  const label = data?.data?.label
+    ? `Featured collection ${data.rowNumber !== undefined ? data.rowNumber + 1 : ''}: ${data?.data?.label}`
+    : 'Row'
+
+  return <div>{label}</div>
+}

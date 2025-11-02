@@ -1,0 +1,387 @@
+# Product GraphQL Schema
+# Handles product catalog, categories, collections, and search functionality for the storefront
+
+"""
+A product represents a unique item in the store's catalog. It can be either a physical
+or digital good that can be purchased by customers.
+"""
+type Product {
+  "Unique identifier for the product"
+  id: ID!
+  "Stock keeping unit - unique product identifier code"
+  sku: String!
+  "The display name of the product"
+  name: String!
+  "URL-friendly version of the product name"
+  slug: String!
+  "Full description of the product in HTML format"
+  description: String
+  "Brief summary of the product"
+  shortDescription: String
+  "The standard selling price of the product"
+  basePrice: Money!
+  "Minimum price across all variants (if product has variants)"
+  minPrice: Money
+  "Maximum price across all variants (if product has variants)"
+  maxPrice: Money
+  "Original or MSRP price for comparison"
+  compareAtPrice: Money
+  "The cost to acquire or produce the product"
+  costPrice: Money
+  "The purchase price (cost to acquire) for margin calculation"
+  purchasePrice: Money
+  "Whether the product is currently available for purchase"
+  isActive: Boolean!
+  "Indicates if the product is a digital download rather than physical item"
+  isDigital: Boolean!
+  "Weight of the product in the default unit (typically grams)"
+  weight: Float
+  "Physical dimensions of the product"
+  dimensions: ProductDimensions
+  "List of product images in display order"
+  images: [Image!]!
+  "Available variations of the product"
+  variants: [ProductVariant!]!
+  "Configurable options for this product"
+  options: [ProductOptionGroup!]!
+  "The primary category this product belongs to"
+  category: Category
+  "Collections this product is part of"
+  collections: [Collection!]!
+  "Keywords or labels associated with the product"
+  tags: [String!]!
+  "Search engine optimization metadata"
+  seo: SEO
+  "Stock and inventory tracking information"
+  inventory: ProductInventory
+  "Timestamp when the product was first created"
+  createdAt: Time!
+  "Timestamp when the product was last modified"
+  updatedAt: Time!
+}
+
+"""
+Physical dimensions of a product, used for shipping calculations and display
+"""
+type ProductDimensions {
+  "Length of the product in the specified unit"
+  length: Float
+  "Width of the product in the specified unit"
+  width: Float
+  "Height of the product in the specified unit"
+  height: Float
+  "Unit of measurement (e.g., cm, inches)"
+  unit: String
+}
+
+"""
+A specific variation of a product, with its own unique combination of options,
+price, and inventory tracking
+"""
+type ProductVariant {
+  "Unique identifier for the variant"
+  id: ID!
+  "Stock keeping unit - unique identifier code for this variant"
+  sku: String!
+  "URL-friendly version of the variant name"
+  slug: String!
+  "Display name of this variant"
+  name: String!
+  "Selling price specific to this variant"
+  price: Money!
+  "Original or MSRP price for comparison"
+  compareAtPrice: Money
+  "Cost to acquire or produce this variant"
+  costPrice: Money
+  "Whether this variant is available for purchase"
+  isActive: Boolean!
+  "Weight of this variant in the default unit"
+  weight: Float
+  "Physical dimensions specific to this variant"
+  dimensions: ProductDimensions
+  "Images specific to this variant"
+  images: [Image!]!
+  "Selected options that define this variant"
+  options: [ProductOption!]!
+  "Stock and inventory tracking for this variant"
+  inventory: ProductInventory
+  "Timestamp when the variant was created"
+  createdAt: Time!
+  "Timestamp when the variant was last modified"
+  updatedAt: Time!
+}
+
+"""
+An individual option selection for a product variant
+(e.g., "Color: Blue" or "Size: Large")
+"""
+type ProductOption {
+  "Unique identifier for this option"
+  id: ID!
+  "Name of the option (e.g., 'Color', 'Size')"
+  name: String!
+  "Selected value for this option (e.g., 'Blue', 'Large')"
+  value: String!
+}
+
+"""
+A group of available options for a product
+(e.g., all available colors or sizes)
+"""
+type ProductOptionGroup {
+  "Name of the option group (e.g., 'Color', 'Size')"
+  name: String!
+  "List of all possible values for this option"
+  values: [String!]!
+}
+
+"""
+Inventory tracking information for a product or variant
+"""
+type ProductInventory {
+  "Whether stock levels should be tracked for this item"
+  trackQuantity: Boolean!
+  "Current stock level (null if not tracking quantity)"
+  quantity: Int
+  "Whether orders can be placed when out of stock"
+  allowBackorder: Boolean!
+  "Stock keeping unit for inventory tracking"
+  sku: String
+  "Barcode or UPC for the item"
+  barcode: String
+}
+
+"""
+A category represents a hierarchical classification of products
+in the store's catalog
+"""
+type Category {
+  "Unique identifier for the category"
+  id: ID!
+  "Display name of the category"
+  name: String!
+  "URL-friendly version of the category name"
+  slug: String!
+  "Detailed description of the category"
+  description: String
+  "Featured image for the category"
+  image: Image
+  "Parent category if this is a subcategory"
+  parent: Category
+  "List of subcategories under this category"
+  children: [Category!]!
+  "Products assigned to this category"
+  products: [Product!]!
+  "Search engine optimization metadata"
+  seo: SEO
+  "Whether this category is currently visible in the storefront"
+  isActive: Boolean!
+  "Position for sorting in category lists"
+  sortOrder: Int
+  "Timestamp when the category was created"
+  createdAt: Time!
+  "Timestamp when the category was last modified"
+  updatedAt: Time!
+}
+
+"""
+A node in the category hierarchy tree, representing a category
+with its children and metadata
+"""
+type CategoryTreeNode {
+  "The category data for this node"
+  category: Category!
+  "Child categories in the hierarchy"
+  children: [CategoryTreeNode!]!
+  "Number of products in this category and all subcategories"
+  productCount: Int!
+  "Depth level in the hierarchy (root = 0)"
+  level: Int!
+}
+
+"""
+A collection is a curated group of products that can be used
+for seasonal promotions, themes, or special offers
+"""
+type Collection {
+  "Unique identifier for the collection"
+  id: ID!
+  "Display name of the collection"
+  name: String!
+  "URL-friendly version of the collection name"
+  slug: String!
+  "Detailed description of the collection"
+  description: String
+  "Featured image for the collection"
+  image: Image
+  "Products included in this collection"
+  products: [Product!]!
+  "Search engine optimization metadata"
+  seo: SEO
+  "Whether this collection is currently visible in the storefront"
+  isActive: Boolean!
+  "Position for sorting in collection lists"
+  sortOrder: Int
+  "Timestamp when the collection was created"
+  createdAt: Time!
+  "Timestamp when the collection was last modified"
+  updatedAt: Time!
+}
+
+"""
+Search Engine Optimization metadata for products, categories,
+and collections
+"""
+type SEO {
+  "Meta title for search engines"
+  title: String
+  "Meta description for search engines"
+  description: String
+  "Meta keywords for search engines"
+  keywords: [String!]!
+}
+
+"""
+Input parameters for searching and filtering products
+in the catalog
+"""
+input ProductSearchInput {
+  "Text to search for in product names and descriptions"
+  query: String
+  "Filter by category slug"
+  category: String
+  "Filter by collection slug"
+  collection: String
+  "Minimum price filter"
+  priceMin: Int
+  "Maximum price filter"
+  priceMax: Int
+  "Filter for products in stock"
+  inStock: Boolean
+  "Filter by product tags"
+  tags: [String!]
+  "How to sort the results"
+  sortBy: ProductSortBy = RELEVANCE
+  "Direction of the sort"
+  sortOrder: SortOrder = DESC
+  "Pagination parameters"
+  pagination: PaginationInput
+}
+
+"""
+Available sorting options for product search results
+"""
+enum ProductSortBy {
+  "Sort by search relevance score"
+  RELEVANCE
+  "Sort by price, lowest first"
+  PRICE_LOW_TO_HIGH
+  "Sort by price, highest first"
+  PRICE_HIGH_TO_LOW
+  "Sort by creation date, newest first"
+  NEWEST
+  "Sort by creation date, oldest first"
+  OLDEST
+  "Sort by number of sales"
+  BEST_SELLING
+  "Sort alphabetically by name"
+  ALPHABETICAL
+}
+
+
+input PriceRangeInput {
+  min: Int
+  max: Int
+}
+
+"""
+Response type for product search operations, including results
+and available filters
+"""
+type ProductSearchResponse {
+  "List of products matching the search criteria"
+  products: [Product!]!
+  "Pagination information for the results"
+  pagination: PaginationInfo!
+  "Available filters based on the current results"
+  filters: ProductFilters!
+  "Total number of products matching the criteria"
+  total: Int!
+}
+
+"""
+Aggregated filter options available for the current search results
+"""
+type ProductFilters {
+  "Available category filters"
+  categories: [CategoryFilter!]!
+  "Available collection filters"
+  collections: [CollectionFilter!]!
+  "Available price range filter"
+  priceRange: PriceRangeFilter!
+  "Available tag filters"
+  tags: [TagFilter!]!
+}
+
+"""
+Category-based filter option with product counts
+"""
+type CategoryFilter {
+  "Category identifier"
+  id: ID!
+  "Category name"
+  name: String!
+  "Number of products in this category"
+  count: Int!
+}
+
+"""
+Collection-based filter option with product counts
+"""
+type CollectionFilter {
+  "Collection identifier"
+  id: ID!
+  "Collection name"
+  name: String!
+  "Number of products in this collection"
+  count: Int!
+}
+
+"""
+Price range filter showing the available price spectrum
+"""
+type PriceRangeFilter {
+  "Minimum price in the current results"
+  min: Int!
+  "Maximum price in the current results"
+  max: Int!
+}
+
+"""
+Tag-based filter option with product counts
+"""
+type TagFilter {
+  "Tag name"
+  name: String!
+  "Number of products with this tag"
+  count: Int!
+}
+
+extend type Query {
+  "List products with optional pagination and filtering"
+  products(pagination: PaginationInput, filter: ProductFilterInput): [Product!]!
+  "Get a single product by ID or slug, optionally with a specific variant"
+  product(id: ID, slug: String, variantSlug: String): Product
+  "Search products by fulltext, category, collection, or other criteria"
+  searchProducts(input: ProductSearchInput!): ProductSearchResponse!
+  "List categories with optional pagination"
+  categories(pagination: PaginationInput): [Category!]!
+  "Get a single category by ID or slug"
+  category(id: ID, slug: String): Category
+  "Get the complete category tree hierarchy with optional filtering"
+  categoryTree(includeInactive: Boolean, maxDepth: Int, rootSlug: String, includeCounts: Boolean, sortBy: String, sortDirection: String): [CategoryTreeNode!]!
+  "List collections with optional pagination"
+  collections(pagination: PaginationInput): [Collection!]!
+  "Get a single collection by ID or slug"
+  collection(id: ID, slug: String): Collection
+}

@@ -23,6 +23,9 @@ import {
 } from '@payloadcms/plugin-seo/fields'
 import { hero } from '@/heros/config'
 
+import { tagField } from '@/fields/tag'
+
+
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
   access: {
@@ -64,6 +67,11 @@ export const Pages: CollectionConfig<'pages'> = {
       name: 'title',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'tags',
+      type: 'array',
+      fields: [...tagField()],
     },
     {
       name: 'elements',

@@ -1,0 +1,137 @@
+# Order GraphQL Schema
+# Handles order management and processing
+
+# Order type
+type Order {
+  id: ID!
+  orderNumber: String!
+  customerId: ID
+  customerEmail: String!
+  status: OrderStatus!
+  items: [OrderItem!]!
+  totals: OrderTotals!
+  appliedCoupons: [AppliedCoupon!]!
+  shipping: OrderShipping
+  payment: OrderPayment
+  billing: OrderBilling
+  tracking: OrderTracking
+  metadata: JSON
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+# Order item
+type OrderItem {
+  id: ID!
+  productId: ID!
+  variantId: ID
+  product: Product!
+  variant: ProductVariant
+  quantity: Int!
+  unitPrice: Money!
+  totalPrice: Money!
+  discounts: [OrderItemDiscount!]!
+  appliedDiscounts: [AppliedItemDiscount!]!
+}
+
+# Order totals
+type OrderTotals {
+  subtotal: Money!
+  tax: Money!
+  shipping: Money!
+  discount: Money!
+  total: Money!
+  currency: String!
+}
+
+# Order shipping
+type OrderShipping {
+  method: ShippingMethod!
+  address: Address!
+  cost: Money!
+  trackingNumber: String
+  status: ShippingStatus!
+  estimatedDelivery: Time
+}
+
+# Order payment
+type OrderPayment {
+  id: ID!
+  method: PaymentMethod!
+  status: PaymentStatus!
+  amount: Money!
+  currency: String!
+  transactionId: String
+  processedAt: Time
+}
+
+# Order billing
+type OrderBilling {
+  address: Address!
+  taxId: String
+  company: String
+}
+
+# Order tracking
+type OrderTracking {
+  status: OrderStatus!
+  history: [OrderStatusHistory!]!
+  estimatedDelivery: Time
+  trackingNumber: String
+  trackingUrl: String
+}
+
+# Order status history
+type OrderStatusHistory {
+  status: OrderStatus!
+  timestamp: Time!
+  note: String
+  updatedBy: String
+}
+
+# Order status
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+  RETURNED
+}
+
+# Shipping status
+enum ShippingStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+  RETURNED
+}
+
+# Order item discount
+type OrderItemDiscount {
+  id: ID!
+  discountId: ID!
+  couponCode: String
+  amount: Money!
+  description: String!
+  appliedAt: Time!
+  isActive: Boolean!
+}
+
+# Order queries
+extend type Query {
+  order(id: ID!): Order
+  orders(userId: ID, customerEmail: String, pagination: PaginationInput): [Order!]!
+  orderByNumber(orderNumber: String!): Order
+}
+
+# Order mutations
+extend type Mutation {
+  createOrder(input: CreateOrderInput!): CreateOrderResponse!
+}
+

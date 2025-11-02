@@ -1,7 +1,7 @@
 'use client'
 
+import { Product } from '@/lib/client'
 import { formatCurrency } from '@/lib/formatCurrrency'
-import { Product } from '@/payload-types'
 import { useState } from 'react'
 import { ImageMedia } from '../Media/ImageMedia'
 import ProductButtons from './product-buttons'
@@ -40,30 +40,24 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
         className="products-font text-gray-600 text-xl font-bold mb-1 
       md:text-medium"
       >
-        {product.title}
+        {product.name}
       </h3>
       <p className="products-font text-md uppercase text-gray-600 mb-6 md:text-md">
         Price:
         <span className="text-primary-600 font-semibold ml-1">
-          {formatCurrency(product.priceRange?.minVariantPrice?.amount ?? 0).trimEnd()}
+          {formatCurrency(product.basePrice?.amount ?? 0).trimEnd()}
           ,00
         </span>{' '}
         <span className="text-gray-400 italic">HUF</span>
       </p>
 
-      <ImageMedia
-        alt={product.title}
-        resource={product.featuredImage.url}
-        className="w-full h-80 object-cover my-3 rounded-md md:h-80 lg:h-[250px]"
-      />
-
-      {/* <img
-        src={product.featuredImage?.url as string}
-        alt={product.title}
-        className="w-full h-80
-        object-cover my-3 rounded-md 
-        md:h-80 lg:h-[250px]"
-      /> */}
+      {product.images && product.images[0] && (
+        <ImageMedia
+          alt={product.images[0].altText || product.name}
+          resource={product.images[0]}
+          className="w-full h-80 object-cover my-3 rounded-md md:h-80 lg:h-[250px]"
+        />
+      )}
       <p
         className="products-font text-sm text-gray-600"
         dangerouslySetInnerHTML={{
@@ -73,7 +67,7 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
 
       <div className="absolute bottom-0 left-0 right-0">
         <div className="flex flex-row justify-center">
-          <ProductButtons show={hover} handle={product.slug || ''} />
+          <ProductButtons product={product} show={hover} handle={product.slug} />
         </div>
       </div>
     </div>

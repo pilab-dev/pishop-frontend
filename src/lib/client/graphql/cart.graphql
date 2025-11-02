@@ -1,0 +1,455 @@
+"""
+Cart represents a shopping cart for both guest and authenticated users.
+Supports cart items, discounts, coupons, gift cards, and shipping calculations.
+"""
+type Cart {
+  "Unique cart identifier"
+  id: ID!
+  
+  "User ID if cart belongs to authenticated user"
+  userId: ID
+  
+  "Session ID for guest carts or temporary cart tracking"
+  sessionId: ID!
+  
+  "List of items in the cart"
+  items: [CartItem!]!
+  
+  "Calculated cart totals including tax, shipping, and discounts"
+  totals: CartTotals!
+  
+  "Applied coupons and promotions (both manual and auto-applied)"
+  appliedCoupons: [AppliedCoupon!]!
+  
+  "Gift cards booked for this cart with their amounts and expiration"
+  bookedGiftCards: [BookedGiftCard!]!
+  
+  "Shipping method and address information"
+  shipping: CartShipping
+  
+  "Additional metadata stored as JSON"
+  metadata: JSON
+  
+  "When the cart expires (for guest carts)"
+  expiresAt: Time
+  
+  "When the cart was created"
+  createdAt: Time!
+  
+  "When the cart was last updated"
+  updatedAt: Time!
+}
+
+"""
+CartItem represents a single item in the shopping cart.
+Includes product information, pricing, quantity, and applied discounts.
+"""
+type CartItem {
+  "Unique cart item identifier"
+  id: ID!
+  
+  "Product ID reference"
+  productId: ID!
+  
+  "Product variant ID if applicable"
+  variantId: ID
+  
+  "Full product details"
+  product: Product!
+  
+  "Product variant details if selected"
+  variant: ProductVariant
+  
+  "Quantity of this item in the cart"
+  quantity: Int!
+  
+  "Price per unit"
+  unitPrice: Money!
+  
+  "Total price (unitPrice × quantity)"
+  totalPrice: Money!
+  
+  "Per-item applied discounts from coupons or promotions"
+  appliedDiscounts: [AppliedItemDiscount!]!
+  
+  "Additional metadata stored as JSON"
+  metadata: JSON
+  
+  "When the item was added to cart"
+  addedAt: Time!
+  
+  "When the item was last updated"
+  updatedAt: Time!
+}
+
+"""
+CartTotals contains all calculated totals for the cart.
+Includes subtotal, tax, shipping, discounts, and final total.
+"""
+type CartTotals {
+  "Sum of all item prices before tax and shipping"
+  subtotal: Money!
+  
+  "Calculated tax amount"
+  tax: Money!
+  
+  "Shipping cost"
+  shipping: Money!
+  
+  "Total discount amount applied"
+  discount: Money!
+  
+  "Final total amount to be paid"
+  total: Money!
+  
+  "Total number of items in cart"
+  itemCount: Int!
+  
+  "Total weight of all items (if applicable)"
+  weight: Float
+}
+
+
+"""
+AppliedCoupon represents a coupon or promotion applied to the cart.
+Supports both manually entered coupons and auto-applied promotions.
+This is the unified discount model that replaces legacy CartDiscount.
+"""
+type AppliedCoupon {
+  "Unique applied coupon identifier"
+  id: ID!
+  
+  "Coupon code"
+  couponCode: String!
+  
+  "Reference to the discount definition"
+  discountId: ID!
+  
+  "Source of the coupon (manual or auto-applied)"
+  source: CouponSource!
+  
+  "When the coupon was applied"
+  appliedAt: Time!
+  
+  "User who applied the coupon (null for auto-applied)"
+  appliedBy: ID
+  
+  "Whether the coupon is currently active"
+  isActive: Boolean!
+  
+  "Human-readable description"
+  description: String
+  
+  "Total discount amount on cart items"
+  discountAmount: Money!
+  
+  "Discount amount applied to shipping"
+  shippingDiscount: Money
+  
+  "Whether this coupon provides free shipping"
+  includesFreeShipping: Boolean!
+}
+
+"""
+CouponSource indicates how a coupon was applied to the cart.
+"""
+enum CouponSource {
+  "User manually entered and applied the coupon"
+  MANUAL
+  
+  "System automatically applied the promotion"
+  AUTO
+}
+
+"""
+BookedGiftCard represents a gift card that has been reserved for this cart.
+The amount is temporarily held until checkout is completed or the booking expires.
+"""
+type BookedGiftCard {
+  "Gift card code"
+  code: String!
+  
+  "Amount currently booked from this gift card"
+  bookedAmount: Money!
+  
+  "Remaining balance available on the gift card"
+  availableBalance: Money!
+  
+  "Whether this gift card provides free shipping"
+  freeShipping: Boolean!
+  
+  "When the gift card was booked"
+  bookedAt: Time!
+  
+  "When the booking expires and funds are released"
+  bookingExpiresAt: Time!
+}
+
+"""
+AppliedItemDiscount represents a discount applied to a specific cart item.
+Tracks per-item discounts from coupons or promotions.
+"""
+type AppliedItemDiscount {
+  "Unique applied discount identifier"
+  id: ID!
+  
+  "Reference to the discount definition"
+  discountId: ID!
+  
+  "Coupon code that triggered this discount"
+  couponCode: String
+  
+  "Discount amount for this item"
+  amount: Money!
+  
+  "Human-readable description"
+  description: String!
+  
+  "When the discount was applied"
+  appliedAt: Time!
+  
+  "Whether the discount is currently active"
+  isActive: Boolean!
+}
+
+"""
+CartShipping contains shipping information for the cart.
+Includes selected method, delivery destination, and estimated delivery time.
+"""
+type CartShipping {
+  "Selected shipping method"
+  method: ShippingMethod
+
+  "Shipping destination (address, pickup point, or parcel box)"
+  destination: ShippingDestination
+
+  "Calculated shipping cost"
+  cost: Money!
+
+  "Estimated delivery time in days"
+  estimatedDays: Int
+
+  "Tracking number (if available)"
+  trackingNumber: String
+}
+
+"""
+ShippingProvider represents a shipping carrier or service provider.
+"""
+type ShippingProvider {
+  "Unique provider identifier"
+  id: ID!
+
+  "Display name of the provider"
+  name: String!
+
+  "Provider description"
+  description: String
+
+  "Supported delivery types"
+  supportedDeliveryTypes: [DeliveryType!]!
+
+  "Whether the provider is currently active"
+  isActive: Boolean!
+
+  "Provider logo URL"
+  logoUrl: String
+
+  "Contact information"
+  contactInfo: String
+}
+
+"""
+DeliveryType represents the type of delivery method.
+"""
+enum DeliveryType {
+  "Home delivery to customer's address"
+  HOME_DELIVERY
+
+  "Pickup from a designated pickup point"
+  PICKUP_POINT
+
+  "Delivery to a parcel box/locker"
+  PARCEL_BOX
+}
+
+"""
+ShippingMethod represents a shipping option available for the cart.
+Includes pricing, delivery estimates, provider info, and applicable zones.
+"""
+type ShippingMethod {
+  "Unique shipping method identifier"
+  id: ID!
+
+  "Display name of the shipping method"
+  name: String!
+
+  "Detailed description"
+  description: String
+
+  "Shipping provider offering this method"
+  provider: ShippingProvider!
+
+  "Delivery type for this method"
+  deliveryType: DeliveryType!
+
+  "Base cost for this shipping method"
+  cost: Money!
+
+  "Estimated delivery time in days"
+  estimatedDays: Int
+
+  "Whether this method is currently available"
+  isActive: Boolean!
+
+  "Shipping zones where this method is available"
+  zones: [ShippingZone!]!
+}
+
+"""
+ShippingZone defines a geographic area with specific shipping rates.
+"""
+type ShippingZone {
+  "Unique zone identifier"
+  id: ID!
+  
+  "Display name of the zone"
+  name: String!
+  
+  "List of country codes in this zone"
+  countries: [String!]!
+  
+  "Shipping cost for this zone"
+  cost: Money!
+}
+
+"""
+DiscountType defines the different types of discounts available.
+"""
+enum DiscountType {
+  "Percentage-based discount (e.g., 10% off)"
+  PERCENTAGE
+  
+  "Fixed amount discount (e.g., $5 off)"
+  FIXED_AMOUNT
+  
+  "Free shipping discount"
+  FREE_SHIPPING
+  
+  "Buy X get Y discount (e.g., buy 2 get 1 free)"
+  BUY_X_GET_Y
+}
+
+"""
+DiscountValue contains the value details for a discount.
+"""
+type DiscountValue {
+  "Type of discount"
+  type: DiscountType!
+  
+  "Numeric value (percentage or amount)"
+  value: Float!
+  
+  "Currency code (for fixed amount discounts)"
+  currency: String
+}
+
+extend type Query {
+  "Get a cart by its unique identifier"
+  cart(
+    "Cart ID"
+    id: ID!
+  ): Cart
+
+  "List carts for a user or session"
+  carts(
+    "Filter by user ID"
+    userId: ID
+
+    "Filter by session ID"
+    sessionId: ID
+  ): [Cart!]!
+
+  "Get all available shipping providers"
+  shippingProviders: [ShippingProvider!]!
+
+  "Get shipping methods for a specific provider"
+  shippingMethods(
+    "Provider ID"
+    providerId: ID!
+  ): [ShippingMethod!]!
+
+  "Get available pickup points for an address"
+  pickupPoints(
+    "Address to search around"
+    address: AddressInput!
+
+    "Maximum number of results"
+    limit: Int
+  ): [PickupPoint!]!
+
+  "Get available parcel boxes for an address"
+  parcelBoxes(
+    "Address to search around"
+    address: AddressInput!
+
+    "Maximum number of results"
+    limit: Int
+  ): [ParcelBox!]!
+}
+
+extend type Mutation {
+  "Create a new shopping cart"
+  createCart(
+    "Cart creation input"
+    input: CreateCartInput!
+  ): CreateCartResponse!
+  
+  "Add an item to the cart"
+  addToCart(
+    "Item details to add"
+    input: AddToCartInput!
+  ): AddToCartResponse!
+  
+  "Update quantity or details of an existing cart item"
+  updateCartItem(
+    "Updated item details"
+    input: UpdateCartItemInput!
+  ): UpdateCartItemResponse!
+  
+  "Remove an item from the cart"
+  removeFromCart(
+    "Item to remove"
+    input: RemoveFromCartInput!
+  ): RemoveFromCartResponse!
+  
+  "Apply a discount code or coupon to the cart"
+  applyDiscount(
+    "Discount code and details"
+    input: ApplyDiscountInput!
+  ): ApplyDiscountResponse!
+  
+  "Remove a previously applied discount"
+  removeDiscount(
+    "Discount to remove"
+    input: RemoveDiscountInput!
+  ): RemoveDiscountResponse!
+  
+  "Set or change the shipping method for the cart"
+  setShippingMethod(
+    "Shipping method selection"
+    input: SetShippingMethodInput!
+  ): SetShippingMethodResponse!
+  
+  "Merge a guest cart with an authenticated user's cart"
+  mergeCarts(
+    "Carts to merge"
+    input: MergeCartsInput!
+  ): MergeCartsResponse!
+  
+  "Clear all items from a cart"
+  clearCart(
+    "Cart ID to clear"
+    cartId: ID!
+  ): ClearCartResponse!
+}

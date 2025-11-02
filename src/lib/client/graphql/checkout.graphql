@@ -1,0 +1,134 @@
+# Checkout GraphQL Schema
+# Handles the checkout process including validation, shipping, and payment setup
+
+# Checkout session
+type CheckoutSession {
+  id: ID!
+  cartId: ID!
+  cart: Cart!
+  customer: CheckoutCustomer
+  shipping: CheckoutShipping
+  payment: CheckoutPayment
+  totals: CheckoutTotals!
+  status: CheckoutStatus!
+  expiresAt: Time!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+# Checkout customer
+type CheckoutCustomer {
+  id: ID
+  email: String!
+  firstName: String
+  lastName: String
+  phone: String
+  isGuest: Boolean!
+  billingAddress: Address
+  shippingAddress: Address
+}
+
+# Checkout shipping
+type CheckoutShipping {
+  method: ShippingMethod!
+  address: Address!
+  cost: Money!
+  estimatedDays: Int
+  trackingNumber: String
+}
+
+# Checkout payment
+type CheckoutPayment {
+  intentId: String!
+  clientSecret: String!
+  methods: [PaymentMethod!]!
+  selectedMethod: PaymentMethod
+  status: PaymentStatus!
+}
+
+# Payment method
+type PaymentMethod {
+  id: ID!
+  type: PaymentMethodType!
+  name: String!
+  description: String
+  isActive: Boolean!
+  metadata: JSON
+}
+
+enum PaymentMethodType {
+  CREDIT_CARD
+  DEBIT_CARD
+  PAYPAL
+  APPLE_PAY
+  GOOGLE_PAY
+  BANK_TRANSFER
+  CASH_ON_DELIVERY
+  CRYPTOCURRENCY
+}
+
+# Checkout totals
+type CheckoutTotals {
+  subtotal: Money!
+  tax: Money!
+  shipping: Money!
+  discount: Money!
+  total: Money!
+  currency: String!
+}
+
+# Checkout status
+enum CheckoutStatus {
+  DRAFT
+  PENDING_PAYMENT
+  PAYMENT_FAILED
+  PAYMENT_SUCCEEDED
+  COMPLETED
+  EXPIRED
+  CANCELLED
+}
+
+# Payment status
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  REQUIRES_ACTION
+}
+
+
+
+# Checkout validation errors
+type CheckoutValidationError {
+  field: String!
+  message: String!
+  code: String!
+}
+
+# Available shipping methods
+type AvailableShippingMethods {
+  methods: [ShippingMethod!]!
+  defaultMethod: ShippingMethod
+}
+
+# Available payment methods
+type AvailablePaymentMethods {
+  methods: [PaymentMethod!]!
+  defaultMethod: PaymentMethod
+}
+
+# Checkout queries
+extend type Query {
+  checkoutSession(id: ID!): CheckoutSession
+}
+
+# Checkout mutations
+extend type Mutation {
+  createCheckout(input: CreateCheckoutInput!): CreateCheckoutResponse!
+  updateCheckoutCustomer(input: UpdateCheckoutCustomerInput!): UpdateCheckoutCustomerResponse!
+  updateCheckoutShipping(input: UpdateCheckoutShippingInput!): UpdateCheckoutShippingResponse!
+  validateCheckout(input: ValidateCheckoutInput!): ValidateCheckoutResponse!
+  processPayment(input: ProcessPaymentInput!): ProcessPaymentResponse!
+}

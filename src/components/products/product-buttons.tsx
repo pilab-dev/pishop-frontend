@@ -1,30 +1,44 @@
-"use client";
+'use client'
 
-import { TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
-import { Tooltip, TooltipProvider } from "@ui/tooltip";
-import { AnimatePresence, motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { FC } from "react";
-import { FaArrowsAltH, FaCartPlus, FaEye, FaRegHeart } from "react-icons/fa";
+import { AnimatePresence, motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
+import { FC, useCallback, useMemo } from 'react'
+import { FaArrowsAltH, FaCartPlus, FaEye, FaRegHeart } from 'react-icons/fa'
+
+import type { Product } from '@/lib/client'
+import { cn } from '@/lib/utils'
+import { useCartStore } from '@/store/cart-store'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@ui/tooltip'
 
 type ProductButtonsProps = {
-  show: boolean;
-  notForSale?: boolean;
-  noWishlist?: boolean;
-  noCompare?: boolean;
-  hideDetails?: boolean;
-  handle: string;
-};
+  show: boolean
+  product?: Product
+  handle?: string
+  notForSale?: boolean
+  noWishlist?: boolean
+  noCompare?: boolean
+  hideDetails?: boolean
+}
 
 export const ProductButtons: FC<ProductButtonsProps> = ({
   show = false,
+  product,
+  handle,
   notForSale = false,
   noWishlist = false,
   noCompare = false,
   hideDetails = false,
-  handle,
 }) => {
-  const router = useRouter();
+  const router = useRouter()
+  const { addToCart, isLoading } = useCartStore()
+
+  const resolvedHandle = handle ?? product?.slug ?? ''
+
+  const isCartDisabled = useMemo(() => {
+    if (notForSale) return true
+    if (!product) return true
+    return !product.isActive
+  }, [notForSale, product])
 
   const buttonVariants = {
     hidden: {
@@ -38,18 +52,29 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
       scale: 1,
       y: 0,
     },
-  };
+  }
 
   const whileHover = {
     scale: 1.3,
     transition: { duration: 0.2, delay: 0 },
-  };
+  }
+
+  const handleAddToCart = useCallback(() => {
+    if (!product || isCartDisabled) {
+      return
+    }
+
+    void addToCart(product, 1)
+  }, [addToCart, isCartDisabled, product])
 
   const handleNavigateTo = (location?: string) => () => {
-    if (!location) return;
+    if (!location) return
 
-    router.push(location);
-  };
+    router.push(location)
+  }
+
+  const baseButtonClasses =
+    'rounded-full p-3 text-white shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2'
 
   return (
     <TooltipProvider>
@@ -58,43 +83,52 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
           <div className="bottom-0 left-0 right-0 flex flex-row gap-2 pb-5">
             {!hideDetails && (
               <Tooltip>
-                <TooltipContent className="px-4 bg-primary rounded-sm">
-                  View details
-                </TooltipContent>
-
                 <TooltipTrigger asChild>
                   <motion.button
+                    type="button"
                     animate="visible"
                     exit="hidden"
                     initial="hidden"
                     role="link"
-                    data-href={`/product/${handle}`}
+                    aria-label="View details"
+                    data-href={resolvedHandle ? `/product/${resolvedHandle}` : undefined}
                     onClick={handleNavigateTo(
-                      handle ? `/product/${handle}` : undefined,
+                      resolvedHandle ? `/product/${resolvedHandle}` : undefined,
                     )}
                     transition={{ delay: 0, duration: 0.1 }}
                     variants={buttonVariants}
                     whileHover={whileHover}
-                    // disabled={noCompare}
-                    className="bg-gray-600 text-white p-3 drop-shadow rounded-full hover:bg-primary/90"
+                    className={cn(
+                      baseButtonClasses,
+                      'bg-gray-600 drop-shadow cursor-pointer hover:bg-primary/90',
+                    )}
                   >
                     <FaEye />
                   </motion.button>
                 </TooltipTrigger>
+                <TooltipContent className="rounded-sm bg-primary px-4">View details</TooltipContent>
               </Tooltip>
             )}
 
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
+                  type="button"
                   animate="visible"
-                  className="bg-blue-800 text-white p-3 drop-shadow rounded-full hover:bg-primary/90"
+                  aria-label="Compare product"
                   disabled={noCompare}
                   exit="hidden"
                   initial="hidden"
                   transition={{ delay: 0.1, duration: 0.15 }} // 100ms delay
                   variants={buttonVariants}
                   whileHover={whileHover}
+                  className={cn(
+                    baseButtonClasses,
+                    'bg-blue-800 drop-shadow',
+                    noCompare
+                      ? 'cursor-not-allowed opacity-60'
+                      : 'cursor-pointer hover:bg-primary/90',
+                  )}
                 >
                   <FaArrowsAltH />
                 </motion.button>
@@ -105,14 +139,22 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
+                  type="button"
                   animate="visible"
-                  className="bg-blue-800 text-white p-3 shadow-sm rounded-full hover:bg-primary/90"
+                  aria-label="Add to wishlist"
                   disabled={noWishlist}
                   exit="hidden"
                   initial="hidden"
                   transition={{ delay: 0.2, duration: 0.2 }} // 100ms delay
                   variants={buttonVariants}
                   whileHover={whileHover}
+                  className={cn(
+                    baseButtonClasses,
+                    'bg-blue-800',
+                    noWishlist
+                      ? 'cursor-not-allowed opacity-60'
+                      : 'cursor-pointer hover:bg-primary/90',
+                  )}
                 >
                   <FaRegHeart />
                 </motion.button>
@@ -123,25 +165,36 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.button
+                  type="button"
                   animate="visible"
-                  className="bg-blue-800 text-white p-3 shadow-sm rounded-full hover:bg-primary/90"
-                  disabled={notForSale}
+                  aria-label="Add to cart"
+                  aria-busy={isLoading}
+                  disabled={isCartDisabled}
                   exit="hidden"
                   initial="hidden"
                   transition={{ delay: 0.3, duration: 0.2 }}
                   variants={buttonVariants}
                   whileHover={whileHover}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleAddToCart}
+                  className={cn(
+                    baseButtonClasses,
+                    'bg-blue-800',
+                    isCartDisabled
+                      ? 'cursor-not-allowed opacity-60'
+                      : 'cursor-pointer hover:bg-primary/90',
+                  )}
                 >
-                  <FaCartPlus />
+                  <FaCartPlus className={cn(isLoading && 'animate-pulse')} />
                 </motion.button>
               </TooltipTrigger>
-              <TooltipContent>Add to cart</TooltipContent>
+              <TooltipContent>{isCartDisabled ? 'Unavailable' : 'Add to cart'}</TooltipContent>
             </Tooltip>
           </div>
         )}
       </AnimatePresence>
     </TooltipProvider>
-  );
-};
+  )
+}
 
-export default ProductButtons;
+export default ProductButtons
