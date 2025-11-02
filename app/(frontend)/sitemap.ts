@@ -8,7 +8,7 @@ type Route = {
 
 const baseUrl = process.env.NEXT_PUBLIC_DOMAIN_NAME
   ? `https://${process.env.NEXT_PUBLIC_DOMAIN_NAME}`
-  : "http://localhost:3000";
+  : "http://localhost:3001";
 
 export const dynamic = "force-dynamic";
 

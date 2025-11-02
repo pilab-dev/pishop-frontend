@@ -7,31 +7,13 @@ export function formatCurrency(
     const formatter = new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currencyCode,
-      currencyDisplay: "code",
-      maximumFractionDigits: 0,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
-    let formatted = formatter.format(amount);
 
-    // Add a colon after the currency symbol or code.
-    const parts = formatter.formatToParts(amount);
-    const currencyPart = parts.find((part) => part.type === "currency");
-
-    if (currencyPart) {
-      if (parts[0].type === "currency") {
-        formatted = formatted.replace(currencyPart.value, currencyPart.value);
-      } else {
-        formatted = formatted.replace(
-          currencyPart.value + " ",
-          currencyPart.value,
-        );
-      }
-    }
-
-    return formatted.replace("HUF", "");
+    return formatter.format(amount);
   } catch (error) {
-     
     console.error("Error formatting currency:", error);
-
-    return amount.toString(); // Fallback to plain number if formatting fails.
+    return `${currencyCode} ${amount.toFixed(2)}`; // Fallback format
   }
 }

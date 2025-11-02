@@ -32,7 +32,7 @@ export const defaultLexical = lexicalEditor({
     BlockquoteFeature(),
     ChecklistFeature(),
     LinkFeature({
-      enabledCollections: ['pages', 'posts', 'products', 'users'],
+      enabledCollections: ['pages', 'posts', 'users'],
       fields: ({ defaultFields }) => {
         const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
           if ('name' in field && field.name === 'url') return false

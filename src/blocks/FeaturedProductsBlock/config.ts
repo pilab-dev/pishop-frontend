@@ -15,8 +15,7 @@ export const FeaturedProductsBlock: Block = {
       fields: [
         {
           name: "product",
-          type: "relationship",
-          relationTo: "products",
+          type: "text",
         },
         {
           name: "tileType",

@@ -14,8 +14,7 @@ export const HotDealsBlock: Block = {
       fields: [
         {
           name: "product",
-          type: "relationship",
-          relationTo: "products",
+          type: "text",
         },
       ],
       required: true,

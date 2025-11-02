@@ -39,7 +39,13 @@ export function GridTileImage({
           src={src}
           {...props}
         />
-      ) : null}
+      ) : (
+        <div className="flex h-full w-full items-center justify-center bg-gray-100 dark:bg-gray-800">
+          <div className="text-center">
+            <div className="text-2xl text-gray-400">📷</div>
+          </div>
+        </div>
+      )}
       {label ? (
         <Label
           title={label.title}

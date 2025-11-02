@@ -1,0 +1,432 @@
+---
+alwaysApply: true
+---
+# Pishop Frontend - Cursor Rules
+
+## Tech Stack
+- **Framework**: Next.js 15.5.0 (App Router)
+- **CMS**: PayloadCMS 3.49.1
+- **Language**: TypeScript 5.6.3 (strict mode)
+- **Styling**: Tailwind CSS 4.1.12 with custom design tokens
+- **UI Components**: Radix UI primitives with custom shadcn/ui components
+- **State Management**: Zustand
+- **Database**: MongoDB with Mongoose adapter
+- **Package Manager**: pnpm
+
+## Project Structure
+
+### Directory Organization
+- `/app` - Next.js App Router pages and routes
+  - `/(frontend)` - Public-facing routes group
+  - `/(payload)` - PayloadCMS admin routes group
+  - `/api` - Next.js API route handlers
+- `/src` - Source code
+  - `/collections` - PayloadCMS collection configurations
+  - `/components` - React components
+    - `/ui` - shadcn/ui primitives (Radix UI wrappers)
+    - `/cart`, `/product`, `/products` - Feature-specific components
+  - `/fields` - Custom PayloadCMS field components and factories
+  - `/blocks` - PayloadCMS block configurations (config + component)
+  - `/heros` - Hero field configurations and components
+  - `/Header`, `/Footer` - PayloadCMS global configurations
+  - `/lib` - Utility functions and helpers
+  - `/utilities` - PayloadCMS utilities and helpers
+  - `/access` - PayloadCMS access control functions
+  - `/hooks` - PayloadCMS hooks (beforeChange, afterChange, etc.)
+  - `/providers` - React context providers
+  - `/store` - Zustand stores for client state
+  - `/plugins` - PayloadCMS plugins configuration
+  - `/search` - Search plugin configuration
+
+### Path Aliases
+- `@/*` → `./src/*`
+- `@/components/*` → `./src/components/*`
+- `@ui/*` → `./src/components/ui/*`
+- `@payload-config` → `./src/payload.config.ts`
+- `@/payload-types` → `./src/payload-types.ts`
+- `@/fields/*` → `./src/fields/*`
+
+## Code Style & Conventions
+
+### TypeScript
+- Use strict mode (enabled)
+- Prefer type imports: `import type { ... }`
+- Use generic types for PayloadCMS collections: `CollectionConfig<'collectionSlug'>`
+- Use `Promise<{ ... }>` type for Next.js async params
+- Avoid `any` - use `unknown` or proper types instead
+- Prefix unused variables with `_`: `_unusedVar`
+
+### React & Next.js
+- **Default to Server Components** - only use `'use client'` when necessary
+- Use async server components for data fetching
+- Use `cache()` from React for memoizing async functions
+- Prefer async server components over client-side data fetching when possible
+- Use Next.js Metadata API for SEO
+- Use `notFound()` for 404 handling
+
+### PayloadCMS
+- Define collection configs with TypeScript generics: `CollectionConfig<'slug'>`
+- Define global configs with TypeScript generics: `GlobalConfig`
+- Use PayloadCMS UI hooks: `useField`, `useForm`, `useFormFields`
+- Custom field components should extend PayloadCMS field types
+- Use PayloadCMS access control functions from `@/access`
+- Follow PayloadCMS block pattern: config file + component file
+- Use `defaultPopulate` in collection configs for type safety
+- Register blocks in `RenderBlocks.tsx` with matching `blockType` slug
+- Use hooks for side effects: `beforeChange`, `afterChange`, `afterDelete`
+- Use field factories (like `link`, `linkGroup`) for reusable field groups
+- Use Lexical editor features for rich text fields
+
+### Styling
+- Use Tailwind CSS utility classes
+- Use `cn()` utility from `@/lib/utils` for conditional classes
+- Prefer Tailwind over inline styles or CSS modules
+- Use design tokens from Tailwind config (CSS variables)
+- Use `class-variance-authority` for component variants
+- Use `tailwind-merge` via `cn()` to merge classes safely
+
+### Component Patterns
+- Use Radix UI primitives as base components
+- Create variants using `cva` (class-variance-authority)
+- Export component props interfaces
+- Use `React.forwardRef` for components that need refs
+- Client components should be in separate files or marked with `'use client'`
+
+### Imports
+- Use single quotes for imports
+- Group imports: external packages → internal absolute imports → relative imports
+- Use type imports: `import type { ... }` for types only
+- Use path aliases instead of relative paths when possible
+
+### Naming Conventions
+- Components: PascalCase (e.g., `ProductCard.tsx`)
+- Files: match component name
+- Utilities: camelCase (e.g., `formatCurrency.ts`)
+- Collections: PascalCase singular (e.g., `Pages`, `Posts`)
+- Constants: UPPER_SNAKE_CASE or camelCase depending on context
+
+### Code Formatting (Prettier)
+- Single quotes: `'string'`
+- Trailing comma: none
+- Print width: 100
+- Tab width: 2 spaces
+- Arrow parens: always
+- Use `prettier-plugin-tailwindcss` for class ordering
+
+## File Patterns
+
+### PayloadCMS Collections
+```typescript
+import type { CollectionConfig } from 'payload'
+
+export const CollectionName: CollectionConfig<'collection-slug'> = {
+  slug: 'collection-slug',
+  access: { ... },
+  admin: { ... },
+  fields: [ ... ],
+  // ...
+}
+```
+
+### Next.js Pages
+```typescript
+import { Metadata } from 'next'
+
+export const generateMetadata = async ({ params }: { params: Promise<{ ... }> }): Promise<Metadata> => {
+  // ...
+}
+
+export default async function Page({ params }: { params: Promise<{ ... }> }) {
+  // ...
+}
+```
+
+### Custom PayloadCMS Fields
+```typescript
+'use client'
+import { useField, useForm } from '@payloadcms/ui'
+
+export const CustomField: React.FC<CustomFieldProps> = ({ field, path }) => {
+  const { value, setValue } = useField({ path })
+  // ...
+}
+```
+
+### UI Components
+```typescript
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
+
+const componentVariants = cva('base-classes', {
+  variants: { ... },
+  defaultVariants: { ... }
+})
+
+export interface ComponentProps extends VariantProps<typeof componentVariants> {
+  // ...
+}
+
+export const Component = React.forwardRef<...>(({ className, ...props }, ref) => {
+  return <div className={cn(componentVariants({ ... }), className)} />
+})
+```
+
+### PayloadCMS Blocks
+```typescript
+// src/blocks/BlockName/config.ts
+import type { Block } from 'payload'
+
+export const BlockName: Block = {
+  slug: 'blockSlug',
+  interfaceName: 'BlockName',
+  fields: [ ... ],
+}
+
+// src/blocks/BlockName/Component.tsx
+import type { BlockName as BlockNameProps } from '@/payload-types'
+
+export const BlockName: React.FC<BlockNameProps> = ({ ...blockProps }) => {
+  return <div>...</div>
+}
+
+// Register in src/blocks/RenderBlocks.tsx
+const blockComponents = {
+  blockSlug: BlockName,
+  // ...
+}
+```
+
+### PayloadCMS Globals
+```typescript
+import type { GlobalConfig } from 'payload'
+
+export const GlobalName: GlobalConfig = {
+  slug: 'global-slug',
+  access: { read: () => true },
+  fields: [ ... ],
+  hooks: {
+    afterChange: [revalidationHook],
+  },
+}
+```
+
+### PayloadCMS Field Factories
+```typescript
+// src/fields/fieldName.ts
+import type { Field } from 'payload'
+import deepMerge from '@/utilities/deepMerge'
+
+type FieldFactory = (options?: { overrides?: Partial<Field> }) => Field
+
+export const fieldName: FieldFactory = ({ overrides = {} } = {}) => {
+  const field: Field = {
+    name: 'fieldName',
+    type: 'text',
+    // ...
+  }
+  
+  return deepMerge(field, overrides)
+}
+```
+
+### PayloadCMS Hooks
+```typescript
+import type { CollectionBeforeChangeHook } from 'payload'
+
+export const hookName: CollectionBeforeChangeHook = ({ data, operation, req }) => {
+  // Transform data
+  return { ...data, ...modifications }
+}
+```
+
+### Access Control Functions
+```typescript
+import type { AccessArgs } from 'payload'
+import type { User } from '@/payload-types'
+
+type AccessFunction = (args: AccessArgs<User>) => boolean
+
+export const accessName: AccessFunction = ({ req: { user } }) => {
+  return Boolean(user)
+}
+```
+
+### Next.js API Routes
+```typescript
+import { NextResponse } from 'next/server'
+
+export async function GET() {
+  return NextResponse.json({ data: '...' })
+}
+
+export async function POST(request: Request) {
+  const body = await request.json()
+  // Process request
+  return NextResponse.json({ result: '...' })
+}
+```
+
+### Zustand Stores
+```typescript
+import { create } from 'zustand'
+
+interface StoreState {
+  items: Item[]
+  addItem: (item: Item) => Promise<void>
+  fetchData: () => Promise<void>
+}
+
+export const useStore = create<StoreState>((set, get) => ({
+  items: [],
+  
+  addItem: async (item) => {
+    // Optimistic update
+    set((state) => ({ items: [...state.items, item] }))
+    
+    try {
+      // Server call
+      const result = await api.addItem(item)
+      // Update with server response
+      set({ items: result.items })
+    } catch (error) {
+      // Rollback on error
+      set(get())
+    }
+  },
+  
+  fetchData: async () => {
+    const data = await api.fetch()
+    set({ items: data })
+  },
+}))
+```
+
+## Best Practices
+
+1. **Server-First**: Prefer server components and server-side data fetching
+2. **Type Safety**: Leverage PayloadCMS generated types from `@/payload-types`
+3. **Reusability**: Create reusable components in `/src/components/ui`
+4. **Performance**: Use React `cache()` for expensive async operations
+5. **Accessibility**: Use Radix UI primitives which are accessible by default
+6. **Error Handling**: Use Next.js `notFound()` and error boundaries
+7. **SEO**: Use Next.js Metadata API for all pages
+8. **State**: Use Zustand for global client state, server state from PayloadCMS
+9. **Forms**: Use react-hook-form with zod validation
+10. **Styling**: Prefer Tailwind utility classes over custom CSS
+
+## Common Tasks
+
+### Adding a New PayloadCMS Collection
+1. Create config file in `/src/collections/CollectionName/index.ts`
+2. Export with proper TypeScript generics: `CollectionConfig<'slug'>`
+3. Add to `payload.config.ts` collections array
+4. Run `pnpm payload` to generate types
+5. Add access control functions from `@/access`
+6. Add hooks if needed (beforeChange, afterChange, etc.)
+
+### Adding a New Page
+1. Create page file in `/app/(frontend)/route-name/page.tsx`
+2. Add `generateMetadata` function for SEO
+3. Use async server component pattern
+4. Fetch data using PayloadCMS `payload.find()`
+5. Use `cache()` for memoizing expensive fetches
+6. Use `notFound()` for 404 handling
+
+### Creating a New UI Component
+1. Create component file in `/src/components/ui/ComponentName.tsx`
+2. Use Radix UI primitives as base
+3. Create variants with `cva`
+4. Use `cn()` for className merging
+5. Export props interface and component
+6. Use `React.forwardRef` if component needs ref
+
+### Custom PayloadCMS Field
+1. Create component in `/src/fields/field-name/FieldComponent.tsx`
+2. Mark with `'use client'`
+3. Use PayloadCMS UI hooks (`useField`, `useForm`)
+4. Create field config in `/src/fields/field-name/config.ts`
+5. Export field from `/src/fields/field-name/index.ts`
+
+### Adding a New PayloadCMS Block
+1. Create block config in `/src/blocks/BlockName/config.ts`
+2. Define with `Block` type and `interfaceName`
+3. Create component in `/src/blocks/BlockName/Component.tsx`
+4. Register in `/src/blocks/RenderBlocks.tsx` with matching slug
+5. Add block to collection's fields array
+6. Run `pnpm payload` to generate types
+
+### Adding a New API Route
+1. Create route file in `/app/api/route-name/route.ts`
+2. Export named functions: `GET`, `POST`, `PUT`, `DELETE`, etc.
+3. Use `NextResponse` for responses
+4. Handle errors appropriately
+5. Use proper HTTP status codes
+
+### Creating a Zustand Store
+1. Create store file in `/src/store/store-name.ts`
+2. Define state interface with actions
+3. Use `create` from zustand
+4. Implement optimistic updates for async actions
+5. Handle rollback on errors
+6. Export custom hook: `export const useStoreName = ...`
+
+## Dependencies to Remember
+
+- **PayloadCMS**: All `@payloadcms/*` packages
+  - `@payloadcms/ui` - Admin UI hooks and components
+  - `@payloadcms/richtext-lexical` - Rich text editor
+  - `@payloadcms/plugin-seo` - SEO fields
+  - `@payloadcms/plugin-search` - Search functionality
+  - `@payloadcms/plugin-redirects` - URL redirects
+  - `@payloadcms/plugin-form-builder` - Form builder
+- **Radix UI**: `@radix-ui/react-*` for UI primitives
+- **Styling**: `tailwindcss`, `clsx`, `tailwind-merge`, `class-variance-authority`
+- **Forms**: `react-hook-form`, `@hookform/resolvers`, `zod`
+- **State**: `zustand` for client-side global state
+- **Utils**: `lucide-react` for icons
+- **GraphQL**: `@apollo/client`, `graphql` for API client
+
+## Additional Patterns
+
+### Revalidation Hooks
+- Use hooks to revalidate Next.js cache after PayloadCMS changes
+- Pattern: `afterChange`, `afterDelete` hooks call `revalidatePath()` or `revalidateTag()`
+- Example: `src/collections/Pages/hooks/revalidatePage.ts`
+
+### Route Groups
+- `(frontend)` - Public routes, uses frontend layout
+- `(payload)` - PayloadCMS admin routes, uses admin layout
+- Route groups don't affect URL structure, only organization
+
+### Field Factories
+- Reusable field configurations (e.g., `link`, `linkGroup`, `slugField`)
+- Accept `overrides` parameter for customization
+- Use `deepMerge` utility to merge defaults with overrides
+
+### Plugin Configuration
+- Configure PayloadCMS plugins in `/src/plugins/index.ts`
+- Export array of plugin configurations
+- Import in `payload.config.ts`
+
+### Lexical Editor Features
+- Use lexical editor features for rich text:
+  - `HeadingFeature` - Headings
+  - `FixedToolbarFeature` - Fixed toolbar
+  - `InlineToolbarFeature` - Inline toolbar
+- Configure in field definitions or default editor config
+
+## Avoid
+
+- ❌ Don't use client components unless necessary (interactivity, hooks, browser APIs)
+- ❌ Don't bypass PayloadCMS access controls
+- ❌ Don't use relative imports when path aliases exist
+- ❌ Don't use inline styles - use Tailwind classes
+- ❌ Don't use `any` type - use proper types or `unknown`
+- ❌ Don't forget to add `generateMetadata` for SEO
+- ❌ Don't create custom UI components when Radix UI primitives exist
+- ❌ Don't forget to register blocks in `RenderBlocks.tsx`
+- ❌ Don't forget to add blocks to collection's fields array
+- ❌ Don't use client-side data fetching when server components can be used
+- ❌ Don't forget to revalidate cache after PayloadCMS changes
+- ❌ Don't create Zustand stores for server state (use PayloadCMS data)
+

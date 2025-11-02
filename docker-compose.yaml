@@ -16,22 +16,30 @@ services:
     networks:
       - pishop-network
 
-  mongodb:
-    image: mongo
-    container_name: pishop_mongodb
-    restart: unless-stopped
-    env_file:
-      - .env.local
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongodb_data:/data/db
-    networks:
-      - pishop-network
+  # mongodb:
+  #   image: mongo
+  #   container_name: pishop_mongodb
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=root
+  #     - MONGO_INITDB_ROOT_PASSWORD=admin
+  #   ports:
+  #     - '27017:27017'
+  #   volumes:
+  #     - ./data/mongodb:/data/db
+  #   networks:
+  #     - pishop-network
+  #   healthcheck:
+  #     test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 40s
 
 volumes:
   pishop-cache:
-  mongodb_data:
 
 networks:
   pishop-network:

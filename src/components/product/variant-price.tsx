@@ -1,45 +1,42 @@
-"use client";
+'use client'
 
-import Price from "@/components/price";
-import { Product, ProductVariant } from "@/lib/pishop/types";
-import { FC } from "react";
-import { useProduct } from "./product-context";
+import Price from '@/components/price'
+import { Product } from '@/lib/client'
+import { FC } from 'react'
 
 type VariantPriceProps = {
-  product: Product;
-};
+  product: Product
+}
 
 export const VariantPrice: FC<VariantPriceProps> = ({ product }) => {
-  const { variants } = product;
-  const { state } = useProduct();
-
-  console.log("product from variant-price", product);
-
-  const variant = variants.find((variant: ProductVariant) =>
-    variant.selectedOptions.every(
-      (option) => option.value === state[option.name.toLowerCase()],
-    ),
-  );
-
-  const defaultVariantId = variants.length === 1 ? variants[0]?.id : undefined;
-  const selectedVariantId = variant?.id || defaultVariantId;
-  const finalVariant = variants.find(
-    (variant) => variant.id === selectedVariantId,
-  )!;
-
-  if (!finalVariant) {
-    return (
-      <Price
-        amount={product.priceRange?.maxVariantPrice.amount.toString() || "0"}
-        currencyCode={product.priceRange?.maxVariantPrice.currencyCode || "HUF"}
-      />
-    );
-  }
-
   return (
-    <Price
-      amount={finalVariant.price.amount.toString()}
-      currencyCode={finalVariant.price.currencyCode}
-    />
-  );
-};
+    <div className="flex flex-col gap-2">
+      <div itemProp="offers" itemScope itemType="https://schema.org/Offer">
+        <Price
+          amount={product.basePrice.amount}
+          currencyCode={product.basePrice.currencyCode}
+          className="text-2xl font-bold"
+        />
+        <meta itemProp="priceCurrency" content={product.basePrice.currencyCode} />
+        <meta itemProp="price" content={product.basePrice.amount.toString()} />
+        {product.inventory && (
+          <meta
+            itemProp="availability"
+            content={
+              (product.inventory.quantity && product.inventory.quantity > 0) || product.inventory.allowBackorder
+                ? "https://schema.org/InStock"
+                : "https://schema.org/OutOfStock"
+            }
+          />
+        )}
+      </div>
+      {product.compareAtPrice && (
+        <Price
+          amount={product.compareAtPrice.amount}
+          currencyCode={product.compareAtPrice.currencyCode}
+          className="text-lg text-gray-500 line-through"
+        />
+      )}
+    </div>
+  )
+}

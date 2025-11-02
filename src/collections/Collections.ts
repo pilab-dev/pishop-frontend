@@ -26,6 +26,25 @@ export const Collections: CollectionConfig = {
       type: "richText",
       required: true,
     },
+    {
+      name: "featuredProducts",
+      label: "Featured Products",
+      type: "array",
+      admin: {
+        description: "Product slugs to feature in this collection",
+      },
+      fields: [
+        {
+          name: "slug",
+          type: "text",
+          label: "Product Slug",
+          required: true,
+          admin: {
+            description: "The slug/handle of the product to feature",
+          },
+        },
+      ],
+    },
     ...slugField(),
   ],
 };

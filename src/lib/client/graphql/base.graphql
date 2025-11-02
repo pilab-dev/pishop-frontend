@@ -1,0 +1,890 @@
+# Base GraphQL Schema
+# Contains common types and scalars used across the entire GraphQL API
+
+"""
+Custom scalar representing date and time values in ISO 8601 format.
+Example: "2025-10-29T10:30:00Z"
+"""
+scalar Time
+
+"""
+Custom scalar for arbitrary JSON data. Allows flexible metadata storage.
+Example: {"key": "value", "nested": {"data": 123}}
+"""
+scalar JSON
+
+"""
+Custom scalar for file upload operations. Used in mutation inputs for image uploads.
+"""
+scalar Upload
+
+"""
+Money represents a monetary value with currency information.
+The amount is stored in the smallest currency unit (e.g., cents for USD).
+Example: $99.99 USD is represented as {amount: 9999, currencyCode: "USD"}
+"""
+type Money {
+  """Amount in the smallest currency unit (e.g., cents). Example: 9999 for $99.99"""
+  amount: Int!
+  
+  """ISO 4217 currency code. Example: "USD", "EUR", "GBP" """
+  currencyCode: String!
+}
+
+"""
+Image represents a product or content image with metadata.
+Includes URL, dimensions, and accessibility information.
+"""
+type Image {
+  """Unique identifier for the image"""
+  id: ID!
+  
+  """Absolute URL to the image resource. Example: "https://cdn.example.com/images/product.jpg" """
+  url: String!
+  
+  """Alternative text for accessibility and SEO. Describes the image content."""
+  altText: String
+  
+  """Image width in pixels. Used for responsive image rendering."""
+  width: Int
+  
+  """Image height in pixels. Used for responsive image rendering."""
+  height: Int
+}
+
+"""
+Address represents a physical location for shipping or billing purposes.
+Supports both domestic and international addresses with optional company information.
+"""
+type Address {
+  """Unique identifier for the address. Null for new addresses."""
+  id: ID
+  
+  """Recipient's first name. Example: "John" """
+  firstName: String!
+  
+  """Recipient's last name. Example: "Doe" """
+  lastName: String!
+  
+  """Optional company name. Example: "Acme Corp" """
+  company: String
+  
+  """Primary street address. Example: "123 Main Street" """
+  address1: String!
+  
+  """Secondary address line for apartment, suite, etc. Example: "Apt 4B" """
+  address2: String
+  
+  """City name. Example: "New York" """
+  city: String!
+  
+  """State or province name. Example: "New York" or "NY" """
+  province: String!
+  
+  """ISO 3166-1 alpha-2 country code. Example: "US", "CA", "GB" """
+  country: String!
+  
+  """Postal or ZIP code. Example: "10001" or "SW1A 1AA" """
+  zip: String!
+  
+  """Contact phone number with optional country code. Example: "+1-555-0100" """
+  phone: String
+}
+
+"""
+PaginationInput controls pagination and sorting for list queries.
+Supports offset-based pagination with configurable page size and sorting.
+"""
+input PaginationInput {
+  """Page number, starting from 1. Default: 1"""
+  page: Int = 1
+  
+  """Number of items per page. Maximum: 100. Default: 20"""
+  limit: Int = 20
+  
+  """Field name to sort by. Example: "name", "createdAt", "price" """
+  sortBy: String
+  
+  """Sort direction. Default: ASC"""
+  sortOrder: SortOrder = ASC
+}
+
+"""
+SortOrder defines the direction for sorting results.
+"""
+enum SortOrder {
+  """Ascending order (A-Z, 0-9, oldest-newest)"""
+  ASC
+  
+  """Descending order (Z-A, 9-0, newest-oldest)"""
+  DESC
+}
+
+"""
+PaginationInfo provides metadata about paginated results.
+Includes current page information and navigation flags.
+"""
+type PaginationInfo {
+  """Current page number (1-based)"""
+  page: Int!
+  
+  """Number of items per page"""
+  limit: Int!
+  
+  """Total number of items across all pages"""
+  total: Int!
+  
+  """Total number of pages available"""
+  totalPages: Int!
+  
+  """True if there is a next page available"""
+  hasNext: Boolean!
+  
+  """True if there is a previous page available"""
+  hasPrev: Boolean!
+}
+
+"""
+Error represents a structured error with code and message.
+Includes optional field information for validation errors.
+"""
+type Error {
+  """Machine-readable error code. Example: "PRODUCT_NOT_FOUND", "VALIDATION_ERROR" """
+  code: String!
+  
+  """Human-readable error message describing the issue"""
+  message: String!
+  
+  """Optional field name for validation errors. Example: "email", "quantity" """
+  field: String
+}
+
+"""
+BaseResponse is the foundation for all mutation responses.
+Indicates operation success and provides error details.
+"""
+type BaseResponse {
+  """True if the operation completed successfully"""
+  success: Boolean!
+  
+  """List of errors that occurred during the operation. Empty if successful."""
+  errors: [Error!]
+}
+
+"""
+User represents a registered customer account.
+Contains profile information and authentication details.
+"""
+type User {
+  """Unique user identifier"""
+  id: ID!
+  
+  """User's email address. Used for authentication and notifications."""
+  email: String!
+  
+  """User's first name. Optional for guest users."""
+  firstName: String
+  
+  """User's last name. Optional for guest users."""
+  lastName: String
+  
+  """True if this is a guest checkout user without full registration"""
+  isGuest: Boolean!
+  
+  """Timestamp when the user account was created"""
+  createdAt: Time!
+  
+  """Timestamp when the user account was last modified"""
+  updatedAt: Time!
+}
+
+"""
+Session represents a user's shopping session.
+Tracks cart and user association with expiration handling.
+"""
+type Session {
+  """Unique session identifier. Used to track user activity."""
+  id: ID!
+  
+  """Associated user ID. Null for guest sessions."""
+  userId: ID
+  
+  """True if this is a guest session without user authentication"""
+  isGuest: Boolean!
+  
+  """Associated shopping cart ID. Null if no cart created."""
+  cartId: ID
+  
+  """Timestamp when the session was created"""
+  createdAt: Time!
+  
+  """Timestamp when the session expires. Sessions are cleaned up after expiration."""
+  expiresAt: Time!
+}
+
+# Root types - empty definitions extended by schema files
+type Query
+type Mutation
+
+"""
+CreateCartInput creates a new shopping cart for a user session.
+Either for authenticated users or guest sessions.
+"""
+input CreateCartInput {
+  """User ID for authenticated users. Null for guest carts."""
+  userId: ID
+  
+  """Session ID to associate the cart with. Required for session tracking."""
+  sessionId: ID!
+  
+  """Optional metadata for custom cart properties. Example: {"source": "mobile_app"}"""
+  metadata: JSON
+}
+
+"""
+AddToCartInput adds a product or variant to a shopping cart.
+Creates a new cart item or updates quantity if item already exists.
+"""
+input AddToCartInput {
+  """ID of the cart to add the item to"""
+  cartId: ID!
+  
+  """ID of the product to add"""
+  productId: ID!
+  
+  """Optional variant ID for products with variants (size, color, etc.)"""
+  variantId: ID
+  
+  """Quantity to add. Must be positive integer. Example: 2"""
+  quantity: Int!
+  
+  """Optional metadata for the cart item. Example: {"gift_wrap": true}"""
+  metadata: JSON
+}
+
+"""
+UpdateCartItemInput modifies the quantity of an existing cart item.
+Can increase, decrease, or set quantity to a specific value.
+"""
+input UpdateCartItemInput {
+  """ID of the cart containing the item"""
+  cartId: ID!
+  
+  """ID of the cart item to update"""
+  itemId: ID!
+  
+  """New quantity for the item. Must be positive. Set to 0 to remove."""
+  quantity: Int!
+  
+  """Optional metadata to update on the cart item"""
+  metadata: JSON
+}
+
+"""
+RemoveFromCartInput removes a specific item from the shopping cart.
+"""
+input RemoveFromCartInput {
+  """ID of the cart containing the item"""
+  cartId: ID!
+  
+  """ID of the cart item to remove"""
+  itemId: ID!
+}
+
+"""
+ApplyDiscountInput applies a discount code to a shopping cart.
+Validates the code and calculates the discount amount.
+"""
+input ApplyDiscountInput {
+  """ID of the cart to apply the discount to"""
+  cartId: ID!
+  
+  """Discount code to apply. Example: "SUMMER2025", "SAVE10" """
+  code: String!
+}
+
+"""
+RemoveDiscountInput removes a previously applied discount from the cart.
+"""
+input RemoveDiscountInput {
+  """ID of the cart to remove the discount from"""
+  cartId: ID!
+  
+  """ID of the applied discount to remove"""
+  discountId: ID!
+}
+
+"""
+ShippingAddress represents a home delivery address.
+"""
+type ShippingAddress {
+  "Full delivery address"
+  address: Address!
+
+  "Contact person for delivery"
+  contactName: String
+}
+
+"""
+PickupPoint represents a pickup location (store, post office, etc.).
+"""
+type PickupPoint {
+  "Unique pickup point identifier"
+  id: ID!
+
+  "Name of the pickup point"
+  name: String!
+
+  "Address of the pickup point"
+  address: Address!
+
+  "Operating hours"
+  hours: String
+
+  "Contact information"
+  contactInfo: String
+}
+
+"""
+ParcelBox represents a parcel locker or automated pickup box.
+"""
+type ParcelBox {
+  "Unique parcel box identifier"
+  id: ID!
+
+  "Name of the parcel box location"
+  name: String!
+
+  "Address of the parcel box"
+  address: Address!
+
+  "Box size (small, medium, large)"
+  size: String!
+
+  "Availability status"
+  isAvailable: Boolean!
+}
+
+"""
+ShippingDestination represents different types of shipping destinations.
+Can be a home delivery address, pickup point, or parcel box.
+"""
+union ShippingDestination = ShippingAddress | PickupPoint | ParcelBox
+
+"""
+ShippingDestinationInput represents input for different shipping destination types.
+"""
+input ShippingDestinationInput {
+  """Home delivery address"""
+  address: ShippingAddressInput
+
+  """Pickup point delivery"""
+  pickupPoint: PickupPointInput
+
+  """Parcel box delivery"""
+  parcelBox: ParcelBoxInput
+}
+
+"""
+ShippingAddressInput for home delivery.
+"""
+input ShippingAddressInput {
+  """Delivery address"""
+  address: AddressInput!
+
+  """Contact person for delivery"""
+  contactName: String
+}
+
+"""
+PickupPointInput for pickup point delivery.
+"""
+input PickupPointInput {
+  """ID of the pickup point"""
+  id: ID!
+}
+
+"""
+ParcelBoxInput for parcel box delivery.
+"""
+input ParcelBoxInput {
+  """ID of the parcel box"""
+  id: ID!
+}
+
+"""
+SetShippingMethodInput selects a shipping method for the cart.
+Calculates shipping costs based on the selected method and destination.
+"""
+input SetShippingMethodInput {
+  """ID of the cart to set shipping for"""
+  cartId: ID!
+  
+  """ID of the shipping method to use. Example: "standard", "express" """
+  methodId: ID!
+  
+  """Shipping destination (address, pickup point, or parcel box)"""
+  destination: ShippingDestinationInput!
+}
+
+"""
+MergeCartsInput combines two shopping carts.
+Typically used when a guest user logs in and has an existing cart.
+"""
+input MergeCartsInput {
+  """ID of the cart to merge from (will be emptied or deleted)"""
+  sourceCartId: ID!
+  
+  """ID of the cart to merge into (will contain the result)"""
+  targetCartId: ID!
+  
+  """Strategy for handling duplicate items during merge"""
+  mergeStrategy: CartMergeStrategy!
+}
+
+"""
+CartMergeStrategy defines how to handle duplicate items when merging carts.
+"""
+enum CartMergeStrategy {
+  """Keep target cart items and discard source cart items on conflict"""
+  KEEP_TARGET
+  
+  """Keep source cart items and discard target cart items on conflict"""
+  KEEP_SOURCE
+  
+  """Add quantities together for duplicate items"""
+  MERGE_QUANTITIES
+  
+  """Prompt user to resolve conflicts manually"""
+  ASK_USER
+}
+
+"""
+AddressInput creates or updates an address for shipping or billing.
+All fields follow standard postal address formats.
+"""
+input AddressInput {
+  """Recipient's first name"""
+  firstName: String!
+  
+  """Recipient's last name"""
+  lastName: String!
+  
+  """Optional company name for business deliveries"""
+  company: String
+  
+  """Primary street address line"""
+  address1: String!
+  
+  """Secondary address line (apartment, suite, unit)"""
+  address2: String
+  
+  """City name"""
+  city: String!
+  
+  """State or province"""
+  province: String!
+  
+  """ISO 3166-1 alpha-2 country code"""
+  country: String!
+  
+  """Postal or ZIP code"""
+  zip: String!
+  
+  """Contact phone number"""
+  phone: String
+}
+
+"""
+CreateCheckoutInput initiates a new checkout session from a cart.
+Validates cart contents and creates a checkout workflow.
+"""
+input CreateCheckoutInput {
+  """ID of the cart to checkout. Cart must have items and be valid."""
+  cartId: ID!
+  
+  """Customer information for the checkout. Required for guest checkout."""
+  customer: CheckoutCustomerInput
+  
+  """Shipping information including method and address"""
+  shipping: CheckoutShippingInput
+  
+  """Optional metadata for the checkout session. Example: {"affiliate_id": "123"}"""
+  metadata: JSON
+}
+
+"""
+CheckoutCustomerInput provides customer details for checkout.
+Can be used for both guest and authenticated checkout flows.
+"""
+input CheckoutCustomerInput {
+  """Customer's email address. Required for order confirmation and tracking."""
+  email: String!
+  
+  """Customer's first name. Optional but recommended."""
+  firstName: String
+  
+  """Customer's last name. Optional but recommended."""
+  lastName: String
+  
+  """Contact phone number. Optional but useful for delivery coordination."""
+  phone: String
+  
+  """True for guest checkout, false for authenticated users. Default: true"""
+  isGuest: Boolean = true
+  
+  """Billing address for payment. Can be different from shipping address."""
+  billingAddress: AddressInput
+  
+  """Shipping address for delivery. Required for physical products."""
+  shippingAddress: AddressInput
+}
+
+"""
+CheckoutShippingInput specifies shipping method and delivery address.
+"""
+input CheckoutShippingInput {
+  """ID of the selected shipping method. Example: "standard", "express", "next-day" """
+  methodId: ID!
+  
+  """Delivery address. Must be complete and valid for shipping calculation."""
+  address: AddressInput!
+}
+
+"""
+UpdateCheckoutCustomerInput updates customer information in an active checkout.
+Used when customer modifies their details during checkout process.
+"""
+input UpdateCheckoutCustomerInput {
+  """Checkout session ID to update"""
+  sessionId: ID!
+  
+  """Updated customer information"""
+  customer: CheckoutCustomerInput!
+}
+
+"""
+UpdateCheckoutShippingInput modifies shipping details in an active checkout.
+Recalculates shipping costs based on new method or address.
+"""
+input UpdateCheckoutShippingInput {
+  """Checkout session ID to update"""
+  sessionId: ID!
+  
+  """Updated shipping information"""
+  shipping: CheckoutShippingInput!
+}
+
+"""
+ValidateCheckoutInput validates a checkout session before payment.
+Checks inventory, pricing, shipping, and all business rules.
+"""
+input ValidateCheckoutInput {
+  """Checkout session ID to validate"""
+  sessionId: ID!
+}
+
+"""
+ProcessPaymentInput initiates payment processing for a checkout.
+Integrates with payment gateway to authorize or capture payment.
+"""
+input ProcessPaymentInput {
+  """Checkout session ID to process payment for"""
+  sessionId: ID!
+  
+  """ID of the payment method to use. Example: "stripe", "paypal", "credit_card" """
+  paymentMethodId: ID!
+  
+  """Optional payment metadata. Example: {"payment_token": "tok_xyz"}"""
+  metadata: JSON
+}
+
+"""
+CreateOrderInput finalizes a checkout and creates an order.
+Called after successful payment to complete the purchase.
+"""
+input CreateOrderInput {
+  """Checkout session ID to create order from. Must have successful payment."""
+  sessionId: ID!
+  
+  """Optional order metadata. Example: {"gift_message": "Happy Birthday!"}"""
+  metadata: JSON
+}
+
+"""
+ProductFilterInput filters product listings by various criteria.
+Supports category, collection, price range, and availability filtering.
+"""
+input ProductFilterInput {
+  """Filter by category slug. Example: "electronics", "clothing" """
+  category: String
+  
+  """Filter by collection slug. Example: "summer-sale", "new-arrivals" """
+  collection: String
+  
+  """Minimum price in smallest currency unit. Example: 1000 for $10.00"""
+  priceMin: Int
+  
+  """Maximum price in smallest currency unit. Example: 50000 for $500.00"""
+  priceMax: Int
+  
+  """Filter to only show in-stock products when true"""
+  inStock: Boolean
+  
+  """Filter by product tags. Products must match all specified tags."""
+  tags: [String!]
+  
+  """Filter to only show active products when true"""
+  isActive: Boolean
+}
+
+# Response types
+
+"""
+CreateCartResponse returns the result of cart creation operation.
+Contains the newly created cart or error information.
+"""
+type CreateCartResponse {
+  """True if the cart was created successfully"""
+  success: Boolean!
+  
+  """The newly created shopping cart. Null if operation failed."""
+  cart: Cart
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+AddToCartResponse returns the result of adding an item to cart.
+Includes the updated cart and the specific item that was added.
+"""
+type AddToCartResponse {
+  """True if the item was added successfully"""
+  success: Boolean!
+  
+  """The updated shopping cart with the new item. Null if operation failed."""
+  cart: Cart
+  
+  """The specific cart item that was added or updated. Null if operation failed."""
+  item: CartItem
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+UpdateCartItemResponse returns the result of updating a cart item quantity.
+Includes the updated cart and the modified item.
+"""
+type UpdateCartItemResponse {
+  """True if the item was updated successfully"""
+  success: Boolean!
+  
+  """The updated shopping cart. Null if operation failed."""
+  cart: Cart
+  
+  """The updated cart item with new quantity. Null if operation failed."""
+  item: CartItem
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+RemoveFromCartResponse returns the result of removing an item from cart.
+Includes the updated cart after item removal.
+"""
+type RemoveFromCartResponse {
+  """True if the item was removed successfully"""
+  success: Boolean!
+  
+  """The updated shopping cart without the removed item. Null if operation failed."""
+  cart: Cart
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+ApplyDiscountResponse returns the result of applying a discount code.
+Includes the updated cart with discount and the applied coupon details.
+"""
+type ApplyDiscountResponse {
+  """True if the discount was applied successfully"""
+  success: Boolean!
+  
+  """The updated cart with discount applied. Null if operation failed."""
+  cart: Cart
+  
+  """The applied coupon with discount details. Null if operation failed."""
+  discount: AppliedCoupon
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+RemoveDiscountResponse returns the result of removing a discount.
+Includes the updated cart without the discount.
+"""
+type RemoveDiscountResponse {
+  """True if the discount was removed successfully"""
+  success: Boolean!
+  
+  """The updated cart without the discount. Null if operation failed."""
+  cart: Cart
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+SetShippingMethodResponse returns the result of setting a shipping method.
+Includes the updated cart and shipping details with calculated costs.
+"""
+type SetShippingMethodResponse {
+  """True if the shipping method was set successfully"""
+  success: Boolean!
+  
+  """The updated cart with shipping method. Null if operation failed."""
+  cart: Cart
+  
+  """The shipping details with calculated costs. Null if operation failed."""
+  shipping: CartShipping
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+MergeCartsResponse returns the result of merging two carts.
+Includes the merged cart with combined items.
+"""
+type MergeCartsResponse {
+  """True if the carts were merged successfully"""
+  success: Boolean!
+  
+  """The merged cart containing items from both carts. Null if operation failed."""
+  cart: Cart
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+ClearCartResponse returns the result of clearing all cart items.
+Includes the empty cart.
+"""
+type ClearCartResponse {
+  """True if the cart was cleared successfully"""
+  success: Boolean!
+  
+  """The empty cart. Null if operation failed."""
+  cart: Cart
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+CreateCheckoutResponse returns the result of checkout creation.
+Includes the checkout session with initial state.
+"""
+type CreateCheckoutResponse {
+  """True if the checkout was created successfully"""
+  success: Boolean!
+  
+  """The checkout session with cart, customer, and shipping details. Null if operation failed."""
+  session: CheckoutSession
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+UpdateCheckoutCustomerResponse returns the result of updating customer information.
+Includes the updated checkout session.
+"""
+type UpdateCheckoutCustomerResponse {
+  """True if the customer information was updated successfully"""
+  success: Boolean!
+  
+  """The updated checkout session. Null if operation failed."""
+  session: CheckoutSession
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+UpdateCheckoutShippingResponse returns the result of updating shipping details.
+Includes the updated checkout session and recalculated shipping costs.
+"""
+type UpdateCheckoutShippingResponse {
+  """True if the shipping details were updated successfully"""
+  success: Boolean!
+  
+  """The updated checkout session. Null if operation failed."""
+  session: CheckoutSession
+  
+  """The updated shipping details with recalculated costs. Null if operation failed."""
+  shipping: CheckoutShipping
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+ValidateCheckoutResponse returns the result of checkout validation.
+Checks inventory, pricing, shipping availability, and business rules.
+"""
+type ValidateCheckoutResponse {
+  """True if the validation completed successfully"""
+  success: Boolean!
+  
+  """The checkout session that was validated. Null if operation failed."""
+  session: CheckoutSession
+  
+  """True if the checkout is valid and ready for payment"""
+  isValid: Boolean!
+  
+  """List of critical errors that prevent checkout. Empty if valid."""
+  errors: [Error!]
+  
+  """List of non-critical warnings that don't prevent checkout"""
+  warnings: [Error!]
+}
+
+"""
+ProcessPaymentResponse returns the result of payment processing.
+Includes the checkout session and payment details after authorization.
+"""
+type ProcessPaymentResponse {
+  """True if the payment was processed successfully"""
+  success: Boolean!
+  
+  """The checkout session after payment processing. Null if operation failed."""
+  session: CheckoutSession
+  
+  """The payment details including status and transaction ID. Null if operation failed."""
+  payment: CheckoutPayment
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}
+
+"""
+CreateOrderResponse returns the result of order creation.
+Finalizes the checkout and creates a confirmed order.
+"""
+type CreateOrderResponse {
+  """True if the order was created successfully"""
+  success: Boolean!
+  
+  """The created order with order number and details. Null if operation failed."""
+  order: Order
+  
+  """List of errors if the operation failed. Empty on success."""
+  errors: [Error!]
+}

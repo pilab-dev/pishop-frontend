@@ -1,11 +1,15 @@
-import { getPayload } from "payload";
-import type { Category } from "../payload-types";
-import config from "../payload.config";
+import { client } from "@/lib/client";
+import type { Category, CategoryTreeNode } from "@/lib/client/types";
 
 export const getCategoryAncestors = async (
   category: Category,
 ): Promise<Category[]> => {
-  const payload = await getPayload({ config });
+  const categoryTree = await client.getCategoryTree({
+    includeInactive: false,
+    maxDepth: 10,
+    includeCounts: false,
+  });
+
   const ancestors: Category[] = [category];
   let parentId: string | undefined;
 
@@ -16,21 +20,16 @@ export const getCategoryAncestors = async (
   }
 
   while (parentId) {
-    const parentCategory: Category | undefined = await payload.findByID({
-      collection: "categories",
-      id: parentId,
-      depth: 1,
-    });
-
+    const parentCategory = findCategoryById(categoryTree, parentId);
     if (parentCategory) {
-      ancestors.unshift(parentCategory);
-      if (typeof parentCategory.parent === "string") {
-        parentId = parentCategory.parent;
+      ancestors.unshift(parentCategory.category);
+      if (typeof parentCategory.category.parent === "string") {
+        parentId = parentCategory.category.parent;
       } else if (
-        typeof parentCategory.parent === "object" &&
-        parentCategory.parent !== null
+        typeof parentCategory.category.parent === "object" &&
+        parentCategory.category.parent !== null
       ) {
-        parentId = parentCategory.parent.id;
+        parentId = parentCategory.category.parent.id;
       } else {
         parentId = undefined;
       }
@@ -42,38 +41,36 @@ export const getCategoryAncestors = async (
   return ancestors;
 };
 
-export const getCategoryTree = async (): Promise<Category[]> => {
-  const payload = await getPayload({ config });
-  const allCategories = await payload.find({
-    collection: "categories",
-    limit: 100, // Assuming there are not more than 100 categories
-    depth: 1,
+export const getCategoryTree = async (): Promise<(Category & { children: Category[] })[]> => {
+  const categoryTreeNodes = await client.getCategoryTree({
+    includeInactive: false,
+    maxDepth: 2, // Only get top level and immediate children for mega menu
+    includeCounts: true,
+    sortBy: 'sortOrder',
+    sortDirection: 'ASC',
   });
 
-  const categoryMap = new Map<string, Category & { children: Category[] }>();
+  // Convert CategoryTreeNode[] to the expected format
+  const convertToCategoryWithChildren = (node: CategoryTreeNode): Category & { children: Category[] } => {
+    return {
+      ...node.category,
+      children: node.children.map(child => ({
+        ...child.category,
+        children: [], // We only go one level deep for the mega menu
+      })),
+    };
+  };
 
-  allCategories.docs.forEach((cat) => {
-    categoryMap.set(cat.id, { ...cat, children: [] });
-  });
+  return categoryTreeNodes.map(convertToCategoryWithChildren);
+};
 
-  const tree: (Category & { children: Category[] })[] = [];
-
-  allCategories.docs.forEach((cat) => {
-    const catWithChildren = categoryMap.get(cat.id)!;
-    const parentId =
-      typeof cat.parent === "string"
-        ? cat.parent
-        : typeof cat.parent === "object" && cat.parent !== null
-        ? cat.parent.id
-        : null;
-
-    if (parentId && categoryMap.has(parentId)) {
-      const parent = categoryMap.get(parentId)!;
-      parent.children.push(catWithChildren);
-    } else {
-      tree.push(catWithChildren);
+const findCategoryById = (tree: CategoryTreeNode[], id: string): CategoryTreeNode | null => {
+  for (const node of tree) {
+    if (node.category.id === id) {
+      return node;
     }
-  });
-
-  return tree;
+    const found = findCategoryById(node.children, id);
+    if (found) return found;
+  }
+  return null;
 };

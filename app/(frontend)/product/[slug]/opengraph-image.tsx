@@ -41,8 +41,8 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
 
   function formatCurrencyWithSymbol(
     amount: number,
-    currencyCode = "USD",
-    locale = "en-US",
+    currencyCode = "HUF",
+    locale = "hu-HU",
   ) {
     return new Intl.NumberFormat(locale, {
       style: "currency",

@@ -9,7 +9,6 @@ import { Collections } from './collections/Collections'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
-import { Products } from './collections/Products'
 import { Users } from './collections/Users'
 import { defaultLexical } from './fields/defaultLexical'
 import { Footer } from './Footer/config'
@@ -65,7 +64,7 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
   }),
   // database-adapter-config-end
-  collections: [Pages, Posts, Media, Categories, Users, Products, Collections],
+  collections: [Pages, Posts, Media, Categories, Users, Collections],
   cors: [getServerSideURL()].filter(Boolean),
   blocks: [HotDealsBlock],
   globals: [Header, Footer],

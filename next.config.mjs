@@ -3,10 +3,10 @@ import { withPayload } from '@payloadcms/next/withPayload'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
-  turbopack: {},
+  // turbopack: {}, // Disabled due to Turbopack bug in Next.js 16
   images: {
     // loader: "custom",
-    // loaderFile: "./lib/pishop/imageLoader.ts",
+    // loaderFile: "./src/lib/pishop/imageLoader.ts",
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
@@ -18,7 +18,7 @@ const nextConfig = {
     ],
   },
   experimental: {
-    reactCompiler: false,
+    turbopackMinify: false  
   },
 }
 

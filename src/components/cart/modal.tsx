@@ -1,219 +1,225 @@
 'use client'
 
+import { memo, useEffect, useMemo, useRef, useState, useTransition } from 'react'
+
 import LoadingDots from '@/components/loading-dots'
 import Price from '@/components/price'
 import { DEFAULT_OPTION } from '@/lib/constants'
-// import { createUrl } from "@/lib/utils";
 import { cn } from '@/lib/utils'
-import { DialogContent, DialogTrigger } from '@radix-ui/react-dialog'
 import { ShoppingCartIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
-import { useFormStatus } from 'react-dom'
-import { Dialog } from '../ui/dialog'
-import { createCartAndSetCookie, redirectToCheckout } from './actions'
+import { useRouter } from 'next/navigation'
+
+import { useCartStore } from '@/store/cart-store'
+
 import CloseCart from './close-cart'
 import { DeleteItemButton } from './delete-item-button'
 import { EditItemQuantityButton } from './edit-item-quantity-button'
-import OpenCart from './open-cart'
-import { useCart } from './useCart'
+import { Dialog, DialogContent } from '../ui/dialog'
 
-const createUrl = (path: string, params: URLSearchParams) => {
-  const url = new URL(path, process.env.NEXT_PUBLIC_PI_SHOP_URL)
-  url.search = params.toString()
-  return url.toString()
+interface CartItemProps {
+  item: NonNullable<ReturnType<typeof useCartStore>['cart']>['items'][0]
+  onProductClick: () => void
 }
 
-type MerchandiseSearchParams = {
-  [key: string]: string
-}
-
-export default function CartModal() {
-  const { cart, updateCartItem } = useCart()
-  const [isOpen, setIsOpen] = useState(false)
-  const quantityRef = useRef(cart?.totalQuantity)
-  const openCart = () => setIsOpen(true)
-  const closeCart = () => setIsOpen(false)
-
-  useEffect(() => {
-    if (!cart) {
-      createCartAndSetCookie()
-    }
-  }, [cart])
-
-  useEffect(() => {
-    if (
-      cart?.totalQuantity &&
-      cart?.totalQuantity !== quantityRef.current &&
-      cart?.totalQuantity > 0
-    ) {
-      if (!isOpen) {
-        setIsOpen(true)
-      }
-      quantityRef.current = cart?.totalQuantity
-    }
-  }, [isOpen, cart?.totalQuantity, quantityRef])
+const CartItem = memo(function CartItem({ item, onProductClick }: CartItemProps) {
+  const image = item.product.images?.[0]
+  const productUrl = `/product/${item.product.slug}`
 
   return (
-    <>
-      <Dialog>
-        <DialogTrigger>
-          <button aria-label="Open cart" onClick={openCart}>
-            <OpenCart quantity={cart?.totalQuantity} />
-          </button>
-        </DialogTrigger>
-        <DialogContent
-          className={cn(
-            'fixed bottom-0 right-0 top-0 flex h-full w-full flex-col border-l',
-            'border-neutral-200 bg-white/80 p-6 text-black backdrop-blur-xl dark:border-neutral-700',
-            'dark:bg-black/80 dark:text-white md:w-[390px]',
-          )}
-        >
-          <div className="flex items-center justify-between">
-            <p className="text-lg font-semibold">My Cart</p>
-            <button aria-label="Close cart" onClick={closeCart}>
-              <CloseCart />
-            </button>
-          </div>
-
-          {!cart || cart.lines.length === 0 ? (
-            <div className="mt-20 flex w-full flex-col items-center justify-center overflow-hidden">
-              <ShoppingCartIcon className="h-16" />
-              <p className="mt-6 text-center text-2xl font-bold">Your cart is empty.</p>
-            </div>
-          ) : (
-            <div className="flex h-full flex-col justify-between overflow-hidden p-1">
-              <ul className="flex-grow overflow-auto py-4">
-                {cart.lines
-                  .sort((a, b) =>
-                    a.merchandise.product.title.localeCompare(b.merchandise.product.title),
-                  )
-                  .map((item, i) => {
-                    const merchandiseSearchParams = {} as MerchandiseSearchParams
-
-                    // item.merchandise.selectedOptions.forEach(
-                    //   ({ name, value }) => {
-                    //     if (value !== DEFAULT_OPTION) {
-                    //       merchandiseSearchParams[name.toLowerCase()] = value;
-                    //     }
-                    //   },
-                    // );
-
-                    const merchandiseUrl = createUrl(
-                      `/product/${item.merchandise.product.slug}`,
-                      new URLSearchParams(merchandiseSearchParams),
-                    )
-
-                    return (
-                      <li
-                        key={i}
-                        className="flex w-full flex-col border-b border-neutral-300 dark:border-neutral-700"
-                      >
-                        <div className="relative flex w-full flex-row justify-between px-1 py-4">
-                          <div className="absolute z-40 -ml-1 -mt-2">
-                            <DeleteItemButton item={item} optimisticUpdate={updateCartItem} />
-                          </div>
-                          <div className="flex flex-row">
-                            <div className="relative h-16 w-16 overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
-                              <Image
-                                className="h-full w-full object-cover"
-                                width={64}
-                                height={64}
-                                alt={
-                                  item.merchandise.product.featuredImage.alt ||
-                                  item.merchandise.product.title
-                                }
-                                src={String(item.merchandise.product.featuredImage.url)}
-                              />
-                            </div>
-                            <Link
-                              href={merchandiseUrl}
-                              onClick={closeCart}
-                              className="z-30 ml-2 flex flex-row space-x-4"
-                            >
-                              <div className="flex flex-1 flex-col text-base">
-                                <span className="leading-tight">
-                                  {item.merchandise.product.title}
-                                </span>
-                                {item.merchandise.product.title !== DEFAULT_OPTION ? (
-                                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                    {item.merchandise.product.title}
-                                  </p>
-                                ) : null}
-                              </div>
-                            </Link>
-                          </div>
-                          <div className="flex h-16 flex-col justify-between">
-                            <Price
-                              className="flex justify-end space-y-2 text-right text-sm"
-                              amount={item.cost.totalAmount.amount.toFixed(2)}
-                              currencyCode={item.cost.totalAmount.currencyCode}
-                            />
-                            <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
-                              <EditItemQuantityButton
-                                item={item}
-                                type="minus"
-                                optimisticUpdate={updateCartItem}
-                              />
-                              <p className="w-6 text-center">
-                                <span className="w-full text-sm">{item.quantity}</span>
-                              </p>
-                              <EditItemQuantityButton
-                                item={item}
-                                type="plus"
-                                optimisticUpdate={updateCartItem}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                    )
-                  })}
-              </ul>
-              <div className="py-4 text-sm text-neutral-500 dark:text-neutral-400">
-                <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 dark:border-neutral-700">
-                  <p>Taxes</p>
-                  <Price
-                    className="text-right text-base text-black dark:text-white"
-                    amount={cart.cost.totalTaxAmount.amount}
-                    currencyCode={cart.cost.totalTaxAmount.currencyCode}
-                  />
-                </div>
-                <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
-                  <p>Shipping</p>
-                  <p className="text-right">Calculated at checkout</p>
-                </div>
-                <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
-                  <p>Total</p>
-                  <Price
-                    className="text-right text-base text-black dark:text-white"
-                    amount={cart.cost.totalAmount.amount}
-                    currencyCode={cart.cost.totalAmount.currencyCode}
-                  />
-                </div>
+    <li
+      key={item.id}
+      className="flex w-full flex-col border-b border-neutral-300 dark:border-neutral-700"
+    >
+      <div className="relative flex w-full flex-row justify-between px-1 py-4">
+        <div className="absolute z-40 -ml-1 -mt-2">
+          <DeleteItemButton itemId={item.id} />
+        </div>
+        <div className="flex flex-row">
+          <div className="relative h-16 w-16 overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
+            {image ? (
+              <Image
+                className="h-full w-full object-cover"
+                width={64}
+                height={64}
+                alt={image.altText || item.product.name}
+                src={image.url}
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-sm">
+                {item.product.name.charAt(0)}
               </div>
-              <form action={redirectToCheckout}>
-                <CheckoutButton />
-              </form>
+            )}
+          </div>
+          <Link
+            href={productUrl}
+            onClick={onProductClick}
+            className="z-30 ml-2 flex flex-row space-x-4"
+          >
+            <div className="flex flex-1 flex-col text-base">
+              <span className="leading-tight">{item.product.name}</span>
+              {item.product.name !== DEFAULT_OPTION ? (
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  {item.product.shortDescription || ''}
+                </p>
+              ) : null}
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
+          </Link>
+        </div>
+        <div className="flex h-16 flex-col justify-between">
+          <Price
+            className="flex justify-end space-y-2 text-right text-sm"
+            amount={item.totalPrice.amount}
+            currencyCode={item.totalPrice.currencyCode}
+          />
+          <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
+            <EditItemQuantityButton
+              itemId={item.id}
+              currentQuantity={item.quantity}
+              type="minus"
+            />
+            <p className="w-6 text-center">
+              <span className="w-full text-sm">{item.quantity}</span>
+            </p>
+            <EditItemQuantityButton
+              itemId={item.id}
+              currentQuantity={item.quantity}
+              type="plus"
+            />
+          </div>
+        </div>
+      </div>
+    </li>
+  )
+})
+
+interface CartModalProps {
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+export default function CartModal({ isOpen: externalIsOpen, onOpenChange }: CartModalProps = {}) {
+  const { cart, isLoading, init } = useCartStore()
+  const [internalIsOpen, setInternalIsOpen] = useState(false)
+
+  // Use external state if provided, otherwise use internal state
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen
+  const setIsOpen = onOpenChange || setInternalIsOpen
+
+
+  useEffect(() => {
+    init()
+  }, [init])
+
+  const items = cart?.items || []
+  const totals = cart?.totals
+  const total = cart?.totals.total.amount || 0
+  const itemCount = cart?.totals.itemCount || 0
+  const hasItems = items.length > 0
+  const currencyCode = cart?.totals.total.currencyCode || 'HUF'
+
+  // Memoize sorted items to prevent recreating array on every render
+  const sortedItems = useMemo(
+    () => [...items].sort((a, b) => a.product.name.localeCompare(b.product.name)),
+    [items]
+  )
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent
+        className={cn(
+          'hidden md:block fixed bottom-0 right-0 top-0 flex h-full w-full flex-col border-l p-6',
+          'border-neutral-200 bg-white text-black dark:border-neutral-700',
+          'dark:bg-neutral-900 dark:text-white md:w-[390px]',
+          // Override Radix UI default animations for sidebar positioning
+          'data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full',
+          'transition-transform duration-200 ease-in-out',
+        )}
+      >
+        <div className="flex items-center justify-between">
+          <p className="text-lg font-semibold">My Cart</p>
+          <button aria-label="Close cart" onClick={() => setIsOpen(false)}>
+            <CloseCart />
+          </button>
+        </div>
+
+        {isLoading && !hasItems ? (
+          <div className="mt-20 flex w-full flex-col items-center justify-center overflow-hidden">
+            <LoadingDots className="bg-black dark:bg-white" />
+          </div>
+        ) : !hasItems ? (
+          <div className="mt-20 flex w-full flex-col items-center justify-center overflow-hidden">
+            <ShoppingCartIcon className="h-16" />
+            <p className="mt-6 text-center text-2xl font-bold">Your cart is empty.</p>
+          </div>
+        ) : (
+          <div className="flex h-full flex-col justify-between overflow-hidden p-1">
+            <ul className="flex-grow overflow-auto py-4">
+              {sortedItems.map((item) => (
+                <CartItem
+                  key={item.id}
+                  item={item}
+                  onProductClick={() => setIsOpen(false)}
+                />
+              ))}
+            </ul>
+            <div className="py-4 text-sm text-neutral-500 dark:text-neutral-400">
+              <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 dark:border-neutral-700">
+                <p>Taxes</p>
+                <Price
+                  className="text-right text-base text-black dark:text-white"
+                  amount={totals?.tax.amount ?? 0}
+                  currencyCode={totals?.tax.currencyCode ?? currencyCode}
+                />
+              </div>
+              <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
+                <p>Shipping</p>
+                {totals?.shipping.amount ? (
+                  <Price
+                    className="text-right text-base text-black dark:text-white"
+                    amount={totals.shipping.amount}
+                    currencyCode={totals.shipping.currencyCode}
+                  />
+                ) : (
+                  <p className="text-right">Calculated at checkout</p>
+                )}
+              </div>
+              <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
+                <p>Total</p>
+                <Price
+                  className="text-right text-base text-black dark:text-white"
+                  amount={totals?.total.amount ?? total}
+                  currencyCode={totals?.total.currencyCode ?? currencyCode}
+                />
+              </div>
+            </div>
+            <CheckoutButton disabled={!hasItems} />
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }
 
-function CheckoutButton() {
-  const { pending } = useFormStatus()
+function CheckoutButton({ disabled }: { disabled: boolean }) {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+
+  const handleClick = () => {
+    startTransition(() => {
+      router.push('/checkout')
+    })
+  }
 
   return (
     <button
-      className="block w-full rounded-full bg-blue-600 p-3 text-center text-sm font-medium text-white opacity-90 hover:opacity-100"
-      type="submit"
-      disabled={pending}
+      className="block w-full rounded-full bg-blue-600 p-3 text-center text-sm font-medium text-white opacity-90 hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-60"
+      type="button"
+      onClick={handleClick}
+      disabled={disabled || isPending}
     >
-      {pending ? <LoadingDots className="bg-white" /> : 'Proceed to Checkout'}
+      {isPending ? <LoadingDots className="bg-white" /> : 'Proceed to Checkout'}
     </button>
   )
 }
