@@ -28,7 +28,7 @@ export const CartPopover = () => {
   }
 
   return (
-    <div className="w-full max-h-[70vh] overflow-hidden bg-white">
+    <div className="w-full max-h-[60vh] overflow-hidden bg-white">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-gray-200 bg-gradient-to-r from-primary/5 to-primary/10">
         <ShoppingBag className="h-5 w-5 text-primary" />
@@ -37,7 +37,7 @@ export const CartPopover = () => {
       </div>
 
       {/* Content */}
-      <div className="max-h-80 overflow-y-auto">
+      <div className="max-h-64 overflow-y-auto">
         {items.length === 0 ? (
           <div className="p-6 text-center text-gray-500">
             <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-50" />

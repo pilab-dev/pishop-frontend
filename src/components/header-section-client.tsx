@@ -111,7 +111,7 @@ export const HeaderSectionClient = ({
             <FaSearch />
           </Button>
           <AuthPopover />
-          <CartIcon />
+          <CartIcon variant="mobile" />
         </div>
       </div>
 
@@ -278,7 +278,7 @@ export const HeaderSectionClient = ({
         {/* Cart and Auth icons */}
         <div className="flex items-center gap-4">
           <AuthPopover />
-          <CartIcon />
+          <CartIcon variant="desktop" />
         </div>
       </div>
 
