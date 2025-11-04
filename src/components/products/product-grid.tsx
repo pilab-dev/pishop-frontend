@@ -3,7 +3,6 @@
 import { Product } from '@/lib/client'
 import { formatCurrency } from '@/lib/formatCurrrency'
 import { useState } from 'react'
-import { ImageMedia } from '../Media/ImageMedia'
 import ProductButtons from './product-buttons'
 
 export type GridVariant = 'primary' | 'secondary' | 'tertiary'
@@ -52,18 +51,12 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
       </p>
 
       {product.images && product.images[0] && (
-        <ImageMedia
+        <img
           alt={product.images[0].altText || product.name}
-          resource={product.images[0]}
+          src={product.images[0].url}
           className="w-full h-80 object-cover my-3 rounded-md md:h-80 lg:h-[250px]"
         />
       )}
-      <p
-        className="products-font text-sm text-gray-600"
-        dangerouslySetInnerHTML={{
-          __html: product.description ?? '',
-        }}
-      />
 
       <div className="absolute bottom-0 left-0 right-0">
         <div className="flex flex-row justify-center">
