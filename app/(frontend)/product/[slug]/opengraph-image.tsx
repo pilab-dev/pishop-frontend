@@ -1,24 +1,12 @@
-import config from "@/payload.config";
 import Image from "next/image";
 import { ImageResponse } from "next/og";
 
 import LogoIcon from "@/components/icons/logo";
-import { getPayload } from "payload";
+import { client } from "@/lib/client";
 
 export const getProductByHandle = async (handle: string) => {
-  const payload = await getPayload({ config });
-  const product = await payload.find({
-    collection: "products",
-    where: {
-      slug: {
-        equals: handle,
-      },
-    },
-    pagination: false,
-    limit: 1,
-  });
-
-  return product.docs[0];
+  const product = await client.getProduct(handle);
+  return product;
 };
 
 const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
@@ -37,7 +25,7 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
     );
   }
 
-  const price = product?.priceRange?.maxVariantPrice?.amount || 0; // || 'Price Unavailable'; // Handle missing price
+  const price = product?.basePrice?.amount || 0;
 
   function formatCurrencyWithSymbol(
     amount: number,
@@ -52,7 +40,7 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
 
   const formattedPrice = formatCurrencyWithSymbol(
     +price,
-    product.priceRange?.maxVariantPrice.currencyCode || "HUF",
+    product.basePrice?.currencyCode || "HUF",
   );
 
   return new ImageResponse(
@@ -65,9 +53,9 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
           {" "}
           {/* Cover the entire background */}
           <Image
-            alt={product?.title}
+            alt={product?.name}
             height={630}
-            src={typeof product?.featuredImage?.url === 'object' ? product?.featuredImage?.url.url || "" : product?.featuredImage?.url || ""}
+            src={product?.images?.[0]?.url || ""}
             tw="object-cover w-full h-full" // Ensure image covers the div
             width={1200}
           />
@@ -77,7 +65,7 @@ const ProductImage = async (props: { params: Promise<{ handle: string }> }) => {
         {/* Content Container (Logo, Text, Price) */}
         <div tw="absolute bg-black/50 bottom-0 left-0 right-0 p-8 flex flex-col justify-end">
           <p tw="text-5xl font-bold text-white mb-2 text-shadow:_0_4px_8px_rgba(255,0,0,0.6)">
-            {product?.title}
+            {product?.name}
           </p>
           <p tw="text-4xl font-semibold text-white">{formattedPrice}</p>
 

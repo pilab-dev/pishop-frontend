@@ -1,109 +1,80 @@
-import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 
 // import NotFoundPage from "@/app/not-found";
-import { FancyTitle } from "@/components/fancy-title";
-import { BreadcrumbBar } from "@/components/products/breadcrumb-bar";
-import { ProductGrid } from "@/components/products/product-grid";
-import { SectionDecor } from "@/components/ui/section-decor";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import React, { cache } from "react";
-import NotFoundPage from "../../not-found";
+import { FancyTitle } from '@/components/fancy-title'
+import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
+import { ProductGrid } from '@/components/products/product-grid'
+import { SectionDecor } from '@/components/ui/section-decor'
+import { ErrorBoundary } from 'next/dist/client/components/error-boundary'
+import React, { cache } from 'react'
+import NotFoundPage from '../../not-found'
 
-import config from "@/payload.config";
-import { getPayload } from "payload";
-
-import { Collection, Product } from "@/payload-types";
+import type { Collection } from '@/lib/client'
+import { client } from '@/lib/client'
 
 const getCollectionBySlug = cache(
-  async (
-    slug: string,
-  ): Promise<{ collection: Collection; products: Product[] }> => {
-    const payload = await getPayload({ config });
+  async (slug: string): Promise<{ collection: Collection; products: any[] }> => {
+    const collection = await client.getCollection(slug)
 
-    const collectionResult = await payload.find({
-      collection: "collections",
-      where: {
-        slug: {
-          equals: slug,
-        },
-      },
-      limit: 1,
-      depth: 1,
-    });
-
-    if (!collectionResult.docs.length) {
-      notFound();
+    if (!collection) {
+      notFound()
     }
-
-    const collection = collectionResult.docs[0];
-
-    const productsResult = await payload.find({
-      collection: "products",
-      where: {
-        "collection.slug": {
-          equals: slug,
-        },
-      },
-      depth: 2,
-    });
 
     return {
       collection,
-      products: productsResult.docs,
-    };
+      products: collection.products || [],
+    }
   },
-);
+)
 
 /**
  * Generate metadata for the collection page
  */
 export async function generateMetadata(props: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
-  const params = await props.params;
-  const slug = params.slug as string;
+  const params = await props.params
+  const slug = params.slug as string
 
-  const { collection } = await getCollectionBySlug(slug);
+  const { collection } = await getCollectionBySlug(slug)
 
-  if (!collection) return notFound();
+  if (!collection) return notFound()
 
   return {
-    title: collection.title,
-    description: collection.title,
+    title: collection.name,
+    description: collection.description || collection.name,
     openGraph: {
-      title: collection.title,
-      description: `${collection.title} products`,
+      title: collection.name,
+      description: collection.description || `${collection.name} products`,
     },
     twitter: {
-      title: collection.title,
-      description: `${collection.title} products`,
+      title: collection.name,
+      description: collection.description || `${collection.name} products`,
     },
     alternates: {
       canonical: `/collections/${collection.slug}`,
     },
-  };
+  }
 }
 
 type CollectionPageProps = {
   params: Promise<{
-    slug: string;
-  }>;
-};
+    slug: string
+  }>
+}
 
-const CollectionPageContent: React.FC<CollectionPageProps> = async ({
-  params,
-}) => {
-  const { slug } = await params;
+const CollectionPageContent: React.FC<CollectionPageProps> = async ({ params }) => {
+  const { slug } = await params
 
-  const { collection, products } = await getCollectionBySlug(slug);
+  const { collection, products } = await getCollectionBySlug(slug)
 
   return (
     <>
       <BreadcrumbBar
         segments={[
           {
-            name: collection.title,
+            name: collection.name,
             href: `/collections/${collection.slug}`,
           },
         ]}
@@ -114,7 +85,7 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
           <section className="max-w-[1280px] mx-auto px-5 py-5">
             <h2 className="flex items-center uppercase text-3xl font-bold">
               <SectionDecor />
-              <FancyTitle>{collection.title}</FancyTitle>
+              <FancyTitle>{collection.name}</FancyTitle>
             </h2>
           </section>
 
@@ -122,13 +93,13 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
 export default function CollectionPage(props: CollectionPageProps) {
   return (
     <ErrorBoundary errorComponent={NotFoundPage}>
       <CollectionPageContent {...props} />
     </ErrorBoundary>
-  );
+  )
 }

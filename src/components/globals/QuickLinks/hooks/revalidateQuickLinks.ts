@@ -9,7 +9,7 @@ export const revalidateQuickLinks: GlobalAfterChangeHook = ({
   if (!context.disableRevalidate) {
     payload.logger.info(`Revalidating quick links`);
 
-    revalidateTag("global_quickLinks");
+    revalidateTag("global_quickLinks", 'default');
   }
 
   return doc;
