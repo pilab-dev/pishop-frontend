@@ -1,28 +1,30 @@
 'use client'
 
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useCartStore } from "@/store/cart-store";
-import { useRouter } from "next/navigation";
+import { FloatingLabelInput } from '@/components/ui/floating-label-input'
+import { useCartStore } from '@/store/cart-store'
+import { CreditCard, MapPin } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const CheckoutPage = () => {
-  const { cart, isLoading, error, init, createCheckout } = useCartStore();
-  const router = useRouter();
+  const { cart, isLoading, error, init, createCheckout } = useCartStore()
+  const router = useRouter()
 
-  const [currentStep, setCurrentStep] = useState(1); // 1: Information, 2: Shipping, 3: Payment
-  const [shippingOptions, setShippingOptions] = useState<any[]>([]);
-  const [selectedShippingOption, setSelectedShippingOption] = useState<any | null>(null);
-  const [loadingShipping, setLoadingShipping] = useState(true);
-  const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1) // 1: Information, 2: Shipping, 3: Payment
+  const [shippingOptions, setShippingOptions] = useState<any[]>([])
+  const [selectedShippingOption, setSelectedShippingOption] = useState<any | null>(null)
+  const [loadingShipping, setLoadingShipping] = useState(true)
+  const [paymentProcessing, setPaymentProcessing] = useState(false)
 
   useEffect(() => {
-    init();
-  }, [init]);
+    init()
+  }, [init])
 
   useEffect(() => {
     const fetchShippingOptions = async () => {
-      if (!cart) return;
-      setLoadingShipping(true);
+      if (!cart) return
+      setLoadingShipping(true)
       try {
         const response = await fetch('/api/shipping/calculate', {
           method: 'POST',
@@ -30,43 +32,47 @@ const CheckoutPage = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ cartItems: cart.items, shippingAddress: {} }), // Mock address for now
-        });
-        const data = await response.json();
-        setShippingOptions(data.shippingOptions);
+        })
+        const data = await response.json()
+        setShippingOptions(data.shippingOptions)
         if (data.shippingOptions.length > 0 && !selectedShippingOption) {
-          setSelectedShippingOption(data.shippingOptions[0]); // Select first option by default
+          setSelectedShippingOption(data.shippingOptions[0]) // Select first option by default
         }
       } catch (error) {
-        console.error('Error fetching shipping options:', error);
+        console.error('Error fetching shipping options:', error)
       } finally {
-        setLoadingShipping(false);
+        setLoadingShipping(false)
       }
-    };
+    }
 
     if (cart && cart.items.length > 0) {
-      fetchShippingOptions();
+      fetchShippingOptions()
     }
-  }, [cart, selectedShippingOption]);
+  }, [cart, selectedShippingOption])
 
   const handlePlaceOrder = async () => {
-    setPaymentProcessing(true);
+    setPaymentProcessing(true)
     try {
-      const sessionId = await createCheckout();
+      const sessionId = await createCheckout()
       if (sessionId) {
-        router.push(`/order-confirmation?session_id=${sessionId}`);
+        router.push(`/order-confirmation?session_id=${sessionId}`)
       } else {
-        alert('Failed to create checkout session.');
+        alert('Failed to create checkout session.')
       }
     } catch (error) {
-      console.error('Error placing order:', error);
-      alert('An error occurred while placing your order. Please try again.');
+      console.error('Error placing order:', error)
+      alert('An error occurred while placing your order. Please try again.')
     } finally {
-      setPaymentProcessing(false);
+      setPaymentProcessing(false)
     }
-  };
+  }
 
   if (isLoading && !cart) {
-    return <div className="container mx-auto p-4 text-center"><p>Loading...</p></div>;
+    return (
+      <div className="container mx-auto p-4 text-center">
+        <p>Loading...</p>
+      </div>
+    )
   }
 
   if (!cart || cart.items.length === 0) {
@@ -79,44 +85,43 @@ const CheckoutPage = () => {
           </button>
         </Link>
       </div>
-    );
+    )
   }
 
-  const finalTotal = (cart?.totals.total.amount || 0) + (selectedShippingOption?.price || 0);
+  const finalTotal = (cart?.totals.total.amount || 0) + (selectedShippingOption?.price || 0)
 
   return (
-    <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-8">
+    <div className="max-w-7xl mx-auto p-4 flex flex-col lg:flex-row gap-8">
       {/* Main Content Area */}
       <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
         <h1 className="text-3xl font-bold mb-6">Checkout</h1>
 
         {/* Step Indicator */}
         <div className="mb-8 flex justify-between text-sm font-medium text-gray-500">
-          <span className={currentStep >= 1 ? "text-blue-600" : ""}>Information</span>
-          <span className={currentStep >= 2 ? "text-blue-600" : ""}>Shipping</span>
-          <span className={currentStep >= 3 ? "text-blue-600" : ""}>Payment</span>
+          <span className={currentStep >= 1 ? 'text-blue-600' : ''}>Information</span>
+          <span className={currentStep >= 2 ? 'text-blue-600' : ''}>Shipping</span>
+          <span className={currentStep >= 3 ? 'text-blue-600' : ''}>Payment</span>
         </div>
 
         {/* Information Step */}
         {currentStep === 1 && (
           <div className="space-y-4">
             <h2 className="text-xl font-semibold mb-4">Shipping Information (Mocked)</h2>
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">Full Name</label>
-              <input type="text" id="fullName" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="John Doe" />
-            </div>
-            <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
-              <input type="text" id="address" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="123 Main St" />
-            </div>
-            <div>
-              <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
-              <input type="text" id="city" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Anytown" />
-            </div>
-            <div>
-              <label htmlFor="zip" className="block text-sm font-medium text-gray-700">Zip Code</label>
-              <input type="text" id="zip" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="12345" />
-            </div>
+            <FloatingLabelInput
+              id="fullName"
+              label="Full Name"
+              type="text"
+              placeholder="John Doe"
+            />
+            <FloatingLabelInput
+              id="address"
+              label="Address"
+              type="text"
+              placeholder="123 Main St"
+              icon={<MapPin size={18} />}
+            />
+            <FloatingLabelInput id="city" label="City" type="text" placeholder="Anytown" />
+            <FloatingLabelInput id="zip" label="Zip Code" type="text" placeholder="12345" />
             <button
               onClick={() => setCurrentStep(2)}
               className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700"
@@ -177,18 +182,24 @@ const CheckoutPage = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4">Payment Details (Mocked)</h2>
             <div className="space-y-4">
-              <div>
-                <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700">Card Number</label>
-                <input type="text" id="cardNumber" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="**** **** **** ****" />
-              </div>
+              <FloatingLabelInput
+                id="cardNumber"
+                label="Card Number"
+                type="text"
+                placeholder="**** **** **** ****"
+                icon={<CreditCard size={18} />}
+              />
               <div className="flex space-x-4">
                 <div className="w-1/2">
-                  <label htmlFor="expiry" className="block text-sm font-medium text-gray-700">Expiry Date</label>
-                  <input type="text" id="expiry" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="MM/YY" />
+                  <FloatingLabelInput
+                    id="expiry"
+                    label="Expiry Date"
+                    type="text"
+                    placeholder="MM/YY"
+                  />
                 </div>
                 <div className="w-1/2">
-                  <label htmlFor="cvv" className="block text-sm font-medium text-gray-700">CVV</label>
-                  <input type="text" id="cvv" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="123" />
+                  <FloatingLabelInput id="cvv" label="CVV" type="text" placeholder="123" />
                 </div>
               </div>
             </div>
@@ -217,7 +228,9 @@ const CheckoutPage = () => {
         <div className="space-y-2 mb-4">
           {cart.items.map((item) => (
             <div key={item.id} className="flex justify-between text-sm">
-              <span>{item.product.name} (x{item.quantity})</span>
+              <span>
+                {item.product.name} (x{item.quantity})
+              </span>
               <span>{item.totalPrice.amount}</span>
             </div>
           ))}
@@ -240,7 +253,7 @@ const CheckoutPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CheckoutPage;
+export default CheckoutPage
