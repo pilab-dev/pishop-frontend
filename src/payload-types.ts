@@ -66,7 +66,10 @@ export interface Config {
     users: UserAuthOperations;
   };
   blocks: {
+    bestSellers: BestSellersProps;
     hotDealsBlock: HotDealsBlock;
+    productShowcase: ProductShowcaseProps;
+    promotionalBanner: PromotionalBannerProps;
   };
   collections: {
     pages: Page;
@@ -75,6 +78,7 @@ export interface Config {
     categories: Category;
     users: User;
     collections: Collection;
+    promotionalContent: PromotionalContent;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -93,6 +97,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     collections: CollectionsSelect<false> | CollectionsSelect<true>;
+    promotionalContent: PromotionalContentSelect<false> | PromotionalContentSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -109,10 +114,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    promotions: Promotion;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    promotions: PromotionsSelect<false> | PromotionsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -149,228 +156,208 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "HotDealsBlock".
+ * via the `definition` "BestSellersProps".
  */
-export interface HotDealsBlock {
-  products: {
-    product?: string | null;
-    id?: string | null;
-  }[];
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'hotDealsBlock';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages".
- */
-export interface Page {
-  id: string;
-  title: string;
-  tags?:
+export interface BestSellersProps {
+  /**
+   * Title for the best sellers section
+   */
+  title?: string | null;
+  /**
+   * Optional subtitle for this section
+   */
+  subtitle?: string | null;
+  /**
+   * How to source the best-selling products
+   */
+  source: 'promotionalContent' | 'manual' | 'auto';
+  /**
+   * Select promotional content with best sellers
+   */
+  promotionalContent?: (string | null) | PromotionalContent;
+  /**
+   * Manually selected best-selling products
+   */
+  products?:
     | {
         /**
-         * Add and manage tags for this document.
+         * Product ID or slug from the webshop engine
          */
-        tags?:
-          | {
-              tag: string;
-              id?: string | null;
-            }[]
-          | null;
+        productId: string;
+        /**
+         * Sales rank/position (for display purposes)
+         */
+        salesRank?: number | null;
+        /**
+         * Badge text to display (automatically generated based on rank)
+         */
+        badge?: string | null;
+        /**
+         * Sort order within this block
+         */
+        sortOrder?: number | null;
         id?: string | null;
       }[]
     | null;
-  elements: (
-    | FeaturedProductsProps
-    | HotDealsBlock
-    | CallToActionBlock
-    | ContentBlock
-    | MediaBlock
-    | ArchiveBlock
-    | FormBlock
-  )[];
-  meta?: {
-    title?: string | null;
+  /**
+   * Settings for automatic best seller selection
+   */
+  autoSettings?: {
     /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     * Timeframe to consider for best sellers
      */
-    image?: (string | null) | Media;
-    description?: string | null;
+    timeframe?: ('7days' | '30days' | '90days' | 'all') | null;
+    /**
+     * Limit to specific category (optional)
+     */
+    category?: (string | null) | Category;
+    /**
+     * Minimum sales threshold
+     */
+    minSales?: number | null;
   };
-  hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'centeredImpact' | 'sideBySide';
-    richText?: {
-      root: {
-        type: string;
-        children: {
-          type: any;
-          version: number;
-          [k: string]: unknown;
-        }[];
-        direction: ('ltr' | 'rtl') | null;
-        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-        indent: number;
-        version: number;
-      };
-      [k: string]: unknown;
-    } | null;
-    links?:
-      | {
-          link: {
-            type?: ('reference' | 'custom') | null;
-            newTab?: boolean | null;
-            reference?:
-              | ({
-                  relationTo: 'pages';
-                  value: string | Page;
-                } | null)
-              | ({
-                  relationTo: 'posts';
-                  value: string | Post;
-                } | null);
-            url?: string | null;
-            label: string;
-            /**
-             * Choose how the link should be rendered.
-             */
-            appearance?: ('default' | 'outline') | null;
-          };
-          id?: string | null;
-        }[]
-      | null;
-    media?: (string | null) | Media;
+  /**
+   * Display settings for the best sellers section
+   */
+  displaySettings?: {
+    /**
+     * How to display the best sellers
+     */
+    layout?: ('grid' | 'carousel' | 'rankedList' | 'hero') | null;
+    /**
+     * Number of columns (for grid layout)
+     */
+    columns?: ('2' | '3' | '4' | '6') | null;
+    /**
+     * Show sales rankings/numbers
+     */
+    showRankings?: boolean | null;
+    /**
+     * Show 'Best Seller' badges
+     */
+    showBadges?: boolean | null;
+    /**
+     * Maximum number of products to display
+     */
+    maxItems?: number | null;
   };
-  markdown?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  publishedAt?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FeaturedProductsProps".
- */
-export interface FeaturedProductsProps {
-  products: {
-    product?: string | null;
-    tileType?: 'default' | null;
-    id?: string | null;
-  }[];
+  /**
+   * Call-to-action settings
+   */
+  callToAction?: {
+    /**
+     * Button text
+     */
+    text?: string | null;
+    /**
+     * URL or path to link to (e.g., best-sellers collection)
+     */
+    link?: string | null;
+    style?: ('primary' | 'secondary' | 'outline' | 'link') | null;
+  };
   id?: string | null;
   blockName?: string | null;
-  blockType: 'featuredProducts';
+  blockType: 'bestSellers';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CallToActionBlock".
+ * via the `definition` "promotionalContent".
  */
-export interface CallToActionBlock {
-  richText?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  links?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: string | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'cta';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
- */
-export interface Post {
+export interface PromotionalContent {
   id: string;
+  /**
+   * Display title for this promotional content
+   */
   title: string;
-  heroImage?: (string | null) | Media;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  relatedPosts?: (string | Post)[] | null;
-  categories?: (string | Category)[] | null;
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-    description?: string | null;
-  };
-  publishedAt?: string | null;
-  authors?: (string | User)[] | null;
-  populatedAuthors?:
+  /**
+   * Type of promotional content
+   */
+  type: 'featuredProducts' | 'bestSellers' | 'campaign' | 'seasonal' | 'flashSale';
+  /**
+   * Description of this promotional content
+   */
+  description?: string | null;
+  /**
+   * Whether this promotional content is currently active
+   */
+  isActive?: boolean | null;
+  /**
+   * Priority order (higher numbers appear first)
+   */
+  priority?: number | null;
+  /**
+   * When this promotion should start (optional)
+   */
+  startDate?: string | null;
+  /**
+   * When this promotion should end (optional)
+   */
+  endDate?: string | null;
+  /**
+   * Products to feature in this promotional content
+   */
+  products?:
     | {
+        /**
+         * Product ID or slug from the webshop engine
+         */
+        productId: string;
+        /**
+         * Optional custom title to display instead of product name
+         */
+        overrideTitle?: string | null;
+        /**
+         * Optional custom description to display
+         */
+        overrideDescription?: string | null;
+        /**
+         * Badge text to display (e.g., "NEW", "SALE", "BEST SELLER")
+         */
+        badge?: string | null;
+        /**
+         * Sort order within this promotional content
+         */
+        sortOrder?: number | null;
         id?: string | null;
-        name?: string | null;
       }[]
     | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  /**
+   * Hero image for this promotional content
+   */
+  heroImage?: (string | null) | Media;
+  /**
+   * Call-to-action settings
+   */
+  callToAction?: {
+    /**
+     * Button text
+     */
+    text?: string | null;
+    /**
+     * URL or path to link to
+     */
+    link?: string | null;
+    style?: ('primary' | 'secondary' | 'outline') | null;
+  };
+  /**
+   * SEO and display metadata
+   */
+  metadata?: {
+    /**
+     * SEO title override
+     */
+    seoTitle?: string | null;
+    /**
+     * SEO description override
+     */
+    seoDescription?: string | null;
+    /**
+     * How to display this promotional content
+     */
+    displayStyle?: ('grid' | 'carousel' | 'list' | 'hero') | null;
+  };
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -493,6 +480,572 @@ export interface Category {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HotDealsBlock".
+ */
+export interface HotDealsBlock {
+  products: {
+    product?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hotDealsBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductShowcaseProps".
+ */
+export interface ProductShowcaseProps {
+  /**
+   * Optional title for this showcase section
+   */
+  title?: string | null;
+  /**
+   * Optional subtitle
+   */
+  subtitle?: string | null;
+  /**
+   * Type of content to showcase
+   */
+  showcaseType: 'products' | 'category' | 'collection' | 'brand' | 'seasonal';
+  /**
+   * How to source the showcase content
+   */
+  source: 'manual' | 'promotionalContent' | 'dynamic';
+  /**
+   * Select category to showcase
+   */
+  category?: (string | null) | Category;
+  /**
+   * Select collection to showcase
+   */
+  collection?: (string | null) | Collection;
+  /**
+   * Select promotional content to display
+   */
+  promotionalContent?: (string | null) | PromotionalContent;
+  /**
+   * Products to showcase
+   */
+  products?:
+    | {
+        /**
+         * Product ID or slug
+         */
+        productId: string;
+        /**
+         * Highlight this product (larger, different styling)
+         */
+        highlight?: boolean | null;
+        /**
+         * Custom display title
+         */
+        customTitle?: string | null;
+        /**
+         * Badge text (e.g., 'NEW', 'POPULAR')
+         */
+        badge?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Settings for dynamic content
+   */
+  dynamicSettings?: {
+    sortBy?: ('newest' | 'priceAsc' | 'priceDesc' | 'popular' | 'bestSelling' | 'random') | null;
+    filterBy?: {
+      /**
+       * Filter by category
+       */
+      category?: (string | null) | Category;
+      priceRange?: {
+        /**
+         * Minimum price
+         */
+        min?: number | null;
+        /**
+         * Maximum price
+         */
+        max?: number | null;
+      };
+      /**
+       * Filter by tags (comma-separated)
+       */
+      tags?: string | null;
+    };
+  };
+  /**
+   * Layout and display settings
+   */
+  layout?: {
+    style?: ('grid' | 'carousel' | 'masonry' | 'list' | 'heroGrid') | null;
+    columns?: ('2' | '3' | '4' | '5' | '6') | null;
+    aspectRatio?: ('square' | 'portrait' | 'landscape' | 'wide') | null;
+    spacing?: ('tight' | 'normal' | 'loose') | null;
+  };
+  /**
+   * What content to show on products
+   */
+  contentSettings?: {
+    showTitle?: boolean | null;
+    showPrice?: boolean | null;
+    showComparePrice?: boolean | null;
+    showBadges?: boolean | null;
+    /**
+     * Show quick add to cart button
+     */
+    showQuickAdd?: boolean | null;
+    hoverEffect?: ('zoom' | 'lift' | 'overlay' | 'none') | null;
+  };
+  /**
+   * Section call-to-action
+   */
+  callToAction?: {
+    /**
+     * Button text
+     */
+    text?: string | null;
+    /**
+     * URL or path
+     */
+    link?: string | null;
+    position?: ('end' | 'topRight' | 'bottomCenter') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'productShowcase';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections".
+ */
+export interface Collection {
+  id: string;
+  title: string;
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Product slugs to feature in this collection
+   */
+  featuredProducts?:
+    | {
+        /**
+         * The slug/handle of the product to feature
+         */
+        slug: string;
+        id?: string | null;
+      }[]
+    | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PromotionalBannerProps".
+ */
+export interface PromotionalBannerProps {
+  /**
+   * Banner content (text, links, etc.)
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Background image for the banner (optional)
+   */
+  backgroundImage?: (string | null) | Media;
+  /**
+   * Background color (hex code) - used if no background image
+   */
+  backgroundColor?: string | null;
+  /**
+   * Text color (hex code)
+   */
+  textColor?: string | null;
+  /**
+   * Banner height
+   */
+  height?: ('small' | 'medium' | 'large' | 'full') | null;
+  /**
+   * Content alignment
+   */
+  alignment?: ('left' | 'center' | 'right') | null;
+  /**
+   * Call-to-action button settings
+   */
+  callToAction?: {
+    /**
+     * Button text
+     */
+    text?: string | null;
+    /**
+     * URL or path to link to
+     */
+    link?: string | null;
+    style?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
+    position?: ('inline' | 'below') | null;
+  };
+  /**
+   * Banner behavior settings
+   */
+  behavior?: {
+    /**
+     * Allow users to dismiss the banner
+     */
+    dismissible?: boolean | null;
+    /**
+     * Make banner sticky/fixed position
+     */
+    sticky?: boolean | null;
+    /**
+     * Entrance animation
+     */
+    animation?: ('none' | 'fadeIn' | 'slideDown' | 'pulse') | null;
+  };
+  /**
+   * When to show this banner
+   */
+  scheduling?: {
+    /**
+     * Start showing banner from this date
+     */
+    startDate?: string | null;
+    /**
+     * Stop showing banner after this date
+     */
+    endDate?: string | null;
+    /**
+     * Target specific audience
+     */
+    targetAudience?: ('all' | 'new' | 'returning' | 'authenticated') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'promotionalBanner';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: string;
+  title: string;
+  tags?:
+    | {
+        /**
+         * Add and manage tags for this document.
+         */
+        tags?:
+          | {
+              tag: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  elements: (
+    | FeaturedProductsProps
+    | HotDealsBlock
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+  )[];
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
+  hero: {
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'centeredImpact' | 'sideBySide';
+    richText?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    links?:
+      | {
+          link: {
+            type?: ('reference' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            url?: string | null;
+            label: string;
+            /**
+             * Choose how the link should be rendered.
+             */
+            appearance?: ('default' | 'outline') | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    media?: (string | null) | Media;
+  };
+  markdown?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  publishedAt?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedProductsProps".
+ */
+export interface FeaturedProductsProps {
+  /**
+   * Optional title for this featured products section
+   */
+  title?: string | null;
+  /**
+   * Optional subtitle for this section
+   */
+  subtitle?: string | null;
+  /**
+   * How to source the featured products
+   */
+  source: 'manual' | 'promotionalContent' | 'collection';
+  /**
+   * Select promotional content to display
+   */
+  promotionalContent?: (string | null) | PromotionalContent;
+  /**
+   * Select collection to feature products from
+   */
+  collection?: (string | null) | Collection;
+  /**
+   * Manually selected products to feature
+   */
+  products?:
+    | {
+        /**
+         * Product ID or slug from the webshop engine
+         */
+        productId: string;
+        /**
+         * Optional custom title to display instead of product name
+         */
+        overrideTitle?: string | null;
+        /**
+         * Optional custom description to display
+         */
+        overrideDescription?: string | null;
+        /**
+         * Badge text to display (e.g., 'NEW', 'SALE', 'FEATURED')
+         */
+        badge?: string | null;
+        /**
+         * Sort order within this block
+         */
+        sortOrder?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Display settings for this featured products section
+   */
+  displaySettings?: {
+    /**
+     * How to display the featured products
+     */
+    layout?: ('grid' | 'carousel' | 'list' | 'hero') | null;
+    /**
+     * Number of columns (for grid layout)
+     */
+    columns?: ('1' | '2' | '3' | '4' | '6') | null;
+    /**
+     * Show product prices
+     */
+    showPrice?: boolean | null;
+    /**
+     * Show product badges
+     */
+    showBadges?: boolean | null;
+    /**
+     * Maximum number of products to display
+     */
+    maxItems?: number | null;
+  };
+  /**
+   * Call-to-action settings for this section
+   */
+  callToAction?: {
+    /**
+     * Button text (e.g., 'Shop Now', 'View All')
+     */
+    text?: string | null;
+    /**
+     * URL or path to link to
+     */
+    link?: string | null;
+    style?: ('primary' | 'secondary' | 'outline' | 'link') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featuredProducts';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CallToActionBlock".
+ */
+export interface CallToActionBlock {
+  richText?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: string | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cta';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: string;
+  title: string;
+  heroImage?: (string | null) | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  relatedPosts?: (string | Post)[] | null;
+  categories?: (string | Category)[] | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
+  publishedAt?: string | null;
+  authors?: (string | User)[] | null;
+  populatedAuthors?:
+    | {
+        id?: string | null;
+        name?: string | null;
+      }[]
+    | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -817,45 +1370,6 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "collections".
- */
-export interface Collection {
-  id: string;
-  title: string;
-  description: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  /**
-   * Product slugs to feature in this collection
-   */
-  featuredProducts?:
-    | {
-        /**
-         * The slug/handle of the product to feature
-         */
-        slug: string;
-        id?: string | null;
-      }[]
-    | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1069,6 +1583,10 @@ export interface PayloadLockedDocument {
         value: string | Collection;
       } | null)
     | ({
+        relationTo: 'promotionalContent';
+        value: string | PromotionalContent;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1196,12 +1714,36 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "FeaturedProductsProps_select".
  */
 export interface FeaturedProductsPropsSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  source?: T;
+  promotionalContent?: T;
+  collection?: T;
   products?:
     | T
     | {
-        product?: T;
-        tileType?: T;
+        productId?: T;
+        overrideTitle?: T;
+        overrideDescription?: T;
+        badge?: T;
+        sortOrder?: T;
         id?: T;
+      };
+  displaySettings?:
+    | T
+    | {
+        layout?: T;
+        columns?: T;
+        showPrice?: T;
+        showBadges?: T;
+        maxItems?: T;
+      };
+  callToAction?:
+    | T
+    | {
+        text?: T;
+        link?: T;
+        style?: T;
       };
   id?: T;
   blockName?: T;
@@ -1489,6 +2031,46 @@ export interface CollectionsSelect<T extends boolean = true> {
       };
   slug?: T;
   slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "promotionalContent_select".
+ */
+export interface PromotionalContentSelect<T extends boolean = true> {
+  title?: T;
+  type?: T;
+  description?: T;
+  isActive?: T;
+  priority?: T;
+  startDate?: T;
+  endDate?: T;
+  products?:
+    | T
+    | {
+        productId?: T;
+        overrideTitle?: T;
+        overrideDescription?: T;
+        badge?: T;
+        sortOrder?: T;
+        id?: T;
+      };
+  heroImage?: T;
+  callToAction?:
+    | T
+    | {
+        text?: T;
+        link?: T;
+        style?: T;
+      };
+  metadata?:
+    | T
+    | {
+        seoTitle?: T;
+        seoDescription?: T;
+        displayStyle?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1862,6 +2444,131 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "promotions".
+ */
+export interface Promotion {
+  id: string;
+  /**
+   * Site-wide promotional banner settings
+   */
+  sitewideBanner?: {
+    /**
+     * Show site-wide promotional banner
+     */
+    isEnabled?: boolean | null;
+    /**
+     * Banner message text
+     */
+    message?: string | null;
+    /**
+     * Background color (hex code)
+     */
+    backgroundColor?: string | null;
+    /**
+     * Text color (hex code)
+     */
+    textColor?: string | null;
+    /**
+     * Optional link URL
+     */
+    link?: string | null;
+    /**
+     * Allow users to dismiss the banner
+     */
+    dismissible?: boolean | null;
+  };
+  /**
+   * Featured promotional content to display on homepage/landing pages
+   */
+  featuredContent?:
+    | {
+        /**
+         * Select promotional content to feature
+         */
+        promotionalContent: string | PromotionalContent;
+        /**
+         * Display order (higher numbers appear first)
+         */
+        displayOrder?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Define homepage promotional sections
+   */
+  homepageSections?:
+    | {
+        sectionType: 'hero' | 'featuredProducts' | 'bestSellers' | 'campaign' | 'categoryShowcase';
+        /**
+         * Section title
+         */
+        title?: string | null;
+        /**
+         * Section subtitle
+         */
+        subtitle?: string | null;
+        /**
+         * Link to promotional content (if applicable)
+         */
+        content?: (string | null) | PromotionalContent;
+        /**
+         * Link to collection (for category showcase)
+         */
+        collection?: (string | null) | Collection;
+        /**
+         * Enable this section
+         */
+        isEnabled?: boolean | null;
+        /**
+         * Display order
+         */
+        sortOrder?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Newsletter signup promotional settings
+   */
+  newsletterPromotion?: {
+    /**
+     * Show newsletter promotion
+     */
+    isEnabled?: boolean | null;
+    /**
+     * Newsletter promotion title
+     */
+    title?: string | null;
+    /**
+     * Newsletter promotion description
+     */
+    description?: string | null;
+    /**
+     * Discount code to offer for newsletter signup
+     */
+    discountCode?: string | null;
+  };
+  /**
+   * SEO settings for promotional content
+   */
+  seoSettings?: {
+    /**
+     * Default meta title for promotional pages
+     */
+    metaTitle?: string | null;
+    /**
+     * Default meta description for promotional pages
+     */
+    metaDescription?: string | null;
+    /**
+     * Default Open Graph image for promotional content
+     */
+    openGraphImage?: (string | null) | Media;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1919,6 +2626,59 @@ export interface FooterSelect<T extends boolean = true> {
         id?: T;
       };
   copy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "promotions_select".
+ */
+export interface PromotionsSelect<T extends boolean = true> {
+  sitewideBanner?:
+    | T
+    | {
+        isEnabled?: T;
+        message?: T;
+        backgroundColor?: T;
+        textColor?: T;
+        link?: T;
+        dismissible?: T;
+      };
+  featuredContent?:
+    | T
+    | {
+        promotionalContent?: T;
+        displayOrder?: T;
+        id?: T;
+      };
+  homepageSections?:
+    | T
+    | {
+        sectionType?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        collection?: T;
+        isEnabled?: T;
+        sortOrder?: T;
+        id?: T;
+      };
+  newsletterPromotion?:
+    | T
+    | {
+        isEnabled?: T;
+        title?: T;
+        description?: T;
+        discountCode?: T;
+      };
+  seoSettings?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        openGraphImage?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

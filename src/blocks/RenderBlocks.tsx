@@ -8,16 +8,22 @@ import { ContentBlock } from "@/blocks/Content/Component";
 import { FormBlock } from "@/blocks/Form/Component";
 import { MediaBlock } from "@/blocks/MediaBlock/Component";
 import { FeaturedProductsBlock } from "./FeaturedProductsBlock/Component";
+import { BestSellersBlock } from "./BestSellersBlock/Component";
 import { HotDealsBlock } from "./HotDealsBlock/Component";
+import { ProductShowcaseBlock } from "./ProductShowcaseBlock/Component";
+import { PromotionalBannerBlock } from "./PromotionalBannerBlock/Component";
 
 const blockComponents = {
   featuredProducts: FeaturedProductsBlock,
+  bestSellers: BestSellersBlock,
+  hotDealsBlock: HotDealsBlock,
+  productShowcase: ProductShowcaseBlock,
+  promotionalBanner: PromotionalBannerBlock,
   archive: ArchiveBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
-  hotDealsBlock: HotDealsBlock,
 };
 
 export const RenderBlocks: React.FC<{

@@ -9,13 +9,18 @@ import { Collections } from './collections/Collections'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { PromotionalContent } from './collections/PromotionalContent'
 import { Users } from './collections/Users'
 import { defaultLexical } from './fields/defaultLexical'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
+import { Promotions } from './Promotions/config'
 import { plugins } from './plugins'
 import { getServerSideURL } from './utilities/getURL'
+import { BestSellersBlock } from './blocks/BestSellersBlock/config'
 import { HotDealsBlock } from './blocks/HotDealsBlock/config'
+import { ProductShowcaseBlock } from './blocks/ProductShowcaseBlock/config'
+import { PromotionalBannerBlock } from './blocks/PromotionalBannerBlock/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -64,10 +69,10 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
   }),
   // database-adapter-config-end
-  collections: [Pages, Posts, Media, Categories, Users, Collections],
+  collections: [Pages, Posts, Media, Categories, Users, Collections, PromotionalContent],
   cors: [getServerSideURL()].filter(Boolean),
-  blocks: [HotDealsBlock],
-  globals: [Header, Footer],
+  blocks: [BestSellersBlock, HotDealsBlock, ProductShowcaseBlock, PromotionalBannerBlock],
+  globals: [Header, Footer, Promotions],
   plugins: [
     ...plugins,
     // storage-adapter-placeholder
