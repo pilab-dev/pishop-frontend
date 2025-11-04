@@ -129,7 +129,7 @@ export default function CartModal({ isOpen: externalIsOpen, onOpenChange }: Cart
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
         className={cn(
-          'hidden md:block fixed bottom-0 right-0 top-0 flex h-full w-full flex-col border-l p-6',
+          'fixed bottom-0 right-0 top-0 flex h-full w-full flex-col border-l p-6',
           'border-neutral-200 bg-white text-black dark:border-neutral-700',
           'dark:bg-neutral-900 dark:text-white md:w-[390px]',
           // Override Radix UI default animations for sidebar positioning
