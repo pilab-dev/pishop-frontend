@@ -1,23 +1,18 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Eye, EyeOff, Facebook, Instagram, Mail, Twitter, User } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import Link from 'next/link'
-import { Eye, EyeOff, Facebook, Twitter, Instagram, Mail, User, Lock } from 'lucide-react'
 
 import { Button } from './ui/button'
-import { FloatingLabelInput } from './ui/floating-label-input'
 import { Checkbox } from './ui/checkbox'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from './ui/dropdown-menu'
+import { FloatingLabelInput } from './ui/floating-label-input'
 import { Label } from './ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
-import { Separator } from './ui/separator'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -41,17 +36,13 @@ interface SocialButtonProps {
 }
 
 const SocialButton = ({ icon, label, onClick, variant = 'login' }: SocialButtonProps) => {
-  const baseClasses = "w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg border font-medium transition-colors hover:bg-gray-50"
-  const variantClasses = variant === 'signup'
-    ? "border-gray-300 text-gray-700"
-    : "border-gray-300 text-gray-700"
+  const baseClasses =
+    'w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg border font-medium transition-colors hover:bg-gray-50'
+  const variantClasses =
+    variant === 'signup' ? 'border-gray-300 text-gray-700' : 'border-gray-300 text-gray-700'
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`${baseClasses} ${variantClasses}`}
-    >
+    <button type="button" onClick={onClick} className={`${baseClasses} ${variantClasses}`}>
       {icon}
       <span className="text-sm">{label}</span>
     </button>
@@ -115,7 +106,10 @@ export const AuthPopover = () => {
         collisionPadding={20}
       >
         <div className="bg-white rounded-lg">
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'login' | 'signup')}>
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as 'login' | 'signup')}
+          >
             <TabsList className="grid w-full grid-cols-2 rounded-none rounded-t-lg border-b">
               <TabsTrigger
                 value="login"
@@ -141,12 +135,20 @@ export const AuthPopover = () => {
               {/* Social Login Buttons */}
               <div className="space-y-3">
                 <SocialButton
-                  icon={<div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">G</div>}
+                  icon={
+                    <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                      G
+                    </div>
+                  }
                   label="Continue with Google"
                   onClick={() => handleSocialLogin('google')}
                 />
                 <SocialButton
-                  icon={<div className="w-5 h-5 bg-black rounded-full flex items-center justify-center text-white text-xs"></div>}
+                  icon={
+                    <div className="w-5 h-5 bg-black rounded-full flex items-center justify-center text-white text-xs">
+                      
+                    </div>
+                  }
                   label="Continue with Apple"
                   onClick={() => handleSocialLogin('apple')}
                 />
@@ -169,61 +171,64 @@ export const AuthPopover = () => {
               {/* Login Form */}
               <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
                 <div className="space-y-1">
-                  <div className="relative">
-                    <FloatingLabelInput
-                      type="email"
-                      label="Email or Username"
-                      {...loginForm.register('email')}
-                      className="pl-10"
-                    />
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  </div>
+                  <FloatingLabelInput
+                    id="login-email"
+                    type="email"
+                    label="Email or Username"
+                    placeholder="Enter your email or username"
+                    icon={<Mail size={18} />}
+                    {...loginForm.register('email')}
+                  />
                   {loginForm.formState.errors.email && (
-                    <p className="text-sm text-red-500">{loginForm.formState.errors.email.message}</p>
+                    <p className="text-sm text-red-500">
+                      {loginForm.formState.errors.email.message}
+                    </p>
                   )}
                 </div>
 
                 <div className="space-y-1">
                   <div className="relative">
                     <FloatingLabelInput
+                      id="login-password"
                       type={showPassword ? 'text' : 'password'}
                       label="Password"
+                      placeholder="Enter your password"
+                      icon={
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors"
+                        >
+                          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      }
                       {...loginForm.register('password')}
-                      className="pl-10 pr-10"
                     />
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
                   </div>
                   {loginForm.formState.errors.password && (
-                    <p className="text-sm text-red-500">{loginForm.formState.errors.password.message}</p>
+                    <p className="text-sm text-red-500">
+                      {loginForm.formState.errors.password.message}
+                    </p>
                   )}
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="remember"
-                      {...loginForm.register('rememberMe')}
-                    />
+                    <Checkbox id="remember" {...loginForm.register('rememberMe')} />
                     <Label htmlFor="remember" className="text-sm text-gray-600">
                       Remember me
                     </Label>
                   </div>
-                  <Link
-                    href="/forgot-password"
-                    className="text-sm text-primary hover:underline"
-                  >
+                  <Link href="/forgot-password" className="text-sm text-primary hover:underline">
                     Forgot password?
                   </Link>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={loginForm.formState.isSubmitting}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loginForm.formState.isSubmitting}
+                >
                   {loginForm.formState.isSubmitting ? 'Signing in...' : 'Sign In'}
                 </Button>
               </form>
@@ -240,7 +245,11 @@ export const AuthPopover = () => {
               <div className="space-y-3">
                 <SocialButton
                   variant="signup"
-                  icon={<div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">G</div>}
+                  icon={
+                    <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                      G
+                    </div>
+                  }
                   label="Sign up with Google"
                   onClick={() => handleSocialSignup('google')}
                 />
@@ -276,39 +285,42 @@ export const AuthPopover = () => {
               {/* Quick Signup Form */}
               <form onSubmit={signupForm.handleSubmit(handleSignup)} className="space-y-4">
                 <div className="space-y-1">
-                  <div className="relative">
-                    <FloatingLabelInput
-                      type="email"
-                      label="Email Address"
-                      {...signupForm.register('email')}
-                      className="pl-10"
-                    />
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  </div>
+                  <FloatingLabelInput
+                    id="signup-email"
+                    type="email"
+                    label="Email Address"
+                    placeholder="Enter your email address"
+                    icon={<Mail size={18} />}
+                    {...signupForm.register('email')}
+                  />
                   {signupForm.formState.errors.email && (
-                    <p className="text-sm text-red-500">{signupForm.formState.errors.email.message}</p>
+                    <p className="text-sm text-red-500">
+                      {signupForm.formState.errors.email.message}
+                    </p>
                   )}
                 </div>
 
                 <div className="space-y-1">
-                  <div className="relative">
-                    <FloatingLabelInput
-                      type={showPassword ? 'text' : 'password'}
-                      label="Create Password"
-                      {...signupForm.register('password')}
-                      className="pl-10 pr-10"
-                    />
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
+                  <FloatingLabelInput
+                    id="signup-password"
+                    type={showPassword ? 'text' : 'password'}
+                    label="Create Password"
+                    placeholder="Create a strong password"
+                    icon={
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors"
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    }
+                    {...signupForm.register('password')}
+                  />
                   {signupForm.formState.errors.password && (
-                    <p className="text-sm text-red-500">{signupForm.formState.errors.password.message}</p>
+                    <p className="text-sm text-red-500">
+                      {signupForm.formState.errors.password.message}
+                    </p>
                   )}
                 </div>
 
@@ -318,7 +330,9 @@ export const AuthPopover = () => {
                   className="w-full"
                   disabled={signupForm.formState.isSubmitting}
                 >
-                  {signupForm.formState.isSubmitting ? 'Creating account...' : 'Continue with Email'}
+                  {signupForm.formState.isSubmitting
+                    ? 'Creating account...'
+                    : 'Continue with Email'}
                 </Button>
               </form>
 

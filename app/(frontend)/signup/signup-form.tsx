@@ -10,12 +10,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@ui/form";
-import { Input } from "@ui/input";
 import { Separator } from "@ui/separator";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { FloatingLabelInput } from "@/components/ui/floating-label-input";
+import { User, Mail, Lock } from "lucide-react";
 
 interface ISignupForm {
   firstName: string;
@@ -63,12 +62,35 @@ const SignupForm = () => {
             control={form.control}
             name="firstName"
             render={({ field }) => (
-              <FormItem className="flex flex-col gap-1">
-                <FormLabel>First Name</FormLabel>
+              <FormItem>
                 <FormControl>
-                  <FloatingLabelInput label="First Name" {...field} />
+                  <FloatingLabelInput
+                    id="firstName"
+                    label="First Name"
+                    placeholder="Enter your first name"
+                    icon={<User size={18} />}
+                    {...field}
+                  />
                 </FormControl>
-                <FormDescription>This is your first name.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <FloatingLabelInput
+                    id="lastName"
+                    label="Last Name"
+                    placeholder="Enter your last name"
+                    icon={<User size={18} />}
+                    {...field}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -79,82 +101,60 @@ const SignupForm = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FloatingLabelInput {...field} id="email" label="Email" />
+                <FormControl>
+                  <FloatingLabelInput
+                    id="email"
+                    label="Email"
+                    type="email"
+                    placeholder="Enter your email"
+                    icon={<Mail size={18} />}
+                    {...field}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <div className="flex flex-col gap-1">
-            <FloatingLabelInput
-              placeholder="First Name"
-              {...form.register("firstName")}
-              className={
-                form.formState.errors.firstName ? "border-red-500" : ""
-              }
-            />
-            {form.formState.errors.firstName && (
-              <span className="text-sm text-red-500">
-                {form.formState.errors.firstName.message}
-              </span>
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <FloatingLabelInput
+                    id="password"
+                    label="Password"
+                    type="password"
+                    placeholder="Enter your password"
+                    icon={<Lock size={18} />}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
+          />
 
-          <div className="flex flex-col gap-1">
-            <Input
-              placeholder="Last Name"
-              {...form.register("lastName")}
-              className={form.formState.errors.lastName ? "border-red-500" : ""}
-            />
-            {form.formState.errors.lastName && (
-              <span className="text-sm text-red-500">
-                {form.formState.errors.lastName.message}
-              </span>
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <FloatingLabelInput
+                    id="confirmPassword"
+                    label="Confirm Password"
+                    type="password"
+                    placeholder="Confirm your password"
+                    icon={<Lock size={18} />}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <Input
-              placeholder="Email"
-              {...form.register("email")}
-              className={form.formState.errors.email ? "border-red-500" : ""}
-            />
-            {form.formState.errors.email && (
-              <span className="text-sm text-red-500">
-                {form.formState.errors.email.message}
-              </span>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <Input
-              placeholder="Password"
-              type="password"
-              {...form.register("password")}
-              className={form.formState.errors.password ? "border-red-500" : ""}
-            />
-            {form.formState.errors.password && (
-              <span className="text-sm text-red-500">
-                {form.formState.errors.password.message}
-              </span>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <Input
-              placeholder="Confirm Password"
-              type="password"
-              {...form.register("confirmPassword")}
-              className={
-                form.formState.errors.confirmPassword ? "border-red-500" : ""
-              }
-            />
-            {form.formState.errors.confirmPassword && (
-              <span className="text-sm text-red-500">
-                {form.formState.errors.confirmPassword.message}
-              </span>
-            )}
-          </div>
+          />
 
           <Button
             disabled={form.formState.isSubmitting}

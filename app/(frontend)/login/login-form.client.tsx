@@ -2,9 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@ui/button";
-import { Input } from "@ui/input";
+import { FloatingLabelInput } from "@/components/ui/floating-label-input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Mail, Lock } from "lucide-react";
 
 interface ILoginForm {
   email: string;
@@ -27,14 +28,28 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex flex-col items-center justify-center h-screen gap-4">
         <h1 className="text-2xl font-bold">Login</h1>
-        <Input placeholder="Email" type="email" {...form.register("email")} />
-        <Input
-          placeholder="Password"
-          type="password"
-          {...form.register("password")}
-        />
+        <div className="w-full max-w-sm">
+          <FloatingLabelInput
+            id="email"
+            label="Email"
+            type="email"
+            placeholder="Enter your email"
+            icon={<Mail size={18} />}
+            {...form.register("email")}
+          />
+        </div>
+        <div className="w-full max-w-sm">
+          <FloatingLabelInput
+            id="password"
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            icon={<Lock size={18} />}
+            {...form.register("password")}
+          />
+        </div>
         <Button type="submit" variant="outline">
           Login
         </Button>

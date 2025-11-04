@@ -9,7 +9,20 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 
 const FloatingInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {
-    return <Input ref={ref} className={cn('peer', className)} placeholder=" " {...props} />
+    return (
+      <Input
+        ref={ref}
+        className={cn(
+          'peer',
+          // Hide placeholder by default
+          '[&::placeholder]:opacity-0 [&::placeholder]:pointer-events-none',
+          // Show placeholder only when focused
+          '[&::placeholder]:focus:opacity-100 [&::placeholder]:focus:pointer-events-auto',
+          className,
+        )}
+        {...props}
+      />
+    )
   },
 )
 
@@ -74,7 +87,17 @@ const FloatingTextarea = React.forwardRef<
 >(({ id, label, icon, onIconClick, className, ...props }, ref) => {
   return (
     <div className={cn('relative w-full', className)}>
-      <Textarea ref={ref} id={id} {...props} />
+      <Textarea
+        ref={ref}
+        id={id}
+        className={cn(
+          // Hide placeholder by default
+          '[&::placeholder]:opacity-0 [&::placeholder]:pointer-events-none',
+          // Show placeholder only when focused
+          '[&::placeholder]:focus:opacity-100 [&::placeholder]:focus:pointer-events-auto',
+        )}
+        {...props}
+      />
       <FloatingLabel htmlFor={id}>{label}</FloatingLabel>
       {icon && (
         <button
