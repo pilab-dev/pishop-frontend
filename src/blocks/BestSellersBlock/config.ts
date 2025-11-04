@@ -1,15 +1,16 @@
 import type { Block } from "payload";
 
-export const FeaturedProductsBlock: Block = {
-  slug: "featuredProducts",
-  interfaceName: "FeaturedProductsProps",
-  imageURL: "/blocks/featured-items.png",
+export const BestSellersBlock: Block = {
+  slug: "bestSellers",
+  interfaceName: "BestSellersProps",
+  imageURL: "/blocks/best-sellers.png",
   fields: [
     {
       name: "title",
       type: "text",
+      defaultValue: "Best Sellers",
       admin: {
-        description: "Optional title for this featured products section",
+        description: "Title for the best sellers section",
       },
     },
     {
@@ -23,23 +24,23 @@ export const FeaturedProductsBlock: Block = {
       name: "source",
       type: "select",
       required: true,
-      defaultValue: "manual",
+      defaultValue: "promotionalContent",
       options: [
-        {
-          label: "Manual Selection",
-          value: "manual",
-        },
         {
           label: "From Promotional Content",
           value: "promotionalContent",
         },
         {
-          label: "From Collection",
-          value: "collection",
+          label: "Manual Selection",
+          value: "manual",
+        },
+        {
+          label: "Auto (Top Selling)",
+          value: "auto",
         },
       ],
       admin: {
-        description: "How to source the featured products",
+        description: "How to source the best-selling products",
       },
     },
     {
@@ -47,29 +48,20 @@ export const FeaturedProductsBlock: Block = {
       type: "relationship",
       relationTo: "promotionalContent",
       admin: {
-        description: "Select promotional content to display",
+        description: "Select promotional content with best sellers",
         condition: (data) => data.source === "promotionalContent",
       },
       filterOptions: {
-        type: { equals: "featuredProducts" },
-      },
-    },
-    {
-      name: "collection",
-      type: "relationship",
-      relationTo: "collections",
-      admin: {
-        description: "Select collection to feature products from",
-        condition: (data) => data.source === "collection",
+        type: { equals: "bestSellers" },
       },
     },
     {
       name: "products",
-      label: "Products to display",
+      label: "Best-selling products",
       type: "array",
       maxRows: 12,
       admin: {
-        description: "Manually selected products to feature",
+        description: "Manually selected best-selling products",
         condition: (data) => data.source === "manual",
       },
       fields: [
@@ -82,24 +74,18 @@ export const FeaturedProductsBlock: Block = {
           },
         },
         {
-          name: "overrideTitle",
-          type: "text",
+          name: "salesRank",
+          type: "number",
           admin: {
-            description: "Optional custom title to display instead of product name",
-          },
-        },
-        {
-          name: "overrideDescription",
-          type: "textarea",
-          admin: {
-            description: "Optional custom description to display",
+            description: "Sales rank/position (for display purposes)",
           },
         },
         {
           name: "badge",
           type: "text",
+          defaultValue: "#1 Best Seller",
           admin: {
-            description: "Badge text to display (e.g., 'NEW', 'SALE', 'FEATURED')",
+            description: "Badge text to display (automatically generated based on rank)",
           },
         },
         {
@@ -113,10 +99,50 @@ export const FeaturedProductsBlock: Block = {
       ],
     },
     {
+      name: "autoSettings",
+      type: "group",
+      admin: {
+        description: "Settings for automatic best seller selection",
+        condition: (data) => data.source === "auto",
+      },
+      fields: [
+        {
+          name: "timeframe",
+          type: "select",
+          defaultValue: "30days",
+          options: [
+            { label: "Last 7 days", value: "7days" },
+            { label: "Last 30 days", value: "30days" },
+            { label: "Last 90 days", value: "90days" },
+            { label: "All time", value: "all" },
+          ],
+          admin: {
+            description: "Timeframe to consider for best sellers",
+          },
+        },
+        {
+          name: "category",
+          type: "relationship",
+          relationTo: "categories",
+          admin: {
+            description: "Limit to specific category (optional)",
+          },
+        },
+        {
+          name: "minSales",
+          type: "number",
+          defaultValue: 1,
+          admin: {
+            description: "Minimum sales threshold",
+          },
+        },
+      ],
+    },
+    {
       name: "displaySettings",
       type: "group",
       admin: {
-        description: "Display settings for this featured products section",
+        description: "Display settings for the best sellers section",
       },
       fields: [
         {
@@ -133,16 +159,16 @@ export const FeaturedProductsBlock: Block = {
               value: "carousel",
             },
             {
-              label: "List",
-              value: "list",
+              label: "List with Rankings",
+              value: "rankedList",
             },
             {
-              label: "Hero",
+              label: "Hero with Top Product",
               value: "hero",
             },
           ],
           admin: {
-            description: "How to display the featured products",
+            description: "How to display the best sellers",
           },
         },
         {
@@ -150,7 +176,6 @@ export const FeaturedProductsBlock: Block = {
           type: "select",
           defaultValue: "3",
           options: [
-            { label: "1 Column", value: "1" },
             { label: "2 Columns", value: "2" },
             { label: "3 Columns", value: "3" },
             { label: "4 Columns", value: "4" },
@@ -162,11 +187,11 @@ export const FeaturedProductsBlock: Block = {
           },
         },
         {
-          name: "showPrice",
+          name: "showRankings",
           type: "checkbox",
           defaultValue: true,
           admin: {
-            description: "Show product prices",
+            description: "Show sales rankings/numbers",
           },
         },
         {
@@ -174,13 +199,13 @@ export const FeaturedProductsBlock: Block = {
           type: "checkbox",
           defaultValue: true,
           admin: {
-            description: "Show product badges",
+            description: "Show 'Best Seller' badges",
           },
         },
         {
           name: "maxItems",
           type: "number",
-          defaultValue: 6,
+          defaultValue: 8,
           min: 1,
           max: 12,
           admin: {
@@ -193,21 +218,22 @@ export const FeaturedProductsBlock: Block = {
       name: "callToAction",
       type: "group",
       admin: {
-        description: "Call-to-action settings for this section",
+        description: "Call-to-action settings",
       },
       fields: [
         {
           name: "text",
           type: "text",
+          defaultValue: "Shop Best Sellers",
           admin: {
-            description: "Button text (e.g., 'Shop Now', 'View All')",
+            description: "Button text",
           },
         },
         {
           name: "link",
           type: "text",
           admin: {
-            description: "URL or path to link to",
+            description: "URL or path to link to (e.g., best-sellers collection)",
           },
         },
         {
