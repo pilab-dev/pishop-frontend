@@ -735,6 +735,18 @@ export class PiShopClient {
 
     if (!data?.applyDiscount.success || !data.applyDiscount.cart) {
       const error = data?.applyDiscount.errors?.[0];
+
+      // Provide user-friendly error messages based on error codes
+      if (error?.code === 'DISCOUNT_APPLY_FAILED') {
+        // Check if this is a server-side issue (like NATS not available)
+        if (error.message?.includes('nats:') || error.message?.includes('no responders available')) {
+          throw new Error('Unable to apply coupon right now. Please try again later.');
+        }
+        // For other discount application failures, assume invalid coupon
+        throw new Error('Invalid coupon code. Please check and try again.');
+      }
+
+      // Fallback for other error types
       throw new Error(error?.message || 'Failed to apply discount');
     }
 
@@ -743,12 +755,12 @@ export class PiShopClient {
 
   /**
    * Remove a coupon from the cart
-   * 
-   * @param code - Coupon code to remove
+   *
+   * @param couponId - Coupon ID to remove
    * @param sessionId - Optional session ID for checkout context
    * @returns Promise resolving to updated cart with discount removed
    */
-  async removeCoupon(code: string, sessionId?: string): Promise<Cart> {
+  async removeCoupon(couponId: string, sessionId?: string): Promise<Cart> {
     if (!this._cartId) {
       throw new Error('No active cart');
     }
@@ -760,7 +772,7 @@ export class PiShopClient {
     }
 
     // Find the discountId from the applied coupon
-    const appliedCoupon = currentCart.appliedCoupons?.find(coupon => coupon.couponCode === code);
+    const appliedCoupon = currentCart.appliedCoupons?.find(coupon => coupon.id === couponId);
     if (!appliedCoupon) {
       throw new Error('Coupon not found in cart');
     }
@@ -788,9 +800,10 @@ export class PiShopClient {
 
   /**
    * Create a checkout session from the current cart
-   * 
+   *
    * @param cartId - Optional cart ID. Uses current cart if not provided.
    * @param customer - Optional customer information
+   * @param shipping - Optional shipping information
    * @returns Promise resolving to checkout session
    */
   async createCheckout(
@@ -803,6 +816,10 @@ export class PiShopClient {
       isGuest?: boolean;
       billingAddress?: Address;
       shippingAddress?: Address;
+    },
+    shipping?: {
+      methodId: string;
+      address: Address;
     }
   ): Promise<CheckoutSession> {
     const checkoutCartId = cartId || this._cartId;
@@ -816,6 +833,7 @@ export class PiShopClient {
         input: {
           cartId: checkoutCartId,
           customer,
+          shipping,
         },
       },
     });

@@ -1,8 +1,7 @@
 import React from "react";
 import { getCategoryTree } from "@/lib/category-helpers";
-import { getFeaturedProductsForCategories } from "@/lib/product-helpers";
 import { CategoryNavClient } from "./CategoryNav.client";
-import { Category } from "@/payload-types";
+import { Category } from "@/lib/client/types";
 import config from "@/payload.config";
 import { getPayload } from "payload";
 
@@ -11,12 +10,8 @@ const CategoryNav = async () => {
     children: Category[];
   })[];
 
-  const subCategoryIds = categoryTree.flatMap(
-    (cat) => cat.children?.map((child) => child.id) || [],
-  );
-
-  const featuredProducts =
-    await getFeaturedProductsForCategories(subCategoryIds);
+  // Featured products functionality removed due to deleted collections
+  const featuredProducts: Record<string, any[]> = {};
 
   // Try to get promotional content for navigation
   let promotionalContent = undefined;

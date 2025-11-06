@@ -1,8 +1,7 @@
 'use client'
 
 import { useProduct, useUpdateURL } from '@/components/product/product-context'
-import { ProductOption, ProductVariant } from '@/lib/pishop/types'
-// import { ProductOption, ProductVariant } from "@pilab/pishop-client";
+import { ProductOption, ProductVariant } from '@/lib/client'
 import clsx from 'clsx'
 
 type Combination = {
@@ -20,63 +19,53 @@ export function VariantSelector({
 }) {
   const { state, updateOption } = useProduct()
   const updateURL = useUpdateURL()
-  const hasNoOptionsOrJustOneOption =
-    !options.length || (options.length === 1 && options[0]?.values?.length === 1)
+  const hasNoVariantsOrJustOneVariant = !variants.length || variants.length === 1
 
-  if (hasNoOptionsOrJustOneOption) {
+  if (hasNoVariantsOrJustOneVariant) {
     return null
   }
 
-  const combinations: Combination[] = variants.map((variant) => ({
-    id: variant.id,
-    availableForSale: variant.availableForSale,
-    ...variant.selectedOptions.reduce(
-      (accumulator, option) => ({
-        ...accumulator,
-        [option.name.toLowerCase()]: option.value,
-      }),
-      {},
-    ),
-  }))
+  // Group variants by option type for display
+  const optionGroups = options.reduce((acc, option) => {
+    const optionName = option.name.toLowerCase()
+    if (!acc[optionName]) {
+      acc[optionName] = []
+    }
+    // Find unique values for this option across variants
+    variants.forEach(variant => {
+      const variantOption = variant.options.find(o => o.name.toLowerCase() === optionName)
+      if (variantOption && !acc[optionName].includes(variantOption.value)) {
+        acc[optionName].push(variantOption.value)
+      }
+    })
+    return acc
+  }, {} as Record<string, string[]>)
 
-  return options
-    .sort((optionA, optionB) => optionA.name.localeCompare(optionB.name))
-    .map((option) => (
-      <form key={option.id}>
+  return Object.entries(optionGroups).map(([optionName, values]) => (
+    <form key={optionName}>
         <dl className="mb-8">
-          <dt className="mb-4 text-sm uppercase tracking-wide">{option.name}</dt>
+        <dt className="mb-4 text-sm uppercase tracking-wide">{optionName}</dt>
           <dd className="flex flex-wrap gap-3">
-            {option.values.map((value) => {
-              const optionNameLowerCase = option.name.toLowerCase()
-
-              // Base option params on current selectedOptions so we can preserve any other param state.
-              const optionParams = { ...state, [optionNameLowerCase]: value }
-
-              // Filter out invalid options and check if the option combination is available for sale.
-              const filtered = Object.entries(optionParams).filter(([key, value]) =>
-                options.find(
-                  (option) => option.name.toLowerCase() === key && option.values.includes(value),
-                ),
-              )
-              const isAvailableForSale = combinations.find((combination) =>
-                filtered.every(
-                  ([key, value]) => combination[key] === value && combination.availableForSale,
-                ),
-              )
-
-              // The option is active if it's in the selected options.
-              const isActive = state[optionNameLowerCase] === value
+          {values.map((value) => {
+            // Check if this combination exists and is active
+            const matchingVariant = variants.find(variant =>
+              variant.options.some(option =>
+                option.name.toLowerCase() === optionName && option.value === value
+              ) && variant.isActive
+            )
+            const isAvailableForSale = !!matchingVariant
+            const isActive = state[optionName] === value
 
               return (
                 <button
                   formAction={() => {
-                    const newState = updateOption(optionNameLowerCase, value)
+                  const newState = updateOption(optionName, value)
                     updateURL(newState)
                   }}
                   key={value}
                   aria-disabled={!isAvailableForSale}
                   disabled={!isAvailableForSale}
-                  title={`${option.name} ${value}${!isAvailableForSale ? ' (Out of Stock)' : ''}`}
+                title={`${optionName} ${value}${!isAvailableForSale ? ' (Out of Stock)' : ''}`}
                   className={clsx(
                     'flex min-w-[48px] items-center justify-center rounded-full border bg-neutral-100 px-2 py-1 text-sm dark:border-neutral-800 dark:bg-neutral-900',
                     {

@@ -2,8 +2,7 @@
 
 import { Media } from '@/components/Media'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Product } from '@/lib/client/types'
-import { Category } from '@/payload-types'
+import { Product, Category } from '@/lib/client/types'
 import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -41,7 +40,7 @@ export const CategoryNavClient: React.FC<CategoryNavClientProps> = ({
               <div key={category.id} className="flex flex-col gap-2">
                 <h3 className="font-bold text-lg mb-2 border-b pb-2">
                   <Link href={`/collections/${category.slug}`} onClick={() => setIsOpen(false)}>
-                    {category.title}
+                    {category.name}
                   </Link>
                 </h3>
                 <ul className="space-y-2">
@@ -52,7 +51,7 @@ export const CategoryNavClient: React.FC<CategoryNavClientProps> = ({
                         onClick={() => setIsOpen(false)}
                         className="hover:underline"
                       >
-                        {child.title}
+                        {child.name}
                       </Link>
                     </li>
                   ))}

@@ -1,5 +1,6 @@
 'use client'
 
+import { ErrorInfo } from 'react'
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react'
 import { FallbackProps, ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary'
@@ -65,7 +66,7 @@ interface AppErrorBoundaryProps {
 }
 
 export function AppErrorBoundary({ children }: AppErrorBoundaryProps) {
-  const handleError = (error: Error, errorInfo: { componentStack: string }) => {
+  const handleError = (error: Error, errorInfo: ErrorInfo) => {
     // Log error to console in development
     if (process.env.NODE_ENV === 'development') {
       console.error('Error Boundary caught an error:', error, errorInfo)

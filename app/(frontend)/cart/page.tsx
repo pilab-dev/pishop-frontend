@@ -1,17 +1,19 @@
 'use client'
 
-import { useEffect } from 'react'
+import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react'
 import Link from 'next/link'
-import { ShoppingCart, Trash2, Plus, Minus } from 'lucide-react'
 
-import { useCartStore } from '@/store/cart-store'
+export const dynamic = 'force-dynamic'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { formatCurrency } from '@/lib/formatCurrrency'
+import { useCartStore } from '@/store/cart-store'
 
 const CartPage = () => {
-  const { cart, isLoading, error, removeFromCart, updateItemQuantity, refresh, reset } = useCartStore()
+  const { cart, isLoading, error, removeFromCart, updateItemQuantity, refresh, reset } =
+    useCartStore()
 
   const items = cart?.items || []
   const total = cart?.totals?.total || { amount: 0, currencyCode: 'HUF' }
@@ -56,7 +58,7 @@ const CartPage = () => {
     )
   }
 
-  if (isLoading && !cart) {
+  if (isLoading || !cart) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">
@@ -90,9 +92,7 @@ const CartPage = () => {
                 Add some products to get started with your shopping.
               </p>
               <Button asChild>
-                <Link href="/">
-                  Continue Shopping
-                </Link>
+                <Link href="/">Continue Shopping</Link>
               </Button>
             </CardContent>
           </Card>
@@ -142,7 +142,9 @@ const CartPage = () => {
                           type="number"
                           min="1"
                           value={item.quantity}
-                          onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1)}
+                          onChange={(e) =>
+                            handleQuantityChange(item.id, parseInt(e.target.value) || 1)
+                          }
                           className="w-20 text-center"
                           disabled={isLoading}
                         />
@@ -185,32 +187,48 @@ const CartPage = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Cart Summary</CardTitle>
-                <Button
-                  onClick={() => refresh()}
-                  variant="ghost"
-                  size="sm"
-                  disabled={isLoading}
-                >
+                <Button onClick={() => refresh()} variant="ghost" size="sm" disabled={isLoading}>
                   Refresh
                 </Button>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between text-sm">
                   <span>Subtotal ({items.length} items)</span>
-                  <span>{formatCurrency(cart?.totals?.subtotal?.amount || 0, cart?.totals?.subtotal?.currencyCode || 'HUF')}</span>
+                  <span>
+                    {formatCurrency(
+                      cart?.totals?.subtotal?.amount || 0,
+                      cart?.totals?.subtotal?.currencyCode || 'HUF',
+                    )}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Tax</span>
-                  <span>{formatCurrency(cart?.totals?.tax?.amount || 0, cart?.totals?.tax?.currencyCode || 'HUF')}</span>
+                  <span>
+                    {formatCurrency(
+                      cart?.totals?.tax?.amount || 0,
+                      cart?.totals?.tax?.currencyCode || 'HUF',
+                    )}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Shipping</span>
-                  <span>{formatCurrency(cart?.totals?.shipping?.amount || 0, cart?.totals?.shipping?.currencyCode || 'HUF')}</span>
+                  <span>
+                    {formatCurrency(
+                      cart?.totals?.shipping?.amount || 0,
+                      cart?.totals?.shipping?.currencyCode || 'HUF',
+                    )}
+                  </span>
                 </div>
                 {cart?.totals?.discount?.amount && cart?.totals?.discount?.amount > 0 && (
                   <div className="flex justify-between text-sm text-green-600">
                     <span>Discount</span>
-                    <span>-{formatCurrency(cart?.totals?.discount?.amount || 0, cart?.totals?.discount?.currencyCode || 'HUF')}</span>
+                    <span>
+                      -
+                      {formatCurrency(
+                        cart?.totals?.discount?.amount || 0,
+                        cart?.totals?.discount?.currencyCode || 'HUF',
+                      )}
+                    </span>
                   </div>
                 )}
                 <div className="border-t pt-4">
@@ -222,9 +240,7 @@ const CartPage = () => {
               </CardContent>
               <CardFooter>
                 <Button asChild className="w-full" size="lg">
-                  <Link href="/checkout">
-                    Proceed to Checkout
-                  </Link>
+                  <Link href="/checkout">Proceed to Checkout</Link>
                 </Button>
               </CardFooter>
             </Card>

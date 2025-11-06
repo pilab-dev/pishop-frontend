@@ -1,22 +1,20 @@
-import { Product } from "@/payload-types";
-import React from "react";
+import { Product } from '@/lib/client'
+import React from 'react'
 
-function isProduct(
-  product: string | Product | null | undefined,
-): product is Product {
-  return (product as Product).meta !== undefined;
+function isProduct(product: string | Product | null | undefined): product is Product {
+  return (product as Product)?.id !== undefined && typeof (product as Product).name === 'string'
 }
 
 type ProductTile = {
-  product?: string | Product | null | undefined;
-  tileType?: "default" | null;
-  id?: string | null;
-};
+  product?: string | Product | null | undefined
+  tileType?: 'default' | null
+  id?: string | null
+}
 
 type FeaturedProductsProps = {
-  products: ProductTile[];
-  blockType?: string;
-};
+  products: ProductTile[]
+  blockType?: string
+}
 
 export const TopSalesSection: React.FC<FeaturedProductsProps> = async ({
   products: productTiles,
@@ -24,9 +22,9 @@ export const TopSalesSection: React.FC<FeaturedProductsProps> = async ({
   // Get products from payload
   const products: Product[] = productTiles
     .filter((tile) => tile.product && isProduct(tile.product))
-    .map((tile) => tile.product as Product);
+    .map((tile) => tile.product as Product)
 
-  console.log("TopSalesSection products", products);
+  console.log('TopSalesSection products', products)
 
   return (
     <div className="pt-14 pb-16">
@@ -34,54 +32,54 @@ export const TopSalesSection: React.FC<FeaturedProductsProps> = async ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10">
           {products.map((product, i) => {
             switch (productTiles[i].tileType) {
-              case "default":
-                return <ProductTile key={i} product={product} />;
+              case 'default':
+                return <ProductTile key={i} product={product} />
               default:
                 return (
                   <div
                     key={i}
                     className="border-1 border-gray-200 bg-gray-200 p-4 transition-all ease-in-out hover:scale-105 origin-bottom hover:z-50 hover:shadow-lg"
                   >
-                    <h3 className="text-3xl font-bold mb-1">{product.title}</h3>
+                    <h3 className="text-3xl font-bold mb-1">{product.name}</h3>
                     <p className="text-gray-600">{product.description}</p>
                   </div>
-                );
+                )
             }
           })}
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 type MediaResource = {
-  alt: string;
+  alt: string
   url: {
-    alt: string;
-    url: string;
-    width: number;
-    height: number;
-    thumbnailURL: string;
-  };
-};
+    alt: string
+    url: string
+    width: number
+    height: number
+    thumbnailURL: string
+  }
+}
 
 const isImage = (resource: any): resource is MediaResource => {
   return (
-    typeof resource.alt === "string" &&
-    typeof resource.url === "object" &&
-    typeof resource.url.url === "string" &&
-    typeof resource.url.width === "number" &&
-    typeof resource.url.height === "number" &&
-    typeof resource.url.thumbnailURL === "string"
-  );
-};
+    typeof resource.alt === 'string' &&
+    typeof resource.url === 'object' &&
+    typeof resource.url.url === 'string' &&
+    typeof resource.url.width === 'number' &&
+    typeof resource.url.height === 'number' &&
+    typeof resource.url.thumbnailURL === 'string'
+  )
+}
 
 const ProductTile: React.FC<{ product: Product }> = ({ product }) => {
-  console.log("ProductTile product", isImage(product.featuredImage));
+  console.log('ProductTile product', isImage(product.images?.[0]))
 
-  const productImage: MediaResource | undefined = isImage(product.featuredImage)
-    ? product.featuredImage
-    : undefined;
+  const productImage: MediaResource | undefined = isImage(product.images?.[0])
+    ? product.images?.[0]
+    : undefined
 
   return (
     <div
@@ -98,10 +96,10 @@ const ProductTile: React.FC<{ product: Product }> = ({ product }) => {
           alt={productImage?.alt}
         />
         <div className="absolute p-5 inset-0 text-right flex flex-col justify-end">
-          <h3 className="text-3xl font-bold mb-1">{product.title}</h3>
+          <h3 className="text-3xl font-bold mb-1">{product.name}</h3>
           <p className="text-gray-600">{product.description}</p>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

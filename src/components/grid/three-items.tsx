@@ -1,6 +1,5 @@
 import { GridTileImage } from '@/components/grid/tile'
-import { Product } from '@/lib/pishop/types'
-// import type { Product } from "@pilab/pishop-client";
+import { Product } from '@/lib/client'
 import Link from 'next/link'
 
 type ThreeItemGridProps = {
@@ -16,22 +15,22 @@ function ThreeItemGridItem({ item, size, priority }: ThreeItemGridProps) {
     >
       <Link
         className="relative block aspect-square h-full w-full"
-        href={`/product/${item.handle}`}
+        href={`/product/${item.slug}`}
         prefetch={true}
       >
         <GridTileImage
-          src={item.featuredImage.url}
+          src={item.images?.[0]?.url || ''}
           fill
           sizes={
             size === 'full' ? '(min-width: 768px) 66vw, 100vw' : '(min-width: 768px) 33vw, 100vw'
           }
           priority={priority}
-          alt={item.title}
+          alt={item.name}
           label={{
             position: size === 'full' ? 'center' : 'bottom',
-            title: item.title as string,
-            amount: item.priceRange?.maxVariantPrice?.amount.toString() || '0',
-            currencyCode: item.priceRange?.maxVariantPrice?.currencyCode || 'HUF',
+            title: item.name,
+            amount: item.basePrice.amount.toString(),
+            currencyCode: item.basePrice.currencyCode,
           }}
         />
       </Link>
@@ -45,39 +44,53 @@ export async function ThreeItemGrid() {
   //   collection: "hidden-homepage-featured-items",
   // });
 
-  /* @ts-ignore */
-  const homepageItems = [
+  const homepageItems: Product[] = [
     {
       id: '1',
-      title: 'Product 1',
-      priceRange: {
-        maxVariantPrice: {
+      sku: 'PROD-1',
+      name: 'Product 1',
+      slug: 'product-1',
+      basePrice: {
           amount: 1002,
           currencyCode: 'HUF',
-        },
       },
+      isActive: true,
+      images: [{ id: '1', url: '/images/product1.jpg', altText: 'Product 1' }],
+      tags: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
     {
       id: '2',
-      title: 'Product 2',
-      priceRange: {
-        maxVariantPrice: {
+      sku: 'PROD-2',
+      name: 'Product 2',
+      slug: 'product-2',
+      basePrice: {
           amount: 1000,
           currencyCode: 'HUF',
-        },
       },
+      isActive: true,
+      images: [{ id: '2', url: '/images/product2.jpg', altText: 'Product 2' }],
+      tags: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
     {
       id: '3',
-      title: 'Product 3',
-      priceRange: {
-        maxVariantPrice: {
+      sku: 'PROD-3',
+      name: 'Product 3',
+      slug: 'product-3',
+      basePrice: {
           amount: 5000,
           currencyCode: 'HUF',
-        },
       },
+      isActive: true,
+      images: [{ id: '3', url: '/images/product3.jpg', altText: 'Product 3' }],
+      tags: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
-  ] as Product[]
+  ]
 
   if (!homepageItems[0] || !homepageItems[1] || !homepageItems[2]) return null
 

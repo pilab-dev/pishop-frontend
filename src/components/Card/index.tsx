@@ -23,7 +23,7 @@ export const Card: React.FC<{
   const { slug, categories, meta, title } = doc || {};
   const { description, image: metaImage } = meta || {};
 
-  const hasCategories = categories?.length || 0 > 0;
+  const hasCategories = categories && categories.trim().length > 0;
   const titleToUse = titleFromProps || title;
   const href = `/${relationTo}/${slug}`;
 
@@ -45,15 +45,19 @@ export const Card: React.FC<{
       <div className="p-4">
         {showCategories && hasCategories && (
           <div className="uppercase text-sm mb-4">
-            {categories?.map(
-              (category, index) =>
-                typeof category === "object" && (
+            {categories.split(',').map((category, index) => {
+              const trimmedCategory = category.trim();
+              if (trimmedCategory) {
+                const categoryArray = categories.split(',');
+                return (
                   <span key={index}>
-                    {category.title || "Untitled category"}
-                    {index < categories.length - 1 && ", "}
+                    {trimmedCategory}
+                    {index < categoryArray.length - 1 && ", "}
                   </span>
-                ),
-            )}
+                );
+              }
+              return null;
+            })}
           </div>
         )}
 

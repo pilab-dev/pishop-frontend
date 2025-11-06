@@ -12,7 +12,8 @@ interface CartState {
   removeFromCart: (itemId: string) => Promise<void>
   updateItemQuantity: (itemId: string, quantity: number) => Promise<void>
   applyCoupon: (code: string) => Promise<void>
-  removeCoupon: (code: string) => Promise<void>
+  removeCoupon: (couponId: string) => Promise<void>
+  setShippingMethod: (methodId: string, destination?: any) => Promise<void>
   createCheckout: () => Promise<string | null>
 }
 
@@ -111,13 +112,24 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  removeCoupon: async (code) => {
+  removeCoupon: async (couponId) => {
     set({ isLoading: true, error: null })
     try {
-      const cart = await client.removeCoupon(code)
+      const cart = await client.removeCoupon(couponId)
       set({ cart, isLoading: false })
     } catch (error) {
       set({ error: 'Failed to remove coupon', isLoading: false })
+      console.error(error)
+    }
+  },
+
+  setShippingMethod: async (methodId, destination) => {
+    set({ isLoading: true, error: null })
+    try {
+      const cart = await client.setShippingMethod(methodId, destination || {})
+      set({ cart, isLoading: false })
+    } catch (error) {
+      set({ error: 'Failed to set shipping method', isLoading: false })
       console.error(error)
     }
   },

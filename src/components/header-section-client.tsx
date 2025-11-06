@@ -3,15 +3,25 @@
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Header, Media } from '@/payload-types'
+import type { CategoryTreeNode } from '@/lib/client/types'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { FaBars, FaFacebook, FaInstagram, FaSearch, FaTimes } from 'react-icons/fa'
 import { SiX } from 'react-icons/si'
 import { TfiHeart, TfiReload } from 'react-icons/tfi'
+import dynamic from 'next/dynamic'
 import { CMSLink } from './Link'
-import { AuthPopover } from './auth-popover'
-import { CartIcon } from './cart-icon'
+
+// Dynamically import heavy components to reduce initial bundle size
+const AuthPopover = dynamic(() => import('./auth-popover').then(mod => ({ default: mod.AuthPopover })), {
+  ssr: false,
+  loading: () => <div className="w-8 h-8 bg-gray-200 animate-pulse rounded" />,
+})
+const CartIcon = dynamic(() => import('./cart-icon').then(mod => ({ default: mod.CartIcon })), {
+  ssr: false,
+  loading: () => <div className="w-8 h-8 bg-gray-200 animate-pulse rounded" />,
+})
 
 const TopRow = () => {
   return (
@@ -51,6 +61,7 @@ interface HeaderSectionClientProps {
   collections: any[]
   logo: Media
   navItems: any[]
+  categoryTree: CategoryTreeNode[]
 }
 
 export const HeaderSectionClient = ({
@@ -59,6 +70,7 @@ export const HeaderSectionClient = ({
   collections,
   logo,
   navItems,
+  categoryTree,
 }: HeaderSectionClientProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -227,19 +239,6 @@ export const HeaderSectionClient = ({
         <div className="font-medium uppercase my-auto">
           {logo && <Image src={logo.url!} alt="Logo" width={100} height={100} priority />}
         </div>
-
-        {/* This is the menu of the header section */}
-        <ul className="flex gap-10 *:text-md *:font-semibold uppercase">
-          {navItems.map(({ link }, i) => (
-            <li key={i}>
-              <CMSLink
-                className="hover:text-primary transition-colors"
-                {...link}
-                appearance="inline"
-              />
-            </li>
-          ))}
-        </ul>
 
         {/* This is the search box of the header section */}
         <div className="hidden md:flex flex-row flex-1 rounded-full bg-white border-gray-700 text-gray-900 max-w-[550px]">

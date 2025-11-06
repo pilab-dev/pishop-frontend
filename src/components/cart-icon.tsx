@@ -70,7 +70,7 @@ export const CartIcon = ({ variant = 'desktop' }: CartIconProps = {}) => {
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 p-0" align="end" side="bottom" sideOffset={8}>
+      <PopoverContent className="w-96 p-0" align="end" side="bottom" sideOffset={0}>
         <CartPopover />
       </PopoverContent>
     </Popover>

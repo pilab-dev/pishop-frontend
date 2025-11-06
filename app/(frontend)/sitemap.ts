@@ -1,5 +1,7 @@
-import { getCollections, getPages, getProducts } from "@/lib/pishop";
 import { MetadataRoute } from "next";
+import { client } from "@/lib/client";
+import config from "@payload-config";
+import { getPayload } from "payload";
 
 type Route = {
   url: string;
@@ -25,26 +27,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date().toISOString(),
   }));
 
-  const collectionsPromise = getCollections().then((collections) =>
+  const collectionsPromise = client.getCollections().then((collections) =>
     collections.map((collection) => ({
-      url: `${baseUrl}${collection.path}`,
+      url: `${baseUrl}/collection/${collection.slug}`,
       lastModified: collection.updatedAt,
     })),
   );
 
-  const productsPromise = getProducts({}).then((products) =>
+  const productsPromise = client.getProducts().then((products) =>
     products.map((product) => ({
-      url: `${baseUrl}/product/${product.handle}`,
+      url: `${baseUrl}/product/${product.slug}`,
       lastModified: product.updatedAt,
     })),
   );
 
-  const pagesPromise = getPages().then((pages) =>
-    pages.map((page) => ({
-      url: `${baseUrl}/${page.handle}`,
-      lastModified: page.updatedAt,
-    })),
-  );
+  const pagesPromise = (async () => {
+    const payload = await getPayload({ config });
+    const pages = await payload.find({
+      collection: 'pages',
+      limit: 1000, // Get all pages for sitemap
+    });
+
+    return pages.docs.map((doc) => ({
+      url: `${baseUrl}/${doc.slug || ''}`,
+      lastModified: doc.updatedAt || new Date().toISOString(),
+    }));
+  })();
 
   let fetchedRoutes: Route[] = [];
 

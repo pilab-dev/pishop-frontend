@@ -142,10 +142,9 @@ export const Promotions: GlobalConfig = {
         },
         {
           name: 'collection',
-          type: 'relationship',
-          relationTo: 'collections',
+          type: 'text',
           admin: {
-            description: 'Link to collection (for category showcase)',
+            description: 'Link to collection from storefront API (for category showcase)',
             condition: (data) => data.sectionType === 'categoryShowcase',
           },
         },

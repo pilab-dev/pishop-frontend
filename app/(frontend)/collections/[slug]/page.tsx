@@ -13,6 +13,9 @@ import NotFoundPage from '../../not-found'
 import type { Collection } from '@/lib/client'
 import { client } from '@/lib/client'
 
+// Force dynamic rendering to avoid build-time API calls
+export const dynamic = 'force-dynamic'
+
 const getCollectionBySlug = cache(
   async (slug: string): Promise<{ collection: Collection; products: any[] }> => {
     const collection = await client.getCollection(slug)

@@ -1,4 +1,5 @@
 import type { Block } from "payload";
+import { productSelectField } from "@/fields/product-select";
 
 export const ProductShowcaseBlock: Block = {
   slug: "productShowcase",
@@ -75,19 +76,17 @@ export const ProductShowcaseBlock: Block = {
     },
     {
       name: "category",
-      type: "relationship",
-      relationTo: "categories",
+      type: "text",
       admin: {
-        description: "Select category to showcase",
+        description: "Select category to showcase (from storefront API)",
         condition: (data) => data.showcaseType === "category",
       },
     },
     {
       name: "collection",
-      type: "relationship",
-      relationTo: "collections",
+      type: "text",
       admin: {
-        description: "Select collection to showcase",
+        description: "Select collection to showcase (from storefront API)",
         condition: (data) => data.showcaseType === "collection",
       },
     },
@@ -109,14 +108,15 @@ export const ProductShowcaseBlock: Block = {
         condition: (data) => data.source === "manual",
       },
       fields: [
-        {
+        productSelectField({
           name: "productId",
-          type: "text",
           required: true,
-          admin: {
-            description: "Product ID or slug",
+          overrides: {
+            admin: {
+              description: "Select product from storefront",
+            },
           },
-        },
+        }),
         {
           name: "highlight",
           type: "checkbox",
@@ -167,10 +167,9 @@ export const ProductShowcaseBlock: Block = {
           fields: [
             {
               name: "category",
-              type: "relationship",
-              relationTo: "categories",
+              type: "text",
               admin: {
-                description: "Filter by category",
+                description: "Filter by category (from storefront API)",
               },
             },
             {

@@ -11,12 +11,13 @@ import Price from '@/components/price'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useCartStore } from '@/store/cart-store'
+import { CartItem as CartItemType } from '@/lib/client'
 import { SiX } from 'react-icons/si'
 import { DeleteItemButton } from './delete-item-button'
 import { EditItemQuantityButton } from './edit-item-quantity-button'
 
 interface CartItemProps {
-  item: CartItem
+  item: CartItemType
   onProductClick: () => void
 }
 

@@ -1,6 +1,6 @@
 services:
   pishop:
-    # image: ghcr.io/pilab-dev/pishop-frontend:latest
+    image: ghcr.io/pilab-dev/pishop-frontend:latest
     container_name: pishop
     build:
       context: .
@@ -10,33 +10,9 @@ services:
     ports:
       - '8084:3000' # Maps host port 8080 to container port 8080. Change as needed.
     volumes:
-      - pishop-cache:/app/.next/cache
-    depends_on:
-      - mongodb
+      - ./data/pishop-cache:/app/.next/cache
     networks:
       - pishop-network
-
-  # mongodb:
-  #   image: mongo
-  #   container_name: pishop_mongodb
-  #   restart: unless-stopped
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - MONGO_INITDB_ROOT_USERNAME=root
-  #     - MONGO_INITDB_ROOT_PASSWORD=admin
-  #   ports:
-  #     - '27017:27017'
-  #   volumes:
-  #     - ./data/mongodb:/data/db
-  #   networks:
-  #     - pishop-network
-  #   healthcheck:
-  #     test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #     start_period: 40s
 
 volumes:
   pishop-cache:

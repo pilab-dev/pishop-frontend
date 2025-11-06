@@ -30,7 +30,7 @@ export const CartPopover = () => {
   return (
     <div className="w-full max-h-[60vh] overflow-hidden bg-white">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b border-gray-200 bg-gradient-to-r from-primary/5 to-primary/10">
+      <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-primary/5 to-primary/10">
         <ShoppingBag className="h-5 w-5 text-primary" />
         <h3 className="text-lg font-semibold text-gray-900">Your Cart</h3>
         <span className="ml-auto text-sm text-gray-600">({totals.itemCount} items)</span>
@@ -51,7 +51,7 @@ export const CartPopover = () => {
         ) : (
           <div className="p-4 space-y-3">
             {items.map((item) => (
-              <div key={item.id} className="flex gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border">
+              <div key={item.id} className="flex gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                 {/* Product Image */}
                 <div className="w-12 h-12 bg-gray-200 rounded-md flex-shrink-0 overflow-hidden">
                   {item.product.images[0] && (
@@ -121,7 +121,7 @@ export const CartPopover = () => {
 
       {/* Totals & Actions */}
       {items.length > 0 && (
-        <div className="border-t border-gray-200 bg-gray-50">
+        <div className="bg-gray-50">
           {/* Detailed Totals */}
           <div className="p-4 space-y-2 text-sm">
             <div className="flex justify-between text-gray-600">
@@ -146,7 +146,7 @@ export const CartPopover = () => {
                 <span>-{formatCurrency(totals.discount.amount, totals.discount.currencyCode)}</span>
               </div>
             )}
-            <div className="border-t border-gray-300 pt-2 mt-3 flex justify-between font-semibold text-gray-900">
+            <div className="pt-2 mt-3 flex justify-between font-semibold text-gray-900">
               <span>Total:</span>
               <span>{formatCurrency(totals.total.amount, totals.total.currencyCode)}</span>
             </div>

@@ -1,4 +1,5 @@
 import type { Block } from "payload";
+import { productSelectField } from "@/fields/product-select";
 
 export const BestSellersBlock: Block = {
   slug: "bestSellers",
@@ -65,14 +66,15 @@ export const BestSellersBlock: Block = {
         condition: (data) => data.source === "manual",
       },
       fields: [
-        {
+        productSelectField({
           name: "productId",
-          type: "text",
           required: true,
-          admin: {
-            description: "Product ID or slug from the webshop engine",
+          overrides: {
+            admin: {
+              description: "Select product from storefront",
+            },
           },
-        },
+        }),
         {
           name: "salesRank",
           type: "number",
@@ -122,10 +124,9 @@ export const BestSellersBlock: Block = {
         },
         {
           name: "category",
-          type: "relationship",
-          relationTo: "categories",
+          type: "text",
           admin: {
-            description: "Limit to specific category (optional)",
+            description: "Limit to specific category from storefront API (optional)",
           },
         },
         {

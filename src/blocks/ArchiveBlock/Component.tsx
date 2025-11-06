@@ -1,9 +1,9 @@
-import type { Post, ArchiveBlock as ArchiveBlockProps } from '@/payload-types'
+import type { ArchiveBlock as ArchiveBlockProps, Post } from '@/payload-types'
 
+import RichText from '@/components/RichText'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
-import RichText from '@/components/RichText'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 
@@ -21,21 +21,24 @@ export const ArchiveBlock: React.FC<
   if (populateBy === 'collection') {
     const payload = await getPayload({ config: configPromise })
 
-    const flattenedCategories = categories?.map((category) => {
-      if (typeof category === 'object') return category.id
-      else return category
-    })
+    const categorySlugs =
+      categories
+        ?.split(',')
+        .map((s) => s.trim())
+        .filter(Boolean) || []
 
     const fetchedPosts = await payload.find({
       collection: 'posts',
       depth: 1,
       limit,
-      ...(flattenedCategories && flattenedCategories.length > 0
+      ...(categorySlugs.length > 0
         ? {
             where: {
-              categories: {
-                in: flattenedCategories,
-              },
+              or: categorySlugs.map((slug) => ({
+                categories: {
+                  like: slug,
+                },
+              })),
             },
           }
         : {}),

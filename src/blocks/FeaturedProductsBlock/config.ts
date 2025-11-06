@@ -1,4 +1,5 @@
 import type { Block } from "payload";
+import { productSelectField } from "@/fields/product-select";
 
 export const FeaturedProductsBlock: Block = {
   slug: "featuredProducts",
@@ -56,10 +57,9 @@ export const FeaturedProductsBlock: Block = {
     },
     {
       name: "collection",
-      type: "relationship",
-      relationTo: "collections",
+      type: "text",
       admin: {
-        description: "Select collection to feature products from",
+        description: "Select collection from storefront API to feature products from",
         condition: (data) => data.source === "collection",
       },
     },
@@ -73,14 +73,15 @@ export const FeaturedProductsBlock: Block = {
         condition: (data) => data.source === "manual",
       },
       fields: [
-        {
+        productSelectField({
           name: "productId",
-          type: "text",
           required: true,
-          admin: {
-            description: "Product ID or slug from the webshop engine",
+          overrides: {
+            admin: {
+              description: "Select product from storefront",
+            },
           },
-        },
+        }),
         {
           name: "overrideTitle",
           type: "text",
