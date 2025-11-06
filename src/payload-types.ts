@@ -75,9 +75,7 @@ export interface Config {
     pages: Page;
     posts: Post;
     media: Media;
-    categories: Category;
     users: User;
-    collections: Collection;
     promotionalContent: PromotionalContent;
     redirects: Redirect;
     forms: Form;
@@ -94,9 +92,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
-    collections: CollectionsSelect<false> | CollectionsSelect<true>;
     promotionalContent: PromotionalContentSelect<false> | PromotionalContentSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -181,7 +177,7 @@ export interface BestSellersProps {
   products?:
     | {
         /**
-         * Product ID or slug from the webshop engine
+         * Select product from storefront
          */
         productId: string;
         /**
@@ -208,9 +204,9 @@ export interface BestSellersProps {
      */
     timeframe?: ('7days' | '30days' | '90days' | 'all') | null;
     /**
-     * Limit to specific category (optional)
+     * Limit to specific category from storefront API (optional)
      */
-    category?: (string | null) | Category;
+    category?: string | null;
     /**
      * Minimum sales threshold
      */
@@ -453,36 +449,6 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: string;
-  title: string;
-  parent?: (string | null) | Category;
-  fields?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  breadcrumbs?:
-    | {
-        doc?: (string | null) | Category;
-        url?: string | null;
-        label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HotDealsBlock".
  */
 export interface HotDealsBlock {
@@ -516,13 +482,13 @@ export interface ProductShowcaseProps {
    */
   source: 'manual' | 'promotionalContent' | 'dynamic';
   /**
-   * Select category to showcase
+   * Select category to showcase (from storefront API)
    */
-  category?: (string | null) | Category;
+  category?: string | null;
   /**
-   * Select collection to showcase
+   * Select collection to showcase (from storefront API)
    */
-  collection?: (string | null) | Collection;
+  collection?: string | null;
   /**
    * Select promotional content to display
    */
@@ -533,7 +499,7 @@ export interface ProductShowcaseProps {
   products?:
     | {
         /**
-         * Product ID or slug
+         * Select product from storefront
          */
         productId: string;
         /**
@@ -558,9 +524,9 @@ export interface ProductShowcaseProps {
     sortBy?: ('newest' | 'priceAsc' | 'priceDesc' | 'popular' | 'bestSelling' | 'random') | null;
     filterBy?: {
       /**
-       * Filter by category
+       * Filter by category (from storefront API)
        */
-      category?: (string | null) | Category;
+      category?: string | null;
       priceRange?: {
         /**
          * Minimum price
@@ -617,45 +583,6 @@ export interface ProductShowcaseProps {
   id?: string | null;
   blockName?: string | null;
   blockType: 'productShowcase';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "collections".
- */
-export interface Collection {
-  id: string;
-  title: string;
-  description: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  /**
-   * Product slugs to feature in this collection
-   */
-  featuredProducts?:
-    | {
-        /**
-         * The slug/handle of the product to feature
-         */
-        slug: string;
-        id?: string | null;
-      }[]
-    | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -878,16 +805,16 @@ export interface FeaturedProductsProps {
    */
   promotionalContent?: (string | null) | PromotionalContent;
   /**
-   * Select collection to feature products from
+   * Select collection from storefront API to feature products from
    */
-  collection?: (string | null) | Collection;
+  collection?: string | null;
   /**
    * Manually selected products to feature
    */
   products?:
     | {
         /**
-         * Product ID or slug from the webshop engine
+         * Select product from storefront
          */
         productId: string;
         /**
@@ -1024,7 +951,10 @@ export interface Post {
     [k: string]: unknown;
   };
   relatedPosts?: (string | Post)[] | null;
-  categories?: (string | Category)[] | null;
+  /**
+   * Categories from storefront API (comma-separated slugs)
+   */
+  categories?: string | null;
   meta?: {
     title?: string | null;
     /**
@@ -1156,7 +1086,10 @@ export interface ArchiveBlock {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'posts' | null;
-  categories?: (string | Category)[] | null;
+  /**
+   * Categories from storefront API (comma-separated slugs)
+   */
+  categories?: string | null;
   limit?: number | null;
   selectedDocs?:
     | {
@@ -1571,16 +1504,8 @@ export interface PayloadLockedDocument {
         value: string | Media;
       } | null)
     | ({
-        relationTo: 'categories';
-        value: string | Category;
-      } | null)
-    | ({
         relationTo: 'users';
         value: string | User;
-      } | null)
-    | ({
-        relationTo: 'collections';
-        value: string | Collection;
       } | null)
     | ({
         relationTo: 'promotionalContent';
@@ -1972,27 +1897,6 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories_select".
- */
-export interface CategoriesSelect<T extends boolean = true> {
-  title?: T;
-  parent?: T;
-  fields?: T;
-  slug?: T;
-  slugLock?: T;
-  breadcrumbs?:
-    | T
-    | {
-        doc?: T;
-        url?: T;
-        label?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -2015,24 +1919,6 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "collections_select".
- */
-export interface CollectionsSelect<T extends boolean = true> {
-  title?: T;
-  description?: T;
-  featuredProducts?:
-    | T
-    | {
-        slug?: T;
-        id?: T;
-      };
-  slug?: T;
-  slugLock?: T;
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2512,9 +2398,9 @@ export interface Promotion {
          */
         content?: (string | null) | PromotionalContent;
         /**
-         * Link to collection (for category showcase)
+         * Link to collection from storefront API (for category showcase)
          */
-        collection?: (string | null) | Collection;
+        collection?: string | null;
         /**
          * Enable this section
          */

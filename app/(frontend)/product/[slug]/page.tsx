@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Product as SchemaProduct, WithContext } from 'schema-dts'
 import { BaseProduct } from './base-product'
+import { cache, use } from 'react'
+import { unstable_cache } from 'next/cache'
 
-const baseUrl = process.env.SITE_BASE_URL
+const baseUrl = process.env.SITE_BASE_URL || 'https://shop.pilab.hu'
 
 import { GridTileImage } from '@/components/grid/tile'
 import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
@@ -15,22 +17,39 @@ import { client } from '@/lib/client'
 import type { Product as GraphQLProduct } from '@/lib/client/types'
 import { HIDDEN_PRODUCT_TAG } from '@/lib/constants'
 
-const getProductRecommendations = async (id: string): Promise<GraphQLProduct[]> => {
-  try {
-    const products = await client.getProducts({ limit: 4 })
-    return products.filter((p) => p.id !== id).slice(0, 4)
-  } catch (error) {
-    console.error('Error fetching product recommendations:', error)
-    return []
+// Next.js 16 ISR with better control
+export const revalidate = 1800 // Revalidate every 30 minutes
+
+const getProductRecommendations = unstable_cache(
+  cache(async (id: string): Promise<GraphQLProduct[]> => {
+    try {
+      const products = await client.getProducts({ limit: 4 })
+      return products.filter((p) => p.id !== id).slice(0, 4)
+    } catch (error) {
+      console.error('Error fetching product recommendations:', error)
+      return []
+    }
+  }),
+  ['product-recommendations'],
+  {
+    revalidate: 3600, // Cache for 1 hour
+    tags: ['products'],
   }
-}
+)
 
-const getProduct = async (slug: string): Promise<GraphQLProduct> => {
-  const product = await client.getProduct(slug)
-  if (!product) return notFound()
+const getProduct = unstable_cache(
+  cache(async (slug: string): Promise<GraphQLProduct> => {
+    const product = await client.getProduct(slug)
+    if (!product) return notFound()
 
-  return product
-}
+    return product
+  }),
+  ['product'],
+  {
+    revalidate: 1800, // Cache for 30 minutes
+    tags: ['products'],
+  }
+)
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>
@@ -90,10 +109,9 @@ export async function generateMetadata(props: {
   }
 }
 
-export default async function ProductPage(props: { params: Promise<{ slug: string }> }) {
-  const params = await props.params
-
-  const product = await getProduct(params.slug)
+export default function ProductPage(props: { params: Promise<{ slug: string }> }) {
+  const params = use(props.params)
+  const product = use(getProduct(params.slug))
 
   if (!product) return notFound()
 
@@ -161,7 +179,7 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
             </div>
           )}
 
-          <RelatedProducts id={product.id} />
+          <RelatedProducts productId={product.id} />
         </div>
         <Footer />
       </>
@@ -169,8 +187,8 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
   )
 }
 
-async function RelatedProducts({ id }: { id: string }) {
-  const relatedProducts = await getProductRecommendations(id)
+function RelatedProducts({ productId }: { productId: string }) {
+  const relatedProducts = use(getProductRecommendations(productId))
 
   if (!relatedProducts.length) return null
 

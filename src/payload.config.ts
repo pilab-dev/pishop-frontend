@@ -4,8 +4,6 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import sharp from 'sharp' // sharp-import
 import { fileURLToPath } from 'url'
-import { Categories } from './collections/Categories'
-import { Collections } from './collections/Collections'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -69,7 +67,7 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
   }),
   // database-adapter-config-end
-  collections: [Pages, Posts, Media, Categories, Users, Collections, PromotionalContent],
+  collections: [Pages, Posts, Media, Users, PromotionalContent],
   cors: [getServerSideURL()].filter(Boolean),
   blocks: [BestSellersBlock, HotDealsBlock, ProductShowcaseBlock, PromotionalBannerBlock],
   globals: [Header, Footer, Promotions],

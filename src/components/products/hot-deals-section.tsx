@@ -10,7 +10,8 @@ import { SectionDecor } from '../ui/section-decor'
 import ProductButtons from './product-buttons'
 
 type HotDealsSectionProps = {
-  products: Product[]
+  products?: Product[] // Optional since we use hardcoded data
+  productSlug?: string // Product identifier from PayloadCMS block
 }
 
 // Sample hot deals data - in a real app, this would come from an API
@@ -59,7 +60,7 @@ const hotDealsData = [
   },
 ]
 
-export const HotDealsSection: FC<HotDealsSectionProps> = ({ products }) => {
+export const HotDealsSection: FC<HotDealsSectionProps> = ({ products = [], productSlug }) => {
   const [currentDealIndex, setCurrentDealIndex] = useState(0)
   const [direction, setDirection] = useState<'up' | 'down'>('down')
 
@@ -208,12 +209,7 @@ export const HotDealsSection: FC<HotDealsSectionProps> = ({ products }) => {
                 </span>
               </span>
 
-              <ProductButtons
-                show
-                noWishlist
-                noCompare
-                handle={products.length > 0 ? (products[0].slug ?? '') : ''}
-              />
+              <ProductButtons show noWishlist noCompare handle={productSlug || ''} />
             </motion.div>
           </AnimatePresence>
         </div>

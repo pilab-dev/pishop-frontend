@@ -41,7 +41,6 @@ export const Posts: CollectionConfig<'posts'> = {
   defaultPopulate: {
     title: true,
     slug: true,
-    categories: true,
     meta: {
       image: true,
       description: true,
@@ -125,12 +124,11 @@ export const Posts: CollectionConfig<'posts'> = {
             },
             {
               name: 'categories',
-              type: 'relationship',
+              type: 'text',
               admin: {
                 position: 'sidebar',
+                description: 'Categories from storefront API (comma-separated slugs)',
               },
-              hasMany: true,
-              relationTo: 'categories',
             },
           ],
           label: 'Meta',

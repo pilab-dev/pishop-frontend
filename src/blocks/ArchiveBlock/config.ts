@@ -58,13 +58,12 @@ export const Archive: Block = {
     },
     {
       name: 'categories',
-      type: 'relationship',
+      type: 'text',
       admin: {
         condition: (_, siblingData) => siblingData.populateBy === 'collection',
+        description: 'Categories from storefront API (comma-separated slugs)',
       },
-      hasMany: true,
       label: 'Categories To Show',
-      relationTo: 'categories',
     },
     {
       name: 'limit',

@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import { useCartStore } from '@/store/cart-store'
+import { CartItem as CartItemType } from '@/lib/client'
 
 import CloseCart from './close-cart'
 import { DeleteItemButton } from './delete-item-button'
@@ -19,7 +20,7 @@ import { EditItemQuantityButton } from './edit-item-quantity-button'
 import { Dialog, DialogContent } from '../ui/dialog'
 
 interface CartItemProps {
-  item: NonNullable<ReturnType<typeof useCartStore>['cart']>['items'][0]
+  item: CartItemType
   onProductClick: () => void
 }
 

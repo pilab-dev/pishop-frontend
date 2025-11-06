@@ -1,12 +1,26 @@
 import '@/globals.css'
-import '@fontsource/inter'
-import '@fontsource/lato'
+import { Inter, Lato } from 'next/font/google'
+
+const inter = Inter({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-inter',
+})
+
+const lato = Lato({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '700'],
+  display: 'swap',
+  variable: '--font-lato',
+})
 
 import { ConditionalToaster } from '@/components/ConditionalToaster'
 import { CartProvider } from '@/components/cart/CartProvider' // New import
 import { CartUIProvider } from '@/components/cart/cart-context'
 import { AppErrorBoundary, SectionErrorBoundary } from '@/components/error-boundary'
 import { HeaderSection } from '@/components/header-section'
+import { MegaMenuSection } from '@/components/mega-menu-section'
 import { PageFooter } from '@/components/page-footer'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import clsx from 'clsx'
@@ -41,8 +55,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning lang="en">
-      <head />
+    <html suppressHydrationWarning lang="en" className={`${inter.variable} ${lato.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className={clsx('bg-background font-sans antialiased')}>
         <AppErrorBoundary>
           <Providers themeProps={{ forcedTheme: 'light' }}>
@@ -53,6 +70,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className="relative flex flex-col min-h-screen">
                   <SectionErrorBoundary>
                     <HeaderSection />
+                  </SectionErrorBoundary>
+                  <SectionErrorBoundary>
+                    <MegaMenuSection />
                   </SectionErrorBoundary>
                   <main>
                     <SectionErrorBoundary>{children}</SectionErrorBoundary>
