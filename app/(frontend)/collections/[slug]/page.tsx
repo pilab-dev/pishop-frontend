@@ -88,7 +88,7 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({ params }) 
           <section className="max-w-[1280px] mx-auto px-5 py-5">
             <h2 className="flex items-center uppercase text-3xl font-bold">
               <SectionDecor />
-              <FancyTitle>{collection.name}</FancyTitle>
+              <FancyTitle label={collection.name} />
             </h2>
           </section>
 

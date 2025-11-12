@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NODE_OPTIONS='--max-old-space-size=6144 --no-deprecation' next dev --webpack -p 3001",
+    "dev": "NODE_OPTIONS='--max-old-space-size=6144 --no-deprecation' next dev -p 3001",
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
     "start": "node .next/standalone/server.js",
@@ -47,6 +47,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "critters": "^0.0.25",
     "framer-motion": "12.23.12",
     "graphql": "^16.12.0",
     "lucide-react": "^0.513.0",

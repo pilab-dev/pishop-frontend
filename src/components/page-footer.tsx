@@ -31,7 +31,7 @@ const QuckLinks: FC<QuckLinksProps> = ({ categories }) => {
     <div className="footer-links flex flex-col gap-8 md:flex-row md:gap-16">
       <div>
         <h3 className="font-bold text-lg md:text-xl mb-5 uppercase">
-          <FancyTitle>Quick links</FancyTitle>
+          <FancyTitle label="Quick links" />
         </h3>
         <div
           className="w-full space-x-20 flex flex-row justify-between 
@@ -62,7 +62,7 @@ const QuckLinks: FC<QuckLinksProps> = ({ categories }) => {
       {/* <!-- Customer Care --> */}
       <div>
         <h3 className="font-bold text-lg md:text-xl mb-5 uppercase">
-          <FancyTitle>Customer Care</FancyTitle>
+          <FancyTitle label="Customer Care" />
         </h3>
         <div className="flex flex-row space-x-12">
           <ul className="list list-outside space-y-3 text-sm md:text-base">
@@ -103,10 +103,10 @@ const FooterContactSection = ({
           height={100}
           className="mb-8"
         />
-        <FancyTitle>PiShop</FancyTitle> is the <i>fastest</i> e-commerce engine in th market! When
-        you are looking for the best e-commerce solution, you can count on us! We have a{' '}
+        <FancyTitle label="PiShop" /> is the <i>fastest</i> e-commerce engine in th market! When you
+        are looking for the best e-commerce solution, you can count on us! We have a{' '}
         <strong>
-          REST <FancyTitle>API</FancyTitle>{' '}
+          REST <FancyTitle label="API" />{' '}
         </strong>
         for you! You can use it to create your own e-commerce platform!
       </div>
@@ -158,10 +158,12 @@ const CopyrightSection = ({ copyright }: { copyright: string }) => {
             </Link>
           </div>
           <div className="flex-1 flex flex-row justify-end">
-            <img
-              src="/images/credit-card-logos-2.png"
+            <Image
+              src="/images/credit-card-logos-2.webp"
               alt="Accepted cards"
               title="Accepted cards"
+              width={200}
+              height={40}
             />
           </div>
         </div>

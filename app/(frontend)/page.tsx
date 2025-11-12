@@ -1,4 +1,3 @@
-import type { Metadata } from 'next'
 import { BentoBox, BentoBoxItem } from '@/components/BentoBox'
 import { FancyTitle } from '@/components/fancy-title'
 import { HeroSection } from '@/components/hero-section'
@@ -8,8 +7,9 @@ import { ProductGrid } from '@/components/products/product-grid'
 import { SectionDecor } from '@/components/ui/section-decor'
 import { client } from '@/lib/client'
 import { getBestSellerProducts, getFeaturedProduct } from '@/lib/product-helpers'
-import { cache, use } from 'react'
+import type { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
+import { cache, use } from 'react'
 
 const baseUrl = process.env.SITE_BASE_URL || 'https://shop.pilab.hu'
 
@@ -41,19 +41,21 @@ const getHomePageData = unstable_cache(
   {
     revalidate: 3600, // Revalidate every hour
     tags: ['products', 'featured-products', 'best-sellers'],
-  }
+  },
 )
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'ShopPi - 2nd hand tech marketplace | Buy and sell second hand tech products',
-    description: 'ShopPi is a 2nd hand tech marketplace where you can buy and sell second hand tech stuffs. Find great deals on laptops, smartphones, headphones and more.',
+    description:
+      'ShopPi is a 2nd hand tech marketplace where you can buy and sell second hand tech stuffs. Find great deals on laptops, smartphones, headphones and more.',
     alternates: {
       canonical: baseUrl,
     },
     openGraph: {
       title: 'ShopPi - 2nd Hand Tech Marketplace',
-      description: 'Buy and sell second hand tech products. Find great deals on laptops, smartphones, headphones and more.',
+      description:
+        'Buy and sell second hand tech products. Find great deals on laptops, smartphones, headphones and more.',
       url: baseUrl,
       siteName: 'ShopPi',
       type: 'website',
@@ -69,7 +71,8 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title: 'ShopPi - 2nd Hand Tech Marketplace',
-      description: 'Buy and sell second hand tech products. Find great deals on laptops, smartphones, headphones and more.',
+      description:
+        'Buy and sell second hand tech products. Find great deals on laptops, smartphones, headphones and more.',
       images: [`${baseUrl}/og-image.jpg`],
     },
   }
@@ -85,7 +88,8 @@ export default function Home() {
     name: 'ShopPi',
     url: baseUrl,
     logo: `${baseUrl}/logo.png`,
-    description: 'ShopPi is a 2nd hand tech marketplace where you can buy and sell second hand tech products.',
+    description:
+      'ShopPi is a 2nd hand tech marketplace where you can buy and sell second hand tech products.',
     sameAs: [
       // Add social media URLs if available
     ],
@@ -137,7 +141,7 @@ export default function Home() {
         <section className="max-w-[1280px] mx-auto px-5 pt-5">
           <h2 className="flex items-center uppercase text-3xl font-bold">
             <SectionDecor />
-            <FancyTitle>Popular Product</FancyTitle>
+            <FancyTitle label="Popular Product" />
           </h2>
         </section>
 
@@ -152,7 +156,7 @@ export default function Home() {
 
           <BestSellersSection
             title="Best Sellers"
-            categories={["Top20", "Headphones", "Laptop & PC", "Smartphone", "Watch"]}
+            categories={['Top20', 'Headphones', 'Laptop & PC', 'Smartphone', 'Watch']}
             featuredProduct={featuredProduct || undefined}
             products={bestSellerProducts}
           />

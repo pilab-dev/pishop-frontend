@@ -4,6 +4,7 @@ import { Product } from '@/lib/client'
 import { formatCurrency } from '@/lib/formatCurrrency'
 import { useState } from 'react'
 import ProductButtons from './product-buttons'
+import Image from 'next/image'
 
 export type GridVariant = 'primary' | 'secondary' | 'tertiary'
 
@@ -51,9 +52,11 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
       </p>
 
       {product.images && product.images[0] && (
-        <img
+        <Image
           alt={product.images[0].altText || product.name}
           src={product.images[0].url}
+          width={300}
+          height={200}
           className="w-full h-80 object-cover my-3 rounded-md md:h-80 lg:h-[250px]"
         />
       )}

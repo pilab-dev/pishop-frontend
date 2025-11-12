@@ -15,37 +15,44 @@ const nextConfig = {
     // Optimize CSS
     optimizeCss: true,
   },
-  // Webpack optimizations for better bundle splitting
-  webpack: (config, { dev, isServer }) => {
-    // Optimize bundle splitting
-    if (!dev && !isServer) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-            priority: 10,
-          },
-          radix: {
-            test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
-            name: 'radix-ui',
-            chunks: 'all',
-            priority: 20,
-          },
-          payload: {
-            test: /[\\/]node_modules[\\/]@payloadcms[\\/]/,
-            name: 'payload',
-            chunks: 'all',
-            priority: 20,
-          },
-        },
-      }
-    }
-
-    return config
+  turbopack: {
+    // Example: adding an alias and custom file extension
+    resolveAlias: {
+      underscore: 'lodash',
+    },
+    resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.json'],
   },
+  // // Webpack optimizations for better bundle splitting
+  // webpack: (config, { dev, isServer }) => {
+  //   // Optimize bundle splitting
+  //   if (!dev && !isServer) {
+  //     config.optimization.splitChunks = {
+  //       chunks: 'all',
+  //       cacheGroups: {
+  //         vendor: {
+  //           test: /[\\/]node_modules[\\/]/,
+  //           name: 'vendors',
+  //           chunks: 'all',
+  //           priority: 10,
+  //         },
+  //         radix: {
+  //           test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
+  //           name: 'radix-ui',
+  //           chunks: 'all',
+  //           priority: 20,
+  //         },
+  //         payload: {
+  //           test: /[\\/]node_modules[\\/]@payloadcms[\\/]/,
+  //           name: 'payload',
+  //           chunks: 'all',
+  //           priority: 20,
+  //         },
+  //       },
+  //     }
+  //   }
+
+  //   return config
+  // },
   // Memory optimizations for development
   onDemandEntries: {
     // Period (in ms) where the server will keep pages in the buffer
@@ -57,8 +64,7 @@ const nextConfig = {
 
   },
   images: {
-    loader: "custom",
-    loaderFile: "./src/lib/pishop/imageLoader.ts",
+    loader: "default",
     formats: ['image/avif', 'image/webp'],
     // Enable image optimization for better performance
     unoptimized: false,

@@ -1,0 +1,168 @@
+// import { NextRequest, NextResponse } from 'next/server'
+
+import { NextRequest, NextResponse } from "next/server";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080'
+
+/**
+ * Proxy middleware that forwards API requests to the backend service
+ * while handling caching and security for frontend routes
+ */
+export async function  proxy(request: NextRequest) {
+  const { pathname, searchParams } = request.nextUrl
+  const method = request.method
+
+  // Handle API proxy routes
+  if (pathname.startsWith('/api/')) {
+    // Skip Next.js internal API routes and ALL PayloadCMS API routes
+    if (
+      pathname.startsWith('/api/_next/') ||
+      pathname.startsWith('/api/auth/') ||
+      pathname.startsWith('/api/admin/') ||
+      pathname.startsWith('/api/payload/') ||
+      pathname.startsWith('/api/users/') ||
+      pathname === '/api/graphql' ||
+      pathname.startsWith('/api/graphql/')
+    ) {
+      return NextResponse.next()
+    }
+
+    try {
+      // Construct backend URL
+      const backendUrl = `${API_BASE}${pathname}`
+
+      // Forward the request to backend with modified headers
+      const headers = new Headers()
+
+      // Copy all headers except host
+      const headerKeys = [
+        'accept', 'accept-encoding', 'accept-language', 'cache-control',
+        'content-type', 'user-agent', 'authorization', 'cookie'
+      ]
+
+      headerKeys.forEach(key => {
+        const value = request.headers.get(key)
+        if (value) {
+          headers.set(key, value)
+        }
+      })
+
+      headers.set('host', new URL(API_BASE).host)
+
+      const backendResponse = await fetch(backendUrl, {
+        method,
+        headers,
+        body: method !== 'GET' && method !== 'HEAD' ? request.body : undefined,
+        // Don't forward the NextRequest body directly, let fetch handle it
+        duplex: method !== 'GET' && method !== 'HEAD' ? 'half' : undefined,
+      } as RequestInit)
+
+      // Create response with backend data
+      const responseHeaders = new Headers()
+
+      // Copy backend response headers
+      const responseHeaderKeys = [
+        'content-type', 'content-length', 'cache-control', 'etag',
+        'last-modified', 'expires', 'set-cookie'
+      ]
+
+      responseHeaderKeys.forEach(key => {
+        const value = backendResponse.headers.get(key)
+        if (value) {
+          responseHeaders.set(key, value)
+        }
+      })
+
+      // Add CORS headers
+      responseHeaders.set('Access-Control-Allow-Origin', '*')
+      responseHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+      responseHeaders.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+
+      const response = new NextResponse(backendResponse.body, {
+        status: backendResponse.status,
+        statusText: backendResponse.statusText,
+        headers: responseHeaders,
+      })
+
+      return response
+    } catch (error) {
+      console.error('Proxy error:', error)
+      return new NextResponse('Proxy Error', { status: 500 })
+    }
+  }
+
+  // Handle frontend caching and security (original middleware logic)
+  const response = NextResponse.next()
+
+  const isUserSpecificRoute = pathname.match(
+    /(cart|checkout|login|signup|account|order-confirmation)/
+  )
+
+  const isAdminRoute = pathname.startsWith('/admin')
+  const isStaticAsset = pathname.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|avif|webp)$/)
+  const isSitemap = pathname.includes('sitemap')
+  const isRobots = pathname === '/robots.txt'
+
+  // SEO-critical files - optimized caching
+  if (isSitemap || isRobots) {
+    response.headers.set(
+      'Cache-Control',
+      'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800'
+    )
+    return response
+  }
+
+  // Static assets - long-term caching
+  if (isStaticAsset) {
+    response.headers.set(
+      'Cache-Control',
+      'public, max-age=31536000, immutable'
+    )
+    if (pathname.endsWith('.woff2')) {
+      response.headers.set('Link', `<${pathname}>; rel=preload; as=font; crossorigin`)
+    }
+    return response
+  }
+
+  // Admin routes - enhanced security
+  if (isAdminRoute) {
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate, private')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+    response.headers.set('X-Frame-Options', 'DENY')
+    response.headers.set('X-Content-Type-Options', 'nosniff')
+    return response
+  }
+
+  // User-specific routes - private, short cache
+  if (isUserSpecificRoute) {
+    response.headers.set('Cache-Control', 'private, max-age=60, must-revalidate')
+    response.headers.set('Vary', 'Cookie, Authorization')
+    return response
+  }
+
+  // Public pages - optimized caching for SEO
+  response.headers.set(
+    'Cache-Control',
+    'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400'
+  )
+
+  // Add SEO and security headers for public pages
+  if (!pathname.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|avif|webp)$/)) {
+    response.headers.set('X-Robots-Tag', 'index, follow')
+    response.headers.set('X-Content-Type-Options', 'nosniff')
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  }
+
+  return response
+}
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths including API routes for proxying
+     * Skip only Next.js internal paths
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
+}

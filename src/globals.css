@@ -136,12 +136,12 @@
 }
 
 .hero-bg {
-  background-image: url(/images/pine-geom.png);
+  background-image: url(/images/pine-geom.webp);
   background-position-y: 300px;
 }
 
 .oval-decor {
-  background-image: url(/images/circle-geom-light.png);
+  background-image: url(/images/circle-geom-light.webp);
   /* background-position-y: 100px;
   background-position-x: 100px; */
   background-repeat: no-repeat;

@@ -1,4 +1,5 @@
 import { Product } from '@/lib/client'
+import Image from 'next/image'
 import React from 'react'
 
 function isProduct(product: string | Product | null | undefined): product is Product {
@@ -90,10 +91,12 @@ const ProductTile: React.FC<{ product: Product }> = ({ product }) => {
     >
       {/* Here comes the background image which is absolute to the box, and aligns top-left without overflowing (cover the box) */}
       <div className="relative pb-4 h-50 overflow-clip">
-        <img
+        <Image
           className="w-full absolute left-0 bottom-0 object-cover h-full"
-          src={productImage?.url.url}
-          alt={productImage?.alt}
+          src={productImage?.url.url || ''}
+          alt={productImage?.alt || ''}
+          width={400}
+          height={200}
         />
         <div className="absolute p-5 inset-0 text-right flex flex-col justify-end">
           <h3 className="text-3xl font-bold mb-1">{product.name}</h3>
