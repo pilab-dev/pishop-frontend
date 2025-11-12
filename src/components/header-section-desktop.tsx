@@ -1,0 +1,150 @@
+'use client'
+
+import type { CategoryTreeNode } from '@/lib/client/types'
+import { Header, Media } from '@/payload-types'
+import dynamic from 'next/dynamic'
+import Image from 'next/image'
+import Link from 'next/link'
+import { FaFacebook, FaInstagram } from 'react-icons/fa'
+import { SiX } from 'react-icons/si'
+import { TfiHeart, TfiReload } from 'react-icons/tfi'
+
+// Dynamically import heavy components to reduce initial bundle size
+const AuthPopover = dynamic(
+  () => import('./auth/AuthPopover').then((mod) => ({ default: mod.AuthPopover })),
+  {
+    ssr: false,
+    loading: () => <div className="w-30 h-6 bg-gray-200 animate-pulse rounded" />,
+  },
+)
+const CartIcon = dynamic(() => import('./cart-icon').then((mod) => ({ default: mod.CartIcon })), {
+  ssr: false,
+  loading: () => <div className="w-4 h-4 animate-pulse rounded" />,
+})
+
+const TopRow = () => {
+  return (
+    <div className="page-gray-950 hidden sm:block">
+      <div className="max-w-[1280px] mx-auto px-5 py-2 flex flex-row justify-between items-center">
+        <div>
+          <ul className="flex flex-row space-x-2">
+            <li>
+              <Link href="/account">
+                <FaFacebook />
+              </Link>
+            </li>
+            <li>
+              <Link href="/account">
+                <FaInstagram />
+              </Link>
+            </li>
+            <li>
+              <Link href="/account">
+                <SiX />
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div className="flex items-center">
+          <AuthPopover />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface HeaderSectionDesktopProps {
+  headerData: Header
+  categories: any[]
+  collections: any[]
+  logo: Media
+  navItems: any[]
+  categoryTree: CategoryTreeNode[]
+}
+
+export const HeaderSectionDesktop = ({
+  headerData,
+  categories,
+  collections,
+  logo,
+  navItems,
+  categoryTree,
+}: HeaderSectionDesktopProps) => {
+  return (
+    <>
+      {/* Desktop Top Row */}
+      <div className="hidden sm:block">
+        <TopRow />
+      </div>
+
+      {/* Desktop Header */}
+      <div className="hidden sm:flex max-w-[1280px] mx-auto px-5 py-5 gap-16 items-center flex-row justify-between space-x-5">
+        <div className="font-medium uppercase my-auto">
+          {logo && <Image src={logo.url!} alt="Logo" width={100} height={100} priority />}
+        </div>
+
+        {/* This is the search box of the header section */}
+        <div className="hidden md:flex flex-row flex-1 rounded-full bg-white border-gray-700 text-gray-900 max-w-[550px]">
+          <select className="bg-transparent flex-shrink ml-6 focus:outline-none">
+            <option disabled value="">
+              Select category
+            </option>
+            <option value="all">All</option>
+            {categories.map((category) => (
+              <option key={category.slug} value={category.slug || ''}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+          <input
+            className="focus:outline-none px-4 py-2 w-full rounded-full"
+            placeholder="Search..."
+            type="text"
+          />
+          <button className="focus:outline-none px-4 py-2">
+            <svg
+              className="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                clipRule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                fillRule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop Bottom Row */}
+      <div className="hidden sm:block page-gray-950">
+        <div className="max-w-[1280px] uppercase mx-auto px-5 py-4 flex flex-row justify-between items-center">
+          <ul className="footer-links flex flex-col md:flex-row gap-10 text-sm font-bold">
+            {collections?.map((collection) => (
+              <li key={collection?.id}>
+                <Link href={`/collections/${collection.collection}`}>{collection.label}</Link>
+              </li>
+            ))}
+          </ul>
+
+          <div>
+            <ul className="flex flex-row gap-8">
+              <li>
+                <TfiReload fontSize={20} />
+              </li>
+              <li>
+                <TfiHeart fontSize={20} />
+              </li>
+              <li>
+                <CartIcon variant="desktop" />
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
