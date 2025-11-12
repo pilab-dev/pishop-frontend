@@ -349,12 +349,14 @@ export class PiShopClient {
 
       if (result.error) {
         console.error('GraphQL error in getCollections:', result.error);
+        console.error('Variables used:', { pagination });
         return [];
       }
 
       return result.data?.collections || [];
     } catch (error) {
       console.error('Error fetching collections:', error);
+      console.error('Variables used:', { pagination });
       return [];
     }
   }
@@ -376,12 +378,14 @@ export class PiShopClient {
 
       if (result.error) {
         console.error('GraphQL error in getCollection:', result.error);
+        console.error('Variables used:', isId ? { id: slugOrId } : { slug: slugOrId });
         return null;
       }
 
       return result.data?.collection || null;
     } catch (error) {
       console.error('Error fetching collection:', error);
+      console.error('Variables used:', { slugOrId });
       return null;
     }
   }

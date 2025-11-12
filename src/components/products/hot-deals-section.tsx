@@ -4,6 +4,7 @@
 import { Product } from '@/lib/client'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import Image from 'next/image'
 import { FC, useState } from 'react'
 import { FancyTitle } from '../fancy-title'
 import { SectionDecor } from '../ui/section-decor'
@@ -27,8 +28,8 @@ const hotDealsData = [
     ],
     currentPrice: '99.99$',
     originalPrice: '199.99$',
-    image: '/images/headphone.png',
-    thumbnailImages: ['/images/headphone.png', '/images/headphone.png', '/images/headphone.png'],
+    image: '/images/headphone.webp',
+    thumbnailImages: ['/images/headphone.webp', '/images/headphone.webp', '/images/headphone.webp'],
   },
   {
     title: 'Gaming Mechanical Keyboard RGB',
@@ -41,8 +42,8 @@ const hotDealsData = [
     ],
     currentPrice: '149.99$',
     originalPrice: '299.99$',
-    image: '/images/headphone.png', // Using same image for demo
-    thumbnailImages: ['/images/headphone.png', '/images/headphone.png', '/images/headphone.png'],
+    image: '/images/headphone.webp', // Using same image for demo
+    thumbnailImages: ['/images/headphone.webp', '/images/headphone.webp', '/images/headphone.webp'],
   },
   {
     title: 'Wireless Gaming Mouse Pro',
@@ -55,8 +56,8 @@ const hotDealsData = [
     ],
     currentPrice: '79.99$',
     originalPrice: '129.99$',
-    image: '/images/headphone.png', // Using same image for demo
-    thumbnailImages: ['/images/headphone.png', '/images/headphone.png', '/images/headphone.png'],
+    image: '/images/headphone.webp', // Using same image for demo
+    thumbnailImages: ['/images/headphone.webp', '/images/headphone.webp', '/images/headphone.webp'],
   },
 ]
 
@@ -120,7 +121,7 @@ export const HotDealsSection: FC<HotDealsSectionProps> = ({ products = [], produ
         <div className="flex justify-center mb-8">
           <h2 className="flex items-center uppercase text-5xl font-bold">
             <SectionDecor />
-            <FancyTitle>This week&apos;s Hot Deals</FancyTitle>
+            <FancyTitle label="This week's Hot Deals" />
           </h2>
         </div>
 
@@ -140,9 +141,11 @@ export const HotDealsSection: FC<HotDealsSectionProps> = ({ products = [], produ
                   opacity: { duration: 0.3 },
                 }}
               >
-                <img
+                <Image
                   src={currentDeal.image}
                   alt="Featured Products"
+                  width={300}
+                  height={300}
                   className="h-[300px] w-[300px] object-contain"
                 />
               </motion.div>
@@ -167,9 +170,11 @@ export const HotDealsSection: FC<HotDealsSectionProps> = ({ products = [], produ
                   i === currentDealIndex ? 'ring-2 ring-primary-600 scale-110' : 'hover:scale-105'
                 }`}
               >
-                <img
+                <Image
                   src={deal.image}
                   alt={`View ${deal.title}`}
+                  width={70}
+                  height={70}
                   className="object-contain w-full h-full p-1"
                 />
               </div>

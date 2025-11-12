@@ -1,26 +1,29 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import type { CategoryTreeNode } from '@/lib/client/types'
 import { cn } from '@/lib/utils'
 import { Header, Media } from '@/payload-types'
-import type { CategoryTreeNode } from '@/lib/client/types'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState, Suspense } from 'react'
-import { FaBars, FaFacebook, FaInstagram, FaSearch, FaTimes } from 'react-icons/fa'
+import { useEffect, useState } from 'react'
+import { FaBars, FaFacebook, FaInstagram, FaSearch, FaSpinner, FaTimes } from 'react-icons/fa'
 import { SiX } from 'react-icons/si'
 import { TfiHeart, TfiReload } from 'react-icons/tfi'
-import dynamic from 'next/dynamic'
 import { CMSLink } from './Link'
 
 // Dynamically import heavy components to reduce initial bundle size
-const AuthPopover = dynamic(() => import('./auth-popover').then(mod => ({ default: mod.AuthPopover })), {
+const AuthPopover = dynamic(
+  () => import('./auth/AuthPopover').then((mod) => ({ default: mod.AuthPopover })),
+  {
+    ssr: false,
+    loading: () => <div className="w-30 h-6 bg-gray-200 animate-pulse rounded" />,
+  },
+)
+const CartIcon = dynamic(() => import('./cart-icon').then((mod) => ({ default: mod.CartIcon })), {
   ssr: false,
-  loading: () => <div className="w-8 h-8 bg-gray-200 animate-pulse rounded" />,
-})
-const CartIcon = dynamic(() => import('./cart-icon').then(mod => ({ default: mod.CartIcon })), {
-  ssr: false,
-  loading: () => <div className="w-8 h-8 bg-gray-200 animate-pulse rounded" />,
+  loading: () => <FaSpinner className="w-4 h-4 animate-spin" />, // This is the loading indicator of the cart icon
 })
 
 const TopRow = () => {

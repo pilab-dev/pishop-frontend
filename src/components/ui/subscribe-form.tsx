@@ -39,7 +39,7 @@ export const SubscribeForm = () => {
           <div className="my-auto">
             and receive{" "}
             <span className="italic">
-              <FancyTitle>$20</FancyTitle>
+              <FancyTitle label="$20" />
             </span>{" "}
             coupon for first shopping
           </div>

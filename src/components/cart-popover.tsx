@@ -5,6 +5,7 @@ import { useCartStore } from '@/store/cart-store'
 import Link from 'next/link'
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react'
 import { Button } from './ui/button'
+import Image from 'next/image'
 
 export const CartPopover = () => {
   const { cart, updateItemQuantity, removeFromCart, isLoading } = useCartStore()
@@ -55,9 +56,11 @@ export const CartPopover = () => {
                 {/* Product Image */}
                 <div className="w-12 h-12 bg-gray-200 rounded-md flex-shrink-0 overflow-hidden">
                   {item.product.images[0] && (
-                    <img
+                    <Image
                       src={item.product.images[0].url}
                       alt={item.product.name}
+                      width={48}
+                      height={48}
                       className="w-full h-full object-cover"
                     />
                   )}

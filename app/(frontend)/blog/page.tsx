@@ -5,6 +5,7 @@ import config from '@/payload.config'
 import type { Post } from '@/payload-types'
 import { cache, use } from 'react'
 import { unstable_cache } from 'next/cache'
+import Image from 'next/image'
 
 const baseUrl = process.env.SITE_BASE_URL || 'https://shop.pilab.hu'
 
@@ -66,9 +67,11 @@ export default function BlogPage() {
             <article key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
               {post.heroImage && typeof post.heroImage === 'object' && (
                 <div className="aspect-video overflow-hidden">
-                  <img
+                  <Image
                     src={post.heroImage.url!}
                     alt={post.heroImage.alt || post.title}
+                    width={400}
+                    height={225}
                     className="w-full h-full object-cover"
                   />
                 </div>

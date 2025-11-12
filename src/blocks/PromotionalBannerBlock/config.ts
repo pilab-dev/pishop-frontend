@@ -3,7 +3,7 @@ import type { Block } from "payload";
 export const PromotionalBannerBlock: Block = {
   slug: "promotionalBanner",
   interfaceName: "PromotionalBannerProps",
-  imageURL: "/blocks/promotional-banner.png",
+  imageURL: "/blocks/promotional-banner.webp",
   fields: [
     {
       name: "content",

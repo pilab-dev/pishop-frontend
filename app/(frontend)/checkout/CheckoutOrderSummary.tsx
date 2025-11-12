@@ -6,6 +6,7 @@ import { Cart } from '@/lib/client/types'
 import { formatCurrency } from '@/lib/formatCurrrency'
 import { CheckCircle, Loader2, ShoppingBag } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 
 // Dynamically import heavy components to reduce initial bundle size
 const Button = dynamic(() => import('@/components/ui/button').then((mod) => mod.Button), {
@@ -53,9 +54,11 @@ export const CheckoutOrderSummary = ({
               <div key={item.id} className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-muted rounded-md flex items-center justify-center">
                   {item.product.images?.[0] ? (
-                    <img
+                    <Image
                       src={item.product.images[0].url}
                       alt={item.product.name}
+                      width={48}
+                      height={48}
                       className="w-full h-full object-cover rounded-md"
                     />
                   ) : (

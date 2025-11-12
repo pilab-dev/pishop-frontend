@@ -4,7 +4,7 @@ import { productSelectField } from "@/fields/product-select";
 export const ProductShowcaseBlock: Block = {
   slug: "productShowcase",
   interfaceName: "ProductShowcaseProps",
-  imageURL: "/blocks/product-showcase.png",
+  imageURL: "/blocks/product-showcase.webp",
   fields: [
     {
       name: "title",

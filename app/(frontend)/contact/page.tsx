@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { FancyTitle } from "@/components/fancy-title";
+import { FancyTitle } from '@/components/fancy-title'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,8 +8,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { ContactForm } from "./contact-form";
+} from '@/components/ui/breadcrumb'
+import { ContactForm } from './contact-form'
 
 export default function PricingPage() {
   return (
@@ -40,18 +40,15 @@ export default function PricingPage() {
             <ContactForm />
           </div>
           <div className="w-1/3 flex flex-col gap-8">
-            <FancyTitle className="text-3xl font-bold">Get in touch</FancyTitle>
+            <FancyTitle className="text-3xl font-bold" label="Get in touch" />
             <p className="text-lg text-gray-500">
-              We&apos;re here to help you with any questions or concerns you
-              have.
+              We&apos;re here to help you with any questions or concerns you have.
             </p>
 
-            <FancyTitle className="text-3xl font-bold">
-              Social Networks
-            </FancyTitle>
+            <FancyTitle className="text-3xl font-bold" label="Social Networks" />
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

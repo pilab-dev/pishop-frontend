@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import Image from 'next/image'
 import { formatCurrency } from '@/lib/formatCurrrency'
 import { useCartStore } from '@/store/cart-store'
 
@@ -107,9 +108,11 @@ const CartPage = () => {
                       {/* Product Image */}
                       {item.product.images[0] && (
                         <div className="flex-shrink-0">
-                          <img
+                          <Image
                             src={item.product.images[0].url}
                             alt={item.product.images[0].altText || item.product.name}
+                            width={80}
+                            height={80}
                             className="w-20 h-20 object-cover rounded-md"
                           />
                         </div>
