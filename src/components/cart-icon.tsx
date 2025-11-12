@@ -4,7 +4,6 @@ import { useCartStore } from '@/store/cart-store'
 import { useState } from 'react'
 import { TfiShoppingCart } from 'react-icons/tfi'
 import { CartPopover } from './cart-popover'
-import { useCartUI } from './cart/cart-context'
 import { MobileCartDrawer } from './cart/mobile-drawer'
 import { Badge } from './ui/badge'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
@@ -14,8 +13,7 @@ interface CartIconProps {
 }
 
 export const CartIcon = ({ variant = 'desktop' }: CartIconProps = {}) => {
-  const { cart } = useCartStore()
-  const { isMobileDrawerOpen, setIsMobileDrawerOpen } = useCartUI()
+  const { cart, isMobileDrawerOpen, setIsMobileDrawerOpen } = useCartStore()
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const itemCount = cart?.totals.itemCount || 0
 

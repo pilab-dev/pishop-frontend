@@ -1,9 +1,9 @@
 'use client'
 
-import { useCartUI } from '@/components/cart/cart-context'
+import { useCartStore } from '@/store/cart-store'
 import { Toaster } from 'sonner'
 
 export function ConditionalToaster() {
-  const { isMobileDrawerOpen } = useCartUI()
+  const { isMobileDrawerOpen } = useCartStore()
   return !isMobileDrawerOpen ? <Toaster position="bottom-right" richColors /> : null
 }

@@ -17,7 +17,6 @@ const lato = Lato({
 
 import { ConditionalToaster } from '@/components/ConditionalToaster'
 import { CartProvider } from '@/components/cart/CartProvider' // New import
-import { CartUIProvider } from '@/components/cart/cart-context'
 import { AppErrorBoundary, SectionErrorBoundary } from '@/components/error-boundary'
 import { HeaderSection } from '@/components/header-section'
 import { MegaMenuSection } from '@/components/mega-menu-section'
@@ -63,27 +62,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={clsx('bg-background font-sans antialiased')}>
         <AppErrorBoundary>
           <Providers themeProps={{ forcedTheme: 'light' }}>
-            <CartUIProvider>
-              <CartProvider>
-                {' '}
-                {/* New CartProvider wrapper */}
-                <div className="relative flex flex-col min-h-screen">
-                  <SectionErrorBoundary>
-                    <HeaderSection />
-                  </SectionErrorBoundary>
-                  <SectionErrorBoundary>
-                    <MegaMenuSection />
-                  </SectionErrorBoundary>
-                  <main>
-                    <SectionErrorBoundary>{children}</SectionErrorBoundary>
-                  </main>
-                  <SectionErrorBoundary>
-                    <PageFooter />
-                  </SectionErrorBoundary>
-                </div>
-                <ConditionalToaster />
-              </CartProvider>
-            </CartUIProvider>
+            <CartProvider>
+              {/* New CartProvider wrapper */}
+              <div className="relative flex flex-col min-h-screen">
+                <SectionErrorBoundary>
+                  <HeaderSection />
+                </SectionErrorBoundary>
+                <SectionErrorBoundary>
+                  <MegaMenuSection />
+                </SectionErrorBoundary>
+                <main>
+                  <SectionErrorBoundary>{children}</SectionErrorBoundary>
+                </main>
+                <SectionErrorBoundary>
+                  <PageFooter />
+                </SectionErrorBoundary>
+              </div>
+              <ConditionalToaster />
+            </CartProvider>
           </Providers>
         </AppErrorBoundary>
         <GoogleAnalytics gaId={gaId as string} />

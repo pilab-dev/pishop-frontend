@@ -5,9 +5,11 @@ interface CartState {
   cart: Cart | null
   isLoading: boolean
   error: string | null
+  isMobileDrawerOpen: boolean
   init: () => Promise<void>
   refresh: () => Promise<void>
   reset: () => void
+  setIsMobileDrawerOpen: (open: boolean) => void
   addToCart: (product: Product, quantity: number, variantId?: string) => Promise<void>
   removeFromCart: (itemId: string) => Promise<void>
   updateItemQuantity: (itemId: string, quantity: number) => Promise<void>
@@ -21,6 +23,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   cart: null,
   isLoading: false,
   error: null,
+  isMobileDrawerOpen: false,
 
   init: async () => {
     // Don't reinitialize if we already have a cart
@@ -62,6 +65,10 @@ export const useCartStore = create<CartState>((set, get) => ({
   reset: () => {
     console.log('Resetting cart state')
     set({ cart: null, isLoading: false, error: null })
+  },
+
+  setIsMobileDrawerOpen: (open: boolean) => {
+    set({ isMobileDrawerOpen: open })
   },
 
   addToCart: async (product, quantity, variantId) => {

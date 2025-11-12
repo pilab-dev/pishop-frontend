@@ -64,10 +64,10 @@ const nextConfig = {
 
   },
   images: {
-    loader: "default",
+    // loader: "default",
     formats: ['image/avif', 'image/webp'],
     // Enable image optimization for better performance
-    unoptimized: false,
+    unoptimized: true,
     remotePatterns: [
       {
         // protocol: "https",

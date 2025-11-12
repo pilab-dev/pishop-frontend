@@ -1,11 +1,11 @@
 'use client'
 
-import { User } from 'lucide-react'
 import { useState } from 'react'
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { Popover, PopoverArrow, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 
+import { FaUser } from 'react-icons/fa'
 import { LoginForm } from './LoginForm'
 import { SignupForm } from './SignupForm'
 
@@ -13,19 +13,22 @@ export const AuthPopover = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login')
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Popover>
+      <PopoverTrigger asChild>
         <button className="flex items-center gap-1.5 text-white hover:text-primary transition-colors text-xs font-medium">
-          <User className="h-3.5 w-3.5" />
-          <span>Account</span>
+          <FaUser className="h-2.5 w-2.5" />
+          <span>sign in</span>
+          <span className="text-gray-500">or</span>
+          <span>register</span>
         </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
+      </PopoverTrigger>
+      <PopoverContent
         align="end"
-        className="w-96 p-0 shadow-xl border-2 border-gray-200"
-        avoidCollisions={true}
-        collisionPadding={20}
+        className="w-96 p-0 shadow-xl border border-black"
+        side="bottom"
+        sideOffset={10}
       >
+        <PopoverArrow className="fill-white relative top-[-1px] h-2 w-4" />
         <div className="bg-white rounded-lg">
           <Tabs
             value={activeTab}
@@ -55,7 +58,7 @@ export const AuthPopover = () => {
             </TabsContent>
           </Tabs>
         </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </PopoverContent>
+    </Popover>
   )
 }
