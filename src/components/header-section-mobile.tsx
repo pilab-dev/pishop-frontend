@@ -13,7 +13,7 @@ import { CMSLink } from './Link'
 
 // Dynamically import heavy components to reduce initial bundle size
 const AuthPopover = dynamic(
-  () => import('./auth/AuthPopover').then((mod) => ({ default: mod.AuthPopover })),
+  () => import('./auth/auth-section-top').then((mod) => ({ default: mod.AuthSectionTop })),
   {
     ssr: false,
     loading: () => <div className="w-30 h-6 bg-gray-200 animate-pulse rounded" />,
