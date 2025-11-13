@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { LoginForm } from './LoginForm'
 import { SignupForm } from './SignupForm'
 
-export const AuthPopover = () => {
+export const AuthSectionTop = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login')
 
   const trigger = (
