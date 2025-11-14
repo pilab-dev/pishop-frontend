@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NODE_OPTIONS='--max-old-space-size=6144 --no-deprecation' next dev -p 3001",
-    "build": "next build",
+    "dev": "bun run --bun next dev -p 3001",
+    "build": "bun run --bun next build",
     "build:analyze": "ANALYZE=true next build",
-    "start": "node .next/standalone/server.js",
+    "start": "bun run --bun .next/standalone/server.js",
     "start:full": "./start.sh",
     "lint": "eslint . --cache --fix",
     "payload": "cross-env payload generate:types",
