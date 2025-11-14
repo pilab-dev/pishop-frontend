@@ -94,7 +94,7 @@ export const Footer: GlobalConfig = {
       type: 'text',
       label: 'Copyright text',
       required: true,
-      defaultValue: `© 2025-${new Date().getFullYear()}, PiShop by Progressive Innovation LAB`,
+      defaultValue: `© 2024-${new Date().getFullYear()}, PiShop by Progressive Innovation LAB`,
       admin: {
         description: 'The copyright text to display in the footer.',
       },

@@ -32,6 +32,10 @@ export interface Product {
   tags: string[];
   createdAt: string;
   updatedAt: string;
+  options?: ProductOptionGroup[];
+  variants?: ProductVariant[];
+  category?: Category;
+  collections?: Collection[];
 }
 
 export interface AppliedItemDiscount {

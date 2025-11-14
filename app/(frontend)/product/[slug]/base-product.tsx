@@ -5,11 +5,11 @@ import type { Product } from '@/lib/client'
 export const BaseProduct = ({ product }: { product: Product }) => {
   return (
     <div
-      className="flex flex-col rounded-lg border border-neutral-200 bg-white p-8 dark:border-neutral-800 dark:bg-black md:p-12 lg:flex-row lg:gap-8"
+      className="flex flex-col gap-8 bg-white lg:flex-row lg:gap-12"
       itemScope
       itemType="https://schema.org/Product"
     >
-      <div className="h-full w-full basis-full lg:basis-4/6">
+      <div className="h-full w-full basis-full lg:basis-1/2">
         <Gallery
           images={
             product.images?.map((image) => ({
@@ -19,7 +19,7 @@ export const BaseProduct = ({ product }: { product: Product }) => {
           }
         />
       </div>
-      <div className="basis-full lg:basis-2/6">
+      <div className="basis-full lg:basis-1/2">
         <ProductDescription product={product} />
       </div>
     </div>

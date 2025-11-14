@@ -1,18 +1,17 @@
 import type { Metadata } from 'next'
 
 import { ProductProvider } from '@/components/product/product-context'
+import { unstable_cache } from 'next/cache'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { use } from 'react'
 import { Product as SchemaProduct, WithContext } from 'schema-dts'
 import { BaseProduct } from './base-product'
-import { cache, use } from 'react'
-import { unstable_cache } from 'next/cache'
 
 const baseUrl = process.env.SITE_BASE_URL || 'https://shop.pilab.hu'
 
 import { GridTileImage } from '@/components/grid/tile'
 import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
-import { Footer } from '@/Footer/Component'
 import { client } from '@/lib/client'
 import type { Product as GraphQLProduct } from '@/lib/client/types'
 import { HIDDEN_PRODUCT_TAG } from '@/lib/constants'
@@ -20,36 +19,38 @@ import { HIDDEN_PRODUCT_TAG } from '@/lib/constants'
 // Next.js 16 ISR with better control
 export const revalidate = 1800 // Revalidate every 30 minutes
 
-const getProductRecommendations = unstable_cache(
-  cache(async (id: string): Promise<GraphQLProduct[]> => {
-    try {
-      const products = await client.getProducts({ limit: 4 })
-      return products.filter((p) => p.id !== id).slice(0, 4)
-    } catch (error) {
-      console.error('Error fetching product recommendations:', error)
-      return []
-    }
-  }),
-  ['product-recommendations'],
-  {
-    revalidate: 3600, // Cache for 1 hour
-    tags: ['products'],
-  }
-)
+const getProductRecommendations = (id: string) =>
+  unstable_cache(
+    async (): Promise<GraphQLProduct[]> => {
+      try {
+        const products = await client.getProducts({ limit: 4 })
+        return products.filter((p) => p.id !== id).slice(0, 4)
+      } catch (error) {
+        console.error('Error fetching product recommendations:', error)
+        return []
+      }
+    },
+    ['product-recommendations', id],
+    {
+      revalidate: 3600, // Cache for 1 hour
+      tags: ['products'],
+    },
+  )()
 
-const getProduct = unstable_cache(
-  cache(async (slug: string): Promise<GraphQLProduct> => {
-    const product = await client.getProduct(slug)
-    if (!product) return notFound()
+const getProduct = (slug: string) =>
+  unstable_cache(
+    async (): Promise<GraphQLProduct> => {
+      const product = await client.getProduct(slug)
+      if (!product) return notFound()
 
-    return product
-  }),
-  ['product'],
-  {
-    revalidate: 1800, // Cache for 30 minutes
-    tags: ['products'],
-  }
-)
+      return product
+    },
+    ['product', slug],
+    {
+      revalidate: 1800, // Cache for 30 minutes
+      tags: ['products'],
+    },
+  )()
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>
@@ -146,17 +147,45 @@ export default function ProductPage(props: { params: Promise<{ slug: string }> }
 
   const breadcrumbSegments: Array<{ name: string; href: string }> = []
 
+  // Build breadcrumb segments: category hierarchy or collection, then product
+  if (product.category) {
+    // Add parent category if it exists
+    if (product.category.parent) {
+      breadcrumbSegments.push({
+        name: product.category.parent.name,
+        href: `/collections/${product.category.parent.slug}`,
+      })
+    }
+    // Add category
+    breadcrumbSegments.push({
+      name: product.category.name,
+      href: `/collections/${product.category.slug}`,
+    })
+  } else if (product.collections && product.collections.length > 0) {
+    // Use first collection if no category
+    breadcrumbSegments.push({
+      name: product.collections[0].name,
+      href: `/collections/${product.collections[0].slug}`,
+    })
+  }
+
+  // Add product name as final segment
+  breadcrumbSegments.push({
+    name: product.name,
+    href: `/product/${product.slug}`,
+  })
+
   return (
     <ProductProvider>
       <>
-        {breadcrumbSegments.length > 0 && <BreadcrumbBar segments={breadcrumbSegments} />}
+        <BreadcrumbBar segments={breadcrumbSegments} />
         <script
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(productJsonLd),
           }}
           type="application/ld+json"
         />
-        <div className="mx-auto max-w-screen-2xl px-4">
+        <div className="mx-auto max-w-[1280px] px-4">
           <BaseProduct product={product} />
 
           {product.description && (
@@ -179,9 +208,8 @@ export default function ProductPage(props: { params: Promise<{ slug: string }> }
             </div>
           )}
 
-          <RelatedProducts productId={product.id} />
+          {/* <RelatedProducts productId={product.id} /> */}
         </div>
-        <Footer />
       </>
     </ProductProvider>
   )

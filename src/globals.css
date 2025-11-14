@@ -99,6 +99,11 @@
   @apply border-2;
 }
 
+.page-gray-600 {
+  @apply text-gray-200;
+  background-color: #333333;
+}
+
 .page-gray-800 {
   @apply text-gray-200;
   background-color: #212121;
