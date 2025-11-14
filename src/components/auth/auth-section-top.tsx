@@ -11,7 +11,7 @@ export const AuthSectionTop = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login')
 
   const trigger = (
-    <button className="flex items-center gap-1.5 text-white hover:text-primary transition-colors text-xs font-medium">
+    <button className="flex items-center gap-1.5 text-white hover:text-primary transition-colors text-sm font-medium">
       <FaUser className="h-2.5 w-2.5" />
       <span>sign in</span>
       <span className="text-gray-500">or</span>

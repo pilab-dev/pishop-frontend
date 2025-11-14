@@ -5,7 +5,15 @@ import { Header, Media } from '@/payload-types'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FaCartPlus, FaFacebook, FaInstagram, FaUser } from 'react-icons/fa'
+import {
+  FaCartPlus,
+  FaFacebook,
+  FaFlag,
+  FaInstagram,
+  FaMoneyBill,
+  FaUser,
+  FaWrench,
+} from 'react-icons/fa'
 import { SiX } from 'react-icons/si'
 import { TfiHeart, TfiReload } from 'react-icons/tfi'
 
@@ -15,7 +23,7 @@ const AuthPopover = dynamic(
   {
     ssr: false,
     loading: () => (
-      <button className="flex items-center gap-1.5 text-white hover:text-primary transition-colors text-xs font-medium">
+      <button className="flex items-center gap-1.5 text-white hover:text-primary transition-colors text-sm font-medium">
         <FaUser className="h-2.5 w-2.5" />
         <span className="text-gray-500">Initializing authentication...</span>
       </button>
@@ -32,7 +40,7 @@ const TopRow = () => {
     <div className="page-gray-950 hidden sm:block">
       <div className="max-w-[1280px] mx-auto px-5 py-2 flex flex-row justify-between items-center">
         <div>
-          <ul className="flex flex-row space-x-2">
+          <ul className="flex flex-row text-sm space-x-3">
             <li>
               <Link href="/account">
                 <FaFacebook />
@@ -51,7 +59,20 @@ const TopRow = () => {
           </ul>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center space-x-8 font-medium text-sm">
+          <div className="flex flex-row items-center space-x-2">
+            <FaFlag fontSize={14} />
+            <span>English</span>
+          </div>
+          <div className="flex flex-row items-center space-x-2">
+            <FaWrench fontSize={14} />
+            <span>Guarantee</span>
+          </div>
+          <div className="flex flex-row items-center space-x-2">
+            <FaMoneyBill fontSize={14} />
+            <span>USA Dollar</span>
+          </div>
+
           <AuthPopover />
         </div>
       </div>
@@ -84,9 +105,21 @@ export const HeaderSectionDesktop = ({
       </div>
 
       {/* Desktop Header */}
-      <div className="hidden sm:flex max-w-[1280px] mx-auto px-5 py-5 gap-16 items-center flex-row justify-between space-x-5">
+      <div className="hidden sm:flex max-w-[1280px] mx-auto px-5 gap-16 items-center flex-row justify-between space-x-5">
         <div className="font-medium uppercase my-auto">
           {logo && <Image src={logo.url!} alt="Logo" width={100} height={100} priority />}
+        </div>
+
+        <div className="flex flex-row flex-1 space-x-8 uppercase font-bold products-font">
+          {navItems.map((item) => (
+            <Link
+              key={item.id}
+              href={item.link.url || ''}
+              className="text-lg hover:text-primary transition-colors hover:underline"
+            >
+              {item.link.label}
+            </Link>
+          ))}
         </div>
 
         {/* This is the search box of the header section */}

@@ -8,7 +8,7 @@ import { HeroImage } from './ui/hero-image'
 export const HeroSection = async () => {
   let product: Awaited<ReturnType<typeof client.getProduct>> = null
   try {
-    product = await client.getProduct('gaming-headset')
+    product = await client.getProduct('akkumulatorcsipesz-200a-150-mm-piros')
   } catch (error) {
     console.error('Failed to fetch product:', error)
     // Continue with null - section will still render

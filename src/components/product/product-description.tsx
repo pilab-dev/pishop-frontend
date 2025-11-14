@@ -1,11 +1,16 @@
 'use client'
 
-import { VariantPrice } from '@/components/product/variant-price'
-import Prose from '@/components/prose'
-import { Badge } from '@/components/ui/badge'
+import Price from '@/components/price'
+import { ColorSwatchSelector } from '@/components/product/color-swatch-selector'
+import { useProduct, useUpdateURL } from '@/components/product/product-context'
+import { QuantitySelector } from '@/components/product/quantity-selector'
+import { SizeSelector } from '@/components/product/size-selector'
+import { StarRating } from '@/components/product/star-rating'
+import { VariantSelector } from '@/components/product/variant-selector'
 import { Product } from '@/lib/client'
 import { useCartStore } from '@/store/cart-store'
-import { FC } from 'react'
+import { Heart, ShoppingCart } from 'lucide-react'
+import { FC, useState } from 'react'
 
 type ProductDescriptionProps = {
   product: Product
@@ -13,97 +18,126 @@ type ProductDescriptionProps = {
 
 export const ProductDescription: FC<ProductDescriptionProps> = ({ product }) => {
   const addToCart = useCartStore((state) => state.addToCart)
+  const [quantity, setQuantity] = useState(1)
+  const { state, updateOption } = useProduct()
+  const updateURL = useUpdateURL()
+
   if (!product) return null
 
+  const handleSizeSelect = (value: string) => {
+    const newState = updateOption('size', value)
+    updateURL(newState)
+  }
+
+  const handleColorSelect = (value: string) => {
+    const newState = updateOption('color', value)
+    updateURL(newState)
+  }
+
+  const handleBuyNow = () => {
+    addToCart(product, quantity)
+  }
+
+  const subtitle = product.category?.name || product.collections?.[0]?.name || ''
+
   return (
-    <>
+    <div
+      className="page-gray-600 my-15 p-8 text-white"
+      itemScope
+      itemType="https://schema.org/Product"
+    >
       <div itemProp="brand" itemScope itemType="https://schema.org/Brand">
         <meta itemProp="name" content="Pilab" />
       </div>
-      <div className="mb-6 flex flex-col border-b pb-6 dark:border-neutral-700">
-        <h1 className="mb-2 text-5xl font-medium" itemProp="name">
-          {product.name}
-        </h1>
-        <div className="mr-auto w-auto rounded-full bg-red-700 p-2 text-sm text-white">
-          <VariantPrice product={product} />
-        </div>
-      </div>
-      {product.description ? (
-        <div itemProp="description">
-          <Prose
-            className="mb-6 text-sm leading-tight dark:text-white/[60%]"
-            html={product.description || ''}
-          />
-        </div>
-      ) : null}
 
-      {/* Product Details */}
-      <div className="mb-6 space-y-4">
-        <h3 className="text-lg font-semibold">Product Details</h3>
-        <div className="grid grid-cols-1 gap-3 text-sm">
-          {product.sku && (
-            <div className="flex justify-between">
-              <span className="font-medium">SKU:</span>
-              <span itemProp="sku">{product.sku}</span>
-            </div>
-          )}
-          {product.inventory && (
-            <>
-              <div className="flex justify-between">
-                <span className="font-medium">Stock:</span>
-                <span>
-                  {product.inventory.trackQuantity
-                    ? product.inventory.quantity || 0
-                    : 'Not tracked'}
-                </span>
-              </div>
-              {product.inventory.allowBackorder && (
-                <div className="flex justify-between">
-                  <span className="font-medium">Backorder:</span>
-                  <span>Allowed</span>
-                </div>
-              )}
-            </>
-          )}
-          <div className="flex justify-between">
-            <span className="font-medium">Status:</span>
-            <span className={product.isActive ? 'text-green-600' : 'text-red-600'}>
-              {product.isActive ? 'Active' : 'Inactive'}
-            </span>
-          </div>
-          {product.tags && product.tags.length > 0 && (
-            <div className="flex justify-between">
-              <span className="font-medium">Tags:</span>
-              <div className="flex flex-wrap gap-1">
-                {product.tags.map((tag, index) => (
-                  <Badge key={index} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
-          <div className="flex justify-between">
-            <span className="font-medium">Created:</span>
-            <span>{new Date(product.createdAt).toLocaleDateString()}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-medium">Updated:</span>
-            <span>{new Date(product.updatedAt).toLocaleDateString()}</span>
-          </div>
-        </div>
+      <h1 className="mb-2 text-3xl font-bold uppercase tracking-wide" itemProp="name">
+        {product.name}
+      </h1>
+
+      {subtitle && <p className="mb-4 text-sm text-white/80">{subtitle}</p>}
+
+      <div className="mb-4">
+        <StarRating rating={3.5} className="text-white/50" />
       </div>
 
-      <button
-        onClick={() => addToCart(product, 1)}
-        className="mt-4 w-full rounded-full bg-blue-600 p-3 text-lg text-white hover:bg-blue-700"
-      >
-        Add to Cart
-      </button>
+      <div className="mb-6 font-medium products-font">
+        <Price
+          amount={product.basePrice.amount}
+          currencyCode={product.basePrice.currencyCode}
+          className="text-4xl font-bold text-white"
+        />
+      </div>
 
-      {/* {product.relatedProducts && product.relatedProducts.length > 0 && (
-        <RelatedProductsList products={product.relatedProducts as Product[]} />
-      )} */}
-    </>
+      {product.description && (
+        <div className="mb-6 text-sm leading-relaxed text-white/80" itemProp="description">
+          <p>
+            {product.description.replace(/<[^>]*>/g, '').substring(0, 200)}
+            {product.description.length > 200 ? '...' : ''}
+          </p>
+        </div>
+      )}
+
+      {product.options && product.options.length > 0 && (
+        <div className="mb-6 space-y-4">
+          {product.options.some((opt) => opt.name.toLowerCase() === 'size') && (
+            <div>
+              <label className="mb-2 block text-sm font-medium uppercase tracking-wide">Size</label>
+              <SizeSelector
+                optionGroups={product.options}
+                variants={product.variants || []}
+                selectedValue={state.size}
+                onSelect={handleSizeSelect}
+              />
+            </div>
+          )}
+
+          {product.options.some((opt) => opt.name.toLowerCase() === 'color') && (
+            <div>
+              <label className="mb-2 block text-sm font-medium uppercase tracking-wide">
+                Color
+              </label>
+              <ColorSwatchSelector
+                optionGroups={product.options}
+                variants={product.variants || []}
+                selectedValue={state.color}
+                onSelect={handleColorSelect}
+              />
+            </div>
+          )}
+
+          {product.variants && product.variants.length > 1 && (
+            <VariantSelector
+              options={product.variants.flatMap((v) => v.options)}
+              variants={product.variants}
+            />
+          )}
+        </div>
+      )}
+
+      <div className="mb-6 flex items-center gap-4">
+        <QuantitySelector value={quantity} onChange={setQuantity} />
+        <div className="flex gap-2">
+          <button
+            onClick={handleBuyNow}
+            className="flex items-center gap-2 bg-yellow-400 px-6 py-3 font-medium text-gray-900 transition-colors hover:bg-yellow-500"
+          >
+            <ShoppingCart className="h-5 w-5" />
+            Buy now
+          </button>
+          <button
+            onClick={handleBuyNow}
+            className="flex items-center gap-2 border border-white/30 bg-transparent px-6 py-3 font-medium text-white transition-colors hover:bg-white/10"
+          >
+            Buy now
+          </button>
+          <button
+            className="flex items-center justify-center border border-white/30 bg-transparent p-3 text-white transition-colors hover:bg-white/10"
+            aria-label="Add to wishlist"
+          >
+            <Heart className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
