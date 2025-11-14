@@ -16,3 +16,4 @@ export const CategoryColumn = ({ categories }: CategoryColumnProps) => {
     </div>
   )
 }
+

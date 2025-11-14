@@ -21,7 +21,7 @@ export const HotDealsSection = ({ products = [], productSlug }: HotDealsSectionP
         </div>
 
         <div
-          className="absolute -left-32 -top-32 -right-0 -bottom-5 oval-decor"
+          className="absolute -left-32 -top-32 right-0 -bottom-5 oval-decor"
           style={{
             pointerEvents: 'none',
           }}

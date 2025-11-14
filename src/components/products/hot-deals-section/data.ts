@@ -45,3 +45,4 @@ export const hotDealsData: HotDeal[] = [
     thumbnailImages: ['/images/headphone.webp', '/images/headphone.webp', '/images/headphone.webp'],
   },
 ]
+

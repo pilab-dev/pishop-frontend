@@ -27,3 +27,4 @@ export const FeaturedSection = ({ category, productCount }: FeaturedSectionProps
     </div>
   )
 }
+
