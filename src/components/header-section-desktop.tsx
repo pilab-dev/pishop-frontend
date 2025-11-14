@@ -5,7 +5,7 @@ import { Header, Media } from '@/payload-types'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FaFacebook, FaInstagram } from 'react-icons/fa'
+import { FaCartPlus, FaFacebook, FaInstagram, FaUser } from 'react-icons/fa'
 import { SiX } from 'react-icons/si'
 import { TfiHeart, TfiReload } from 'react-icons/tfi'
 
@@ -14,12 +14,17 @@ const AuthPopover = dynamic(
   () => import('./auth/auth-section-top').then((mod) => ({ default: mod.AuthSectionTop })),
   {
     ssr: false,
-    loading: () => <div className="w-30 h-6 bg-gray-200 animate-pulse rounded" />,
+    loading: () => (
+      <button className="flex items-center gap-1.5 text-white hover:text-primary transition-colors text-xs font-medium">
+        <FaUser className="h-2.5 w-2.5" />
+        <span className="text-gray-500">Initializing authentication...</span>
+      </button>
+    ),
   },
 )
 const CartIcon = dynamic(() => import('./cart-icon').then((mod) => ({ default: mod.CartIcon })), {
   ssr: false,
-  loading: () => <div className="w-4 h-4 animate-pulse rounded" />,
+  loading: () => <FaCartPlus fontSize={20} className="text-white animate-pulse" />,
 })
 
 const TopRow = () => {

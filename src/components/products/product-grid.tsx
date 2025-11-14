@@ -2,9 +2,9 @@
 
 import { Product } from '@/lib/client'
 import { formatCurrency } from '@/lib/formatCurrrency'
+import Image from 'next/image'
 import { useState } from 'react'
 import ProductButtons from './product-buttons'
-import Image from 'next/image'
 
 export type GridVariant = 'primary' | 'secondary' | 'tertiary'
 
