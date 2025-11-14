@@ -19,3 +19,4 @@ export const groupCategoriesIntoColumns = (
 
   return columns
 }
+

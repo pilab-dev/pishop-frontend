@@ -49,3 +49,4 @@ export const DealContent = ({ deal, slideVariants, direction, currentDealIndex, 
     </AnimatePresence>
   )
 }
+
