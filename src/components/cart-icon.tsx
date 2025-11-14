@@ -27,14 +27,14 @@ export const CartIcon = ({ variant = 'desktop' }: CartIconProps = {}) => {
       <>
         <button
           onClick={handleClick}
-          className="relative focus:outline-none"
+          className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg transition-all duration-200 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           aria-label="Open cart"
         >
-          <TfiShoppingCart fontSize={20} className="hover:text-primary transition-colors" />
+          <TfiShoppingCart fontSize={24} />
           {itemCount > 0 && (
             <Badge
               variant="destructive"
-              className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs font-bold animate-in zoom-in-50 duration-200"
+              className="absolute -top-1 -right-1 h-6 w-6 flex items-center justify-center p-0 text-xs font-bold animate-in zoom-in-50 duration-200"
             >
               {itemCount > 99 ? '99+' : itemCount}
             </Badge>

@@ -37,6 +37,11 @@ export const metadata: Metadata = {
     'ShopPi is a 2nd hand tech marketplace where you can buy and sell second hand tech stuffs.',
   icons: {
     icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+    other: {
+      rel: 'icon',
+      url: '/favicon.ico',
+    },
   },
   category: 'technology',
   robots: {

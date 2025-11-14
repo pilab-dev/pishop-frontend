@@ -82,7 +82,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
         {show && (
           <div className="bottom-0 left-0 right-0 flex flex-row gap-2 pb-5">
             {!hideDetails && (
-              <Tooltip>
+              <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <motion.button
                     type="button"
@@ -95,7 +95,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
                     onClick={handleNavigateTo(
                       resolvedHandle ? `/product/${resolvedHandle}` : undefined,
                     )}
-                    transition={{ delay: 0, duration: 0.1 }}
+                    transition={{ duration: 0.2 }}
                     variants={buttonVariants}
                     whileHover={whileHover}
                     className={cn(
@@ -106,11 +106,11 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
                     <FaEye />
                   </motion.button>
                 </TooltipTrigger>
-                <TooltipContent className="rounded-sm bg-primary px-4">View details</TooltipContent>
+                <TooltipContent>View details</TooltipContent>
               </Tooltip>
             )}
 
-            <Tooltip>
+            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <motion.button
                   type="button"
@@ -119,7 +119,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
                   disabled={noCompare}
                   exit="hidden"
                   initial="hidden"
-                  transition={{ delay: 0.1, duration: 0.15 }} // 100ms delay
+                  transition={{ duration: 0.2 }}
                   variants={buttonVariants}
                   whileHover={whileHover}
                   className={cn(
@@ -136,7 +136,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
               <TooltipContent>Compare</TooltipContent>
             </Tooltip>
 
-            <Tooltip>
+            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <motion.button
                   type="button"
@@ -145,7 +145,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
                   disabled={noWishlist}
                   exit="hidden"
                   initial="hidden"
-                  transition={{ delay: 0.2, duration: 0.2 }} // 100ms delay
+                  transition={{ duration: 0.2 }}
                   variants={buttonVariants}
                   whileHover={whileHover}
                   className={cn(
@@ -162,7 +162,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
               <TooltipContent>Add to wishlist</TooltipContent>
             </Tooltip>
 
-            <Tooltip>
+            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <motion.button
                   type="button"
@@ -172,7 +172,7 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
                   disabled={isCartDisabled}
                   exit="hidden"
                   initial="hidden"
-                  transition={{ delay: 0.3, duration: 0.2 }}
+                  transition={{ duration: 0.2 }}
                   variants={buttonVariants}
                   whileHover={whileHover}
                   whileTap={{ scale: 0.95 }}

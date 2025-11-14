@@ -10,7 +10,13 @@ interface DealContentProps {
   productSlug?: string
 }
 
-export const DealContent = ({ deal, slideVariants, direction, currentDealIndex, productSlug }: DealContentProps) => {
+export const DealContent = ({
+  deal,
+  slideVariants,
+  direction,
+  currentDealIndex,
+  productSlug,
+}: DealContentProps) => {
   return (
     <AnimatePresence mode="wait" custom={direction}>
       <motion.div
@@ -26,22 +32,17 @@ export const DealContent = ({ deal, slideVariants, direction, currentDealIndex, 
           opacity: { duration: 0.3 },
         }}
       >
-        <p>{deal.description}</p>
-
-        <p className="font-bold">{deal.title}</p>
-
+        <span>{deal.description}</span>
+        <span className="font-bold">{deal.title}</span>
         <ul className="list-disc list-inside space-y-1">
           {deal.features.map((feature, index) => (
             <li key={index}>{feature}</li>
           ))}
         </ul>
-
         <span className="text-lg uppercase products-font">
-          <span className="font-bold">Price: </span>
+          <span className="font-uppercase">Price: </span>
           <span className="text-primary font-bold">{deal.currentPrice}</span>
-          <span className="line-through italic text-gray-400 ml-2">
-            {deal.originalPrice}
-          </span>
+          <span className="line-through italic text-gray-400 ml-2">{deal.originalPrice}</span>
         </span>
 
         <ProductButtons show noWishlist noCompare handle={productSlug || ''} />
@@ -49,4 +50,3 @@ export const DealContent = ({ deal, slideVariants, direction, currentDealIndex, 
     </AnimatePresence>
   )
 }
-

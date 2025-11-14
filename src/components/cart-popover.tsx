@@ -2,10 +2,10 @@
 
 import { formatCurrency } from '@/lib/formatCurrrency'
 import { useCartStore } from '@/store/cart-store'
-import Link from 'next/link'
-import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react'
-import { Button } from './ui/button'
+import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
+import { Button } from './ui/button'
 
 export const CartPopover = () => {
   const { cart, updateItemQuantity, removeFromCart, isLoading } = useCartStore()
@@ -17,7 +17,7 @@ export const CartPopover = () => {
     shipping: { amount: 0, currencyCode: 'HUF' },
     discount: { amount: 0, currencyCode: 'HUF' },
     total: { amount: 0, currencyCode: 'HUF' },
-    itemCount: 0
+    itemCount: 0,
   }
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
@@ -52,7 +52,10 @@ export const CartPopover = () => {
         ) : (
           <div className="p-4 space-y-3">
             {items.map((item) => (
-              <div key={item.id} className="flex gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div
+                key={item.id}
+                className="flex gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
                 {/* Product Image */}
                 <div className="w-12 h-12 bg-gray-200 rounded-md flex-shrink-0 overflow-hidden">
                   {item.product.images[0] && (
