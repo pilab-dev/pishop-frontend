@@ -1,7 +1,7 @@
 'use client'
 
-import { FancyTitle } from '../../fancy-title'
-import { SectionDecor } from '../../ui/section-decor'
+import { FancyTitle } from '@/components/fancy-title'
+import { SectionDecor } from '@/components/ui/section-decor'
 import { DealContent } from './DealContent'
 import { DealImage } from './DealImage'
 import { NavigationButtons } from './NavigationButtons'
@@ -15,28 +15,22 @@ export const HotDealsSection = ({ products = [], productSlug }: HotDealsSectionP
 
   return (
     <div className="page-gray-800 relative">
-      <section className="max-w-[1280px] relative mx-auto min-h-[500px]">
+      <section className="max-w-[1280px] relative mx-auto">
         <div className="absolute top-0 left-40 h-full mx-auto px-5 py-5">
           <NavigationButtons onPrev={prevDeal} onNext={nextDeal} />
         </div>
 
+        {/* Oval Decor */}
         <div
-          className="absolute -left-32 -top-32 right-0 -bottom-5 oval-decor"
+          className="absolute -left-[10%] -top-[10%] right-0 bottom-0 oval-decor"
           style={{
             pointerEvents: 'none',
           }}
         />
 
-        <div className="pt-14 pb-5">
+        <div className="max-w-[1280px] h-max mx-auto flex flex-row items-center justify-center">
           {/* Static Title */}
-          <div className="flex justify-center mb-8">
-            <h2 className="flex items-center uppercase text-5xl font-bold">
-              <SectionDecor />
-              <FancyTitle label="This week's Hot Deals" />
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center min-h-[400px]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center min-h-[480px]">
             <DealImage
               image={currentDeal.image}
               title={currentDeal.title}
@@ -44,8 +38,13 @@ export const HotDealsSection = ({ products = [], productSlug }: HotDealsSectionP
               direction={direction}
               currentDealIndex={currentDealIndex}
             />
-
             <ThumbnailCarousel currentDealIndex={currentDealIndex} onSelectDeal={goToDeal} />
+          </div>
+          <div>
+            <h2 className="flex items-center uppercase xl:text-5xl font-bold pb-5">
+              <SectionDecor />
+              <FancyTitle label="This week's Hot Deals" />
+            </h2>
 
             <DealContent
               deal={currentDeal}

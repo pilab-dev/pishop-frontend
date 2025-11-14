@@ -17,7 +17,7 @@ export const DealImage = ({
   currentDealIndex,
 }: DealImageProps) => {
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center z-30">
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
           key={currentDealIndex}
