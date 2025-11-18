@@ -5,6 +5,7 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
+import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -73,10 +74,19 @@ const CartPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Your Shopping Cart</h1>
+    <>
+      <BreadcrumbBar
+        segments={[
+          {
+            name: 'Cart',
+            href: '/cart',
+          },
+        ]}
+      />
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-2">Your Shopping Cart</h1>
           {items.length > 0 && (
             <p className="text-muted-foreground">
               {items.length} {items.length === 1 ? 'item' : 'items'} in your cart
@@ -251,6 +261,7 @@ const CartPage = () => {
         )}
       </div>
     </div>
+    </>
   )
 }
 

@@ -1,5 +1,6 @@
 'use client'
 
+import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { client } from '@/lib/client'
 import { CheckoutSession } from '@/lib/client/types'
@@ -342,7 +343,20 @@ const CheckoutPage = () => {
   // Cart totals are managed by the backend and updated when shipping method changes
 
   return (
-    <div className="max-w-7xl mx-auto p-4 py-8 min-h-screen">
+    <>
+      <BreadcrumbBar
+        segments={[
+          {
+            name: 'Cart',
+            href: '/cart',
+          },
+          {
+            name: 'Checkout',
+            href: '/checkout',
+          },
+        ]}
+      />
+      <div className="max-w-7xl mx-auto p-4 py-8 min-h-screen">
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Main Content Area */}
         <div className="flex-1 space-y-6">
@@ -477,6 +491,7 @@ const CheckoutPage = () => {
         />
       </div>
     </div>
+    </>
   )
 }
 

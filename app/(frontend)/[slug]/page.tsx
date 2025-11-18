@@ -1,16 +1,17 @@
-import { RenderBlocks } from "@/blocks/RenderBlocks";
-import { LivePreviewListener } from "@/components/LivePreviewListener";
-import type { Page } from "@/payload-types";
-import config from "@payload-config";
-import { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getPayload } from "payload";
-import { cache } from "react";
+import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
+import type { Page } from '@/payload-types'
+import config from '@payload-config'
+import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { getPayload } from 'payload'
+import { cache } from 'react'
 
-const payload = await getPayload({ config });
+const payload = await getPayload({ config })
 
 // This is the type of the params object that is passed to the page component.
-type PagePropsPromise = Promise<{ slug: string }>;
+type PagePropsPromise = Promise<{ slug: string }>
 
 /**
  * Get a page by its slug.
@@ -19,48 +20,56 @@ type PagePropsPromise = Promise<{ slug: string }>;
  */
 const getPageBySlug = cache(async (slug: string): Promise<Page> => {
   const page = await payload.find({
-    collection: "pages",
+    collection: 'pages',
     where: { slug: { equals: slug } },
     limit: 1,
-  });
+  })
 
   if (!page.docs) {
-    throw new Error("page not found");
+    throw new Error('page not found')
   }
 
-  return page.docs[0] || null;
-});
+  return page.docs[0] || null
+})
 
 export const generateMetadata = async ({
   params,
 }: {
-  params: PagePropsPromise;
+  params: PagePropsPromise
 }): Promise<Metadata> => {
-  const { slug } = await params;
+  const { slug } = await params
 
-  const doc = await getPageBySlug(slug);
+  const doc = await getPageBySlug(slug)
 
   return {
     title: doc.meta?.title,
     description: doc.meta?.description,
     // icons: doc.meta?.image,
-  };
-};
+  }
+}
 
 // This is the default page handler. When no page found by slug, this should display 404
 export default async function Page({ params }: { params: PagePropsPromise }) {
-  const { slug } = await params;
+  const { slug } = await params
 
-  const page = await getPageBySlug(slug);
+  const page = await getPageBySlug(slug)
 
   if (!page) {
-    return notFound();
+    return notFound()
   }
 
   return (
     <>
+      <BreadcrumbBar
+        segments={[
+          {
+            name: page.title || page.slug || 'Page',
+            href: `/${page.slug || ''}`,
+          },
+        ]}
+      />
       <LivePreviewListener />
       <RenderBlocks blocks={page.elements} />
     </>
-  );
+  )
 }

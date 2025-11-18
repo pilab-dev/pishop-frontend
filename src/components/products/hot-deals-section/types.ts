@@ -15,3 +15,4 @@ export interface HotDeal {
   thumbnailImages: string[]
 }
 
+
