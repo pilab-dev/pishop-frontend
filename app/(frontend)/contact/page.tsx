@@ -1,38 +1,20 @@
 'use client'
 
+import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
 import { FancyTitle } from '@/components/fancy-title'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
 import { ContactForm } from './contact-form'
 
 export default function PricingPage() {
   return (
-    <div className="flex flex-col items-center h-screen">
-      <div className="bg-gray-200 py-4 w-full flex justify-center align-center">
-        <div className="max-w-7xl w-full justify-center">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">Home</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/components">Components</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </div>
-      </div>
+    <>
+      <BreadcrumbBar
+        segments={[
+          {
+            name: 'Contact',
+            href: '/contact',
+          },
+        ]}
+      />
 
       <div className="max-w-7xl w-full">
         <div className="flex flex-row gap-8 my-10">
@@ -49,6 +31,6 @@ export default function PricingPage() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

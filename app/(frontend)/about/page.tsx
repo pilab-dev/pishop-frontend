@@ -1,10 +1,19 @@
 import { subtitle, title } from "@/components/primitives";
+import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
 import Link from "next/link";
 import { Card, FeatureCard } from "./components/Card";
 
 export default async function AboutPage() {
   return (
     <>
+      <BreadcrumbBar
+        segments={[
+          {
+            name: 'About',
+            href: '/about',
+          },
+        ]}
+      />
       {/* Hero Section */}
       <div className="text-center mb-16">
         <h1 className={`${title()} text-5xl font-bold text-gray-900 mb-4`}>

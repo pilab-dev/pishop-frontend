@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { title } from "@/components/primitives";
+import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import type { Post } from '@/payload-types'
@@ -54,8 +55,17 @@ export default function BlogPage() {
   const posts = use(getPosts())
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className={`${title()} text-center mb-8`}>Blog</h1>
+    <>
+      <BreadcrumbBar
+        segments={[
+          {
+            name: 'Blog',
+            href: '/blog',
+          },
+        ]}
+      />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className={`${title()} text-center mb-8`}>Blog</h1>
 
       {posts.length === 0 ? (
         <div className="text-center py-12">
@@ -98,5 +108,6 @@ export default function BlogPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

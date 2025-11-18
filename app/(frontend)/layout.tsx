@@ -19,7 +19,6 @@ import { ConditionalToaster } from '@/components/ConditionalToaster'
 import { CartProvider } from '@/components/cart/CartProvider' // New import
 import { AppErrorBoundary, SectionErrorBoundary } from '@/components/error-boundary'
 import { HeaderSection } from '@/components/header-section'
-import { MegaMenuSection } from '@/components/mega-menu-section'
 import { PageFooter } from '@/components/page-footer'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import clsx from 'clsx'
@@ -73,9 +72,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <SectionErrorBoundary>
                   <HeaderSection />
                 </SectionErrorBoundary>
-                <SectionErrorBoundary>
+                {/* <SectionErrorBoundary>
                   <MegaMenuSection />
-                </SectionErrorBoundary>
+                </SectionErrorBoundary> */}
                 <main>
                   <SectionErrorBoundary>{children}</SectionErrorBoundary>
                 </main>

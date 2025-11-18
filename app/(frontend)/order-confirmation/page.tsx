@@ -1,8 +1,26 @@
+import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
 import Link from "next/link";
 
 const OrderConfirmationPage = () => {
   return (
-    <div className="container mx-auto p-4 text-center">
+    <>
+      <BreadcrumbBar
+        segments={[
+          {
+            name: 'Cart',
+            href: '/cart',
+          },
+          {
+            name: 'Checkout',
+            href: '/checkout',
+          },
+          {
+            name: 'Order Confirmation',
+            href: '/order-confirmation',
+          },
+        ]}
+      />
+      <div className="container mx-auto p-4 text-center">
       <h1 className="text-4xl font-bold text-green-600 mb-6">Order Confirmed!</h1>
       <p className="text-lg mb-4">Thank you for your purchase. Your order has been placed successfully.</p>
       <p className="text-md mb-8">You will receive an email confirmation shortly with your order details.</p>
@@ -12,6 +30,7 @@ const OrderConfirmationPage = () => {
         </button>
       </Link>
     </div>
+    </>
   );
 };
 

@@ -139,7 +139,7 @@ export default function Home() {
 
       <div className="bg-gray-100 pt-14 pb-5">
         <section className="max-w-[1280px] mx-auto px-5 pt-5">
-          <h2 className="flex items-center uppercase text-3xl font-bold">
+          <h2 className="flex items-center uppercase text-4xl font-bold">
             <SectionDecor />
             <FancyTitle label="Popular Product" />
           </h2>

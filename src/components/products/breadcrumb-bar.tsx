@@ -41,7 +41,7 @@ export const BreadcrumbBar: FC<BreadcrumbBarProps> = ({ segments }) => {
                     />
                     {isLast ? (
                       <span
-                        className="ms-1 font-medium text-primary-900 dark:text-white md:ms-2"
+                        className="ms-1 font-medium text-yellow-600 dark:text-primary md:ms-2"
                         aria-current="page"
                       >
                         {segment.name}

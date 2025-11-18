@@ -37,18 +37,17 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
         `}
     >
       <h3
-        className="products-font text-gray-600 text-xl font-bold mb-1 
+        className="products-font text-gray-800 text-normal font-semibold mb-3 
       md:text-medium"
       >
         {product.name}
       </h3>
-      <p className="products-font text-md uppercase text-gray-600 mb-6 md:text-md">
+      <p className="products-font font-light text-md uppercase text-gray-600 mb-6 md:text-md">
         Price:
-        <span className="text-primary-600 font-semibold ml-1">
+        <span className="ml-3 text-yellow-500 font-normal">
           {formatCurrency(product.basePrice?.amount ?? 0).trimEnd()}
-          ,00
-        </span>{' '}
-        <span className="text-gray-400 italic">HUF</span>
+        </span>
+        {/* <span className="text-gray-400 italic">HUF</span> */}
       </p>
 
       {product.images && product.images[0] && (
