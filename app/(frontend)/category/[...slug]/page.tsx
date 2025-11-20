@@ -5,36 +5,36 @@ import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
 import { ProductListLayout } from '@/components/products/product-list-layout'
 import React, { cache } from 'react'
 
-import type { Collection } from '@/lib/client'
+import type { Category } from '@/lib/client'
 import { client } from '@/lib/client'
 
 // Force dynamic rendering to avoid build-time API calls
 export const dynamic = 'force-dynamic'
 
-const getCollectionBySlug = cache(
+const getCategoryBySlug = cache(
   async (
     slug: string,
     page: number = 1,
     perPage: number = 40,
-  ): Promise<{ collection: Collection | null; products: any[]; total: number }> => {
-    const collection = await client.getCollection(slug)
+  ): Promise<{ category: Category | null; products: any[]; total: number }> => {
+    const category = await client.getCategory(slug)
 
-    if (!collection) {
+    if (!category) {
       return {
-        collection: null,
+        category: null,
         products: [],
         total: 0,
       }
     }
 
-    const allProducts = collection.products || []
+    const allProducts = category.products || []
     const total = allProducts.length
     const startIndex = (page - 1) * perPage
     const endIndex = startIndex + perPage
     const paginatedProducts = allProducts.slice(startIndex, endIndex)
 
     return {
-      collection,
+      category,
       products: paginatedProducts,
       total,
     }
@@ -42,43 +42,44 @@ const getCollectionBySlug = cache(
 )
 
 /**
- * Generate metadata for the collection page
+ * Generate metadata for the category page
  */
 export async function generateMetadata(props: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string[] }>
 }): Promise<Metadata> {
   const params = await props.params
-  const slug = params.slug as string
+  const slugArray = params.slug as string[]
+  const categorySlug = slugArray[slugArray.length - 1]
 
-  const { collection } = await getCollectionBySlug(slug)
+  const { category } = await getCategoryBySlug(categorySlug)
 
-  if (!collection) {
+  if (!category) {
     return {
-      title: 'Collection Not Found',
-      description: `The collection "${slug}" was not found`,
+      title: 'Category Not Found',
+      description: `The category "${categorySlug}" was not found`,
     }
   }
 
   return {
-    title: collection.name,
-    description: collection.description || collection.name,
+    title: category.name,
+    description: category.description || category.name,
     openGraph: {
-      title: collection.name,
-      description: collection.description || `${collection.name} products`,
+      title: category.name,
+      description: category.description || `${category.name} products`,
     },
     twitter: {
-      title: collection.name,
-      description: collection.description || `${collection.name} products`,
+      title: category.name,
+      description: category.description || `${category.name} products`,
     },
     alternates: {
-      canonical: `/collections/${collection.slug}`,
+      canonical: `/category/${slugArray.join('/')}`,
     },
   }
 }
 
-type CollectionPageProps = {
+type CategoryPageProps = {
   params: Promise<{
-    slug: string
+    slug: string[]
   }>
   searchParams?: Promise<{
     page?: string
@@ -88,20 +89,58 @@ type CollectionPageProps = {
   }>
 }
 
-const CollectionPageContent: React.FC<CollectionPageProps> = async ({ params, searchParams }) => {
-  const { slug } = await params
+const CategoryPageContent: React.FC<CategoryPageProps> = async ({ params, searchParams }) => {
+  const { slug: slugArray } = await params
   const searchParamsResolved = await searchParams
   const page = Number(searchParamsResolved?.page) || 1
   const perPage = Number(searchParamsResolved?.perPage) || 40
 
-  const { collection, products, total } = await getCollectionBySlug(slug, page, perPage)
+  // Get the last slug in the array (the actual category slug)
+  const categorySlug = slugArray[slugArray.length - 1]
 
-  // Handle collection not found
-  if (!collection) {
+  const { category, products, total } = await getCategoryBySlug(categorySlug, page, perPage)
+
+  // Handle category not found
+  if (!category) {
     notFound()
   }
 
   const totalPages = Math.ceil(total / perPage)
+
+  // Build breadcrumb segments from slug path
+  const breadcrumbSegments: Array<{ name: string; href: string }> = [
+    {
+      name: 'Home',
+      href: '/',
+    },
+  ]
+
+  // Build breadcrumbs from slug path
+  // If we have multiple slugs, build parent path
+  if (slugArray.length > 1) {
+    // Build parent path segments
+    for (let i = 0; i < slugArray.length - 1; i++) {
+      const parentSlug = slugArray[i]
+      const parentPath = slugArray.slice(0, i + 1).join('/')
+      // Use slug as name (could be improved by fetching parent categories)
+      breadcrumbSegments.push({
+        name: parentSlug.charAt(0).toUpperCase() + parentSlug.slice(1).replace(/-/g, ' '),
+        href: `/category/${parentPath}`,
+      })
+    }
+  } else if (category.parent) {
+    // If single slug but has parent, add parent
+    breadcrumbSegments.push({
+      name: category.parent.name,
+      href: `/category/${category.parent.slug}`,
+    })
+  }
+
+  // Add current category
+  breadcrumbSegments.push({
+    name: category.name,
+    href: `/category/${slugArray.join('/')}`,
+  })
 
   // Mock filter data - in a real app, this would come from the API
   const filters = {
@@ -169,23 +208,12 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({ params, se
 
   return (
     <>
-      <BreadcrumbBar
-        segments={[
-          {
-            name: 'Home',
-            href: '/',
-          },
-          {
-            name: collection.name,
-            href: `/collections/${collection.slug}`,
-          },
-        ]}
-      />
+      <BreadcrumbBar segments={breadcrumbSegments} />
 
       <ProductListLayout
         products={products}
         totalProducts={total}
-        categoryName={collection.name}
+        categoryName={category.name}
         filters={filters}
         currentPage={page}
         totalPages={totalPages}
@@ -195,6 +223,6 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({ params, se
   )
 }
 
-export default function CollectionPage(props: CollectionPageProps) {
-  return <CollectionPageContent {...props} />
+export default function CategoryPage(props: CategoryPageProps) {
+  return <CategoryPageContent {...props} />
 }

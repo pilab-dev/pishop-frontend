@@ -36,10 +36,7 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
         origin-top scaled-product-tile
         `}
     >
-      <h3
-        className="products-font text-gray-800 text-normal font-semibold mb-3 
-      md:text-medium"
-      >
+      <h3 className="products-font text-gray-800 text-normal font-semibold mb-3 md:text-medium">
         {product.name}
       </h3>
       <p className="products-font font-light text-md uppercase text-gray-600 mb-6 md:text-md">

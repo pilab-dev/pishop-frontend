@@ -4,7 +4,9 @@ import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { Archive } from '@/blocks/ArchiveBlock/config'
 import { CallToAction } from '@/blocks/CallToAction/config'
 import { Content } from '@/blocks/Content/config'
+import { BentoBoxBlock } from '@/blocks/BentoBoxBlock/config'
 import { FeaturedProductsBlock } from '@/blocks/FeaturedProductsBlock/config'
+import { ProductGridBlock } from '@/blocks/ProductGridBlock/config'
 import { FormBlock } from '@/blocks/Form/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { slugField } from '@/fields/slug'
@@ -78,8 +80,10 @@ export const Pages: CollectionConfig<'pages'> = {
       label: 'Elements',
       type: 'blocks',
       blocks: [
+        BentoBoxBlock,
         FeaturedProductsBlock,
         HotDealsBlock,
+        ProductGridBlock,
         CallToAction,
         Content,
         MediaBlock,

@@ -9,6 +9,7 @@ import type { Product } from '@/lib/client'
 import { cn } from '@/lib/utils'
 import { useCartStore } from '@/store/cart-store'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@ui/tooltip'
+import Link from 'next/link'
 
 type ProductButtonsProps = {
   show: boolean
@@ -84,27 +85,24 @@ export const ProductButtons: FC<ProductButtonsProps> = ({
             {!hideDetails && (
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
-                  <motion.button
-                    type="button"
-                    animate="visible"
-                    exit="hidden"
-                    initial="hidden"
-                    role="link"
-                    aria-label="View details"
-                    data-href={resolvedHandle ? `/product/${resolvedHandle}` : undefined}
-                    onClick={handleNavigateTo(
-                      resolvedHandle ? `/product/${resolvedHandle}` : undefined,
-                    )}
-                    transition={{ duration: 0.2 }}
-                    variants={buttonVariants}
-                    whileHover={whileHover}
-                    className={cn(
-                      baseButtonClasses,
-                      'bg-gray-600 drop-shadow cursor-pointer hover:bg-primary/90',
-                    )}
-                  >
-                    <FaEye />
-                  </motion.button>
+                  <Link passHref href={resolvedHandle ? `/product/${resolvedHandle}` : ``}>
+                    <motion.div
+                      animate="visible"
+                      exit="hidden"
+                      initial="hidden"
+                      role="link"
+                      aria-label="View details"
+                      transition={{ duration: 0.2 }}
+                      variants={buttonVariants}
+                      whileHover={whileHover}
+                      className={cn(
+                        baseButtonClasses,
+                        'bg-gray-600 drop-shadow cursor-pointer hover:bg-primary/90',
+                      )}
+                    >
+                      <FaEye />
+                    </motion.div>
+                  </Link>
                 </TooltipTrigger>
                 <TooltipContent>View details</TooltipContent>
               </Tooltip>

@@ -15,8 +15,11 @@ import { Header } from './Header/config'
 import { Promotions } from './Promotions/config'
 import { plugins } from './plugins'
 import { getServerSideURL } from './utilities/getURL'
+import { BentoBoxBlock } from './blocks/BentoBoxBlock/config'
 import { BestSellersBlock } from './blocks/BestSellersBlock/config'
+import { FeaturedProductsBlock } from './blocks/FeaturedProductsBlock/config'
 import { HotDealsBlock } from './blocks/HotDealsBlock/config'
+import { ProductGridBlock } from './blocks/ProductGridBlock/config'
 import { ProductShowcaseBlock } from './blocks/ProductShowcaseBlock/config'
 import { PromotionalBannerBlock } from './blocks/PromotionalBannerBlock/config'
 
@@ -37,6 +40,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     user: Users.slug,
+    autoRefresh: true,
     livePreview: {
       breakpoints: [
         {
@@ -59,6 +63,14 @@ export default buildConfig({
         },
       ],
     },
+    autoLogin:
+      process.env.NODE_ENV === 'development'
+        ? {
+            email: 'gyula@pilab.hu',
+            password: 'susegoofyY5',
+            prefillOnly: true,
+          }
+        : false
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
@@ -69,7 +81,7 @@ export default buildConfig({
   // database-adapter-config-end
   collections: [Pages, Posts, Media, Users, PromotionalContent],
   cors: [getServerSideURL()].filter(Boolean),
-  blocks: [BestSellersBlock, HotDealsBlock, ProductShowcaseBlock, PromotionalBannerBlock],
+  blocks: [BentoBoxBlock, BestSellersBlock, FeaturedProductsBlock, HotDealsBlock, ProductGridBlock, ProductShowcaseBlock, PromotionalBannerBlock],
   globals: [Header, Footer, Promotions],
   plugins: [
     ...plugins,

@@ -13,10 +13,12 @@ import { Label } from '../ui/label'
 
 import { SocialButton } from './SocialButton'
 import { loginSchema, type LoginFormData } from './auth-schemas'
-import { handleLogin, handleSocialLogin } from './auth-handlers'
+import { handleSocialLogin } from './auth-handlers'
+import { useAuthStore } from '@/store/auth-store'
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false)
+  const { login, isLoading } = useAuthStore()
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -71,7 +73,14 @@ export const LoginForm = () => {
       </div>
 
       {/* Login Form */}
-      <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(async (data) => {
+        try {
+          await login(data.email, data.password)
+          // The auth store will handle the state update
+        } catch (error) {
+          // Error is handled by the auth store
+        }
+      })} className="space-y-4">
         <div className="space-y-1">
           <FloatingLabelInput
             id="login-email"
@@ -129,9 +138,9 @@ export const LoginForm = () => {
         <Button
           type="submit"
           className="w-full"
-          disabled={form.formState.isSubmitting}
+          disabled={isLoading}
         >
-          {form.formState.isSubmitting ? 'Signing in...' : 'Sign In'}
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </Button>
       </form>
     </div>

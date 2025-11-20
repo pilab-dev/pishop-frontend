@@ -16,6 +16,7 @@ import {
 } from 'react-icons/fa'
 import { SiX } from 'react-icons/si'
 import { TfiHeart, TfiReload } from 'react-icons/tfi'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
 
 // Dynamically import heavy components to reduce initial bundle size
 const AuthPopover = dynamic(
@@ -30,10 +31,13 @@ const AuthPopover = dynamic(
     ),
   },
 )
-const CartIcon = dynamic(() => import('./cart-icon').then((mod) => ({ default: mod.CartIcon })), {
-  ssr: false,
-  loading: () => <FaCartPlus fontSize={20} className="text-white animate-pulse" />,
-})
+const CartIcon = dynamic(
+  () => import('./cart-icon-button').then((mod) => ({ default: mod.CartIconButton })),
+  {
+    ssr: false,
+    loading: () => <FaCartPlus fontSize={20} className="text-white animate-pulse" />,
+  },
+)
 
 const TopRow = () => {
   return (
@@ -110,12 +114,12 @@ export const HeaderSectionDesktop = ({
           {logo && <Image src={logo.url!} alt="Logo" width={100} height={100} priority />}
         </div>
 
-        <div className="flex flex-row flex-1 space-x-8 uppercase font-bold products-font">
+        <div className="flex flex-row flex-1 space-x-8 uppercase font-bold products-font transition-colors ease-in-out duration-300">
           {navItems.map((item) => (
             <Link
               key={item.id}
               href={item.link.url || ''}
-              className="text-lg hover:text-primary transition-colors hover:underline"
+              className="text-md hover:text-primary transition-colors"
             >
               {item.link.label}
             </Link>
@@ -174,7 +178,14 @@ export const HeaderSectionDesktop = ({
                 <TfiReload fontSize={20} />
               </li>
               <li>
-                <TfiHeart fontSize={20} />
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TfiHeart fontSize={20} />
+                    </TooltipTrigger>
+                    <TooltipContent>Add to wishlist</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </li>
               <li>
                 <CartIcon variant="desktop" />
