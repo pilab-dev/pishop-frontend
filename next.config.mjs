@@ -9,11 +9,16 @@ const bundleAnalyzer = withBundleAnalyzer({
 const nextConfig = {
   output: 'standalone',
   // Next.js 16 experimental features for better performance
+  reactCompiler: true,
   experimental: {
     // Optimize package imports
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+    optimizePackageImports: [
+      'react-icons', 'lucide-react', 
+      '@radix-ui/react-icons', '@opentelemetry/api'
+    ],
     // Optimize CSS
     optimizeCss: true,
+    turbopackFileSystemCacheForDev: true,
   },
   turbopack: {
     // Example: adding an alias and custom file extension

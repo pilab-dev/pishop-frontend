@@ -10,11 +10,13 @@ import { Button } from '../ui/button'
 import { FloatingLabelInput } from '../ui/floating-label-input'
 
 import { SocialButton } from './SocialButton'
-import { handleSignup, handleSocialSignup } from './auth-handlers'
+import { handleSocialSignup } from './auth-handlers'
 import { signupSchema, type SignupFormData } from './auth-schemas'
+import { useAuthStore } from '@/store/auth-store'
 
 export const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false)
+  const { signup, isLoading } = useAuthStore()
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -73,7 +75,14 @@ export const SignupForm = () => {
       </div>
 
       {/* Quick Signup Form */}
-      <form onSubmit={form.handleSubmit(handleSignup)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(async (data) => {
+        try {
+          await signup(data.email, data.password)
+          // The auth store will handle the redirect
+        } catch (error) {
+          // Error is handled by the auth store
+        }
+      })} className="space-y-4">
         <div className="space-y-1">
           <FloatingLabelInput
             id="signup-email"
@@ -114,9 +123,9 @@ export const SignupForm = () => {
           type="submit"
           variant="outline"
           className="w-full"
-          disabled={form.formState.isSubmitting}
+          disabled={isLoading}
         >
-          {form.formState.isSubmitting ? 'Creating account...' : 'Continue with Email'}
+          {isLoading ? 'Creating account...' : 'Continue with Email'}
         </Button>
       </form>
 

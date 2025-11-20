@@ -1,204 +1,52 @@
 'use client'
 
+import { useState } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { ChevronDown, ChevronUp } from 'lucide-react'
-import { useState } from 'react'
-import { cn } from '@/lib/utils'
+import { Input } from '@/components/ui/input'
 
-interface FilterOption {
+export interface FilterOption {
   label: string
   value: string
   count?: number
+  color?: string
 }
 
-interface FilterSectionProps {
-  title: string
-  options: FilterOption[]
-  selectedValues: string[]
-  onToggle: (value: string) => void
-  defaultOpen?: boolean
-  showViewMore?: boolean
-  maxVisible?: number
-}
-
-const FilterSection: React.FC<FilterSectionProps> = ({
-  title,
-  options,
-  selectedValues,
-  onToggle,
-  defaultOpen = true,
-  showViewMore = false,
-  maxVisible = 5,
-}) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-  const [showAll, setShowAll] = useState(false)
-
-  const visibleOptions = showAll || !showViewMore ? options : options.slice(0, maxVisible)
-
-  return (
-    <div className="border-b border-gray-200 py-4">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between text-left font-semibold uppercase text-gray-900 hover:text-primary"
-      >
-        <span>{title}</span>
-        {isOpen ? (
-          <ChevronUp className="h-4 w-4" />
-        ) : (
-          <ChevronDown className="h-4 w-4" />
-        )}
-      </button>
-
-      {isOpen && (
-        <div className="mt-4 space-y-2">
-          {visibleOptions.map((option) => (
-            <div key={option.value} className="flex items-center space-x-2">
-              <Checkbox
-                id={`${title}-${option.value}`}
-                checked={selectedValues.includes(option.value)}
-                onCheckedChange={() => onToggle(option.value)}
-              />
-              <Label
-                htmlFor={`${title}-${option.value}`}
-                className="flex-1 cursor-pointer text-sm font-normal text-gray-700"
-              >
-                {option.label}
-                {option.count !== undefined && (
-                  <span className="ml-2 text-gray-500">({option.count})</span>
-                )}
-              </Label>
-            </div>
-          ))}
-          {showViewMore && options.length > maxVisible && (
-            <button
-              onClick={() => setShowAll(!showAll)}
-              className="mt-2 text-sm text-primary hover:underline"
-            >
-              {showAll ? 'View less -' : 'View more +'}
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
-
-interface PriceRangeProps {
+export interface PriceRange {
   min: number
   max: number
-  value: [number, number]
-  onChange: (value: [number, number]) => void
 }
 
-const PriceRange: React.FC<PriceRangeProps> = ({ min, max, value, onChange }) => {
-  const [localValue, setLocalValue] = useState(value)
-
-  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMin = Math.max(min, Math.min(Number(e.target.value), localValue[1]))
-    const newValue: [number, number] = [newMin, localValue[1]]
-    setLocalValue(newValue)
-    onChange(newValue)
-  }
-
-  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMax = Math.min(max, Math.max(Number(e.target.value), localValue[0]))
-    const newValue: [number, number] = [localValue[0], newMax]
-    setLocalValue(newValue)
-    onChange(newValue)
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <input
-          type="number"
-          min={min}
-          max={max}
-          value={localValue[0]}
-          onChange={handleMinChange}
-          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
-        />
-        <span className="text-gray-500">to</span>
-        <input
-          type="number"
-          min={min}
-          max={max}
-          value={localValue[1]}
-          onChange={handleMaxChange}
-          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
-        />
-      </div>
-      <div className="relative h-2 w-full rounded-full bg-gray-200">
-        <div
-          className="absolute h-2 rounded-full bg-primary"
-          style={{
-            left: `${((localValue[0] - min) / (max - min)) * 100}%`,
-            width: `${((localValue[1] - localValue[0]) / (max - min)) * 100}%`,
-          }}
-        />
-      </div>
-    </div>
-  )
+export interface FilterData {
+  warehouse?: FilterOption[]
+  onSale?: FilterOption[]
+  priceRange?: PriceRange
+  compatibleOS?: FilterOption[]
+  chipType?: FilterOption[]
+  function?: FilterOption[]
+  brand?: FilterOption[]
+  colors?: FilterOption[]
+  discount?: FilterOption[]
 }
 
-interface ColorOption {
-  label: string
-  value: string
-  color: string
-}
-
-interface ColorFilterProps {
-  colors: ColorOption[]
-  selectedValues: string[]
-  onToggle: (value: string) => void
-}
-
-const ColorFilter: React.FC<ColorFilterProps> = ({ colors, selectedValues, onToggle }) => {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {colors.map((color) => (
-        <button
-          key={color.value}
-          onClick={() => onToggle(color.value)}
-          className={cn(
-            'h-8 w-8 rounded-full border-2 transition-all',
-            selectedValues.includes(color.value)
-              ? 'border-primary ring-2 ring-primary ring-offset-2'
-              : 'border-gray-300 hover:border-gray-400'
-          )}
-          style={{ backgroundColor: color.color }}
-          aria-label={color.label}
-        />
-      ))}
-    </div>
-  )
+export interface SelectedFilters {
+  warehouse: string[]
+  onSale: string[]
+  priceRange?: [number, number]
+  compatibleOS: string[]
+  chipType: string[]
+  function: string[]
+  brand: string[]
+  colors: string[]
+  discount: string[]
 }
 
 export interface FilterSidebarProps {
   categoryName?: string
-  filters: {
-    warehouse?: FilterOption[]
-    onSale?: FilterOption[]
-    priceRange?: { min: number; max: number }
-    compatibleOS?: FilterOption[]
-    chipType?: FilterOption[]
-    function?: FilterOption[]
-    brand?: FilterOption[]
-    colors?: ColorOption[]
-    discount?: FilterOption[]
-  }
-  selectedFilters: {
-    warehouse?: string[]
-    onSale?: string[]
-    priceRange?: [number, number]
-    compatibleOS?: string[]
-    chipType?: string[]
-    function?: string[]
-    brand?: string[]
-    colors?: string[]
-    discount?: string[]
-  }
+  filters: FilterData
+  selectedFilters: SelectedFilters
   onFilterChange: (filterType: string, value: string | string[] | [number, number]) => void
 }
 
@@ -208,119 +56,170 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   selectedFilters,
   onFilterChange,
 }) => {
-  const handleToggle = (filterType: string) => (value: string) => {
-    const current = selectedFilters[filterType as keyof typeof selectedFilters] as string[] | undefined
-    const newValues = current?.includes(value)
-      ? current.filter((v) => v !== value)
-      : [...(current || []), value]
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    warehouse: true,
+    onSale: true,
+    priceRange: true,
+    compatibleOS: false,
+    chipType: false,
+    function: false,
+    brand: false,
+    colors: false,
+    discount: false,
+  })
+
+  const toggleSection = (section: string) => {
+    setOpenSections(prev => ({ ...prev, [section]: !prev[section] }))
+  }
+
+  const handleCheckboxChange = (filterType: string, value: string, checked: boolean) => {
+    const currentValues = selectedFilters[filterType as keyof SelectedFilters] as string[] || []
+    const newValues = checked
+      ? [...currentValues, value]
+      : currentValues.filter(v => v !== value)
     onFilterChange(filterType, newValues)
   }
 
-  return (
-    <aside className="w-full lg:w-64">
-      <div className="bg-white p-4 shadow-sm">
-        {categoryName && (
-          <h2 className="mb-6 text-xl font-bold uppercase text-gray-900">{categoryName}</h2>
+  const handlePriceRangeChange = (values: number[]) => {
+    if (values.length === 2) {
+      onFilterChange('priceRange', [values[0], values[1]])
+    }
+  }
+
+  const renderFilterSection = (
+    title: string,
+    filterType: string,
+    options?: FilterOption[]
+  ) => {
+    if (!options || options.length === 0) return null
+
+    return (
+      <div className="border-b border-gray-100">
+        <Button
+          variant="ghost"
+          className="w-full justify-between p-4 h-auto font-medium"
+          onClick={() => toggleSection(filterType)}
+        >
+          {title}
+          {openSections[filterType] ? (
+            <ChevronUp className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )}
+        </Button>
+        {openSections[filterType] && (
+          <div className="px-4 pb-4">
+            <div className="space-y-3">
+              {options.map((option) => (
+                <div key={option.value} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`${filterType}-${option.value}`}
+                    checked={(selectedFilters[filterType as keyof SelectedFilters] as string[] || []).includes(option.value)}
+                    onCheckedChange={(checked) => handleCheckboxChange(filterType, option.value, checked as boolean)}
+                  />
+                  <Label
+                    htmlFor={`${filterType}-${option.value}`}
+                    className="text-sm font-normal cursor-pointer flex-1"
+                  >
+                    {filterType === 'colors' && option.color ? (
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-4 h-4 rounded-full border border-gray-300"
+                          style={{ backgroundColor: option.color }}
+                        />
+                        {option.label}
+                      </div>
+                    ) : (
+                      option.label
+                    )}
+                    {option.count !== undefined && (
+                      <span className="text-gray-500 ml-1">({option.count})</span>
+                    )}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
-
-        <div className="space-y-0">
-          {filters.warehouse && filters.warehouse.length > 0 && (
-            <FilterSection
-              title="Warehouse Options"
-              options={filters.warehouse}
-              selectedValues={selectedFilters.warehouse || []}
-              onToggle={handleToggle('warehouse')}
-            />
-          )}
-
-          {filters.onSale && filters.onSale.length > 0 && (
-            <FilterSection
-              title="Narrow Search Results"
-              options={filters.onSale}
-              selectedValues={selectedFilters.onSale || []}
-              onToggle={handleToggle('onSale')}
-            />
-          )}
-
-          {filters.priceRange && (
-            <div className="border-b border-gray-200 py-4">
-              <h3 className="mb-4 font-semibold uppercase text-gray-900">Price Range</h3>
-              <PriceRange
-                min={filters.priceRange.min}
-                max={filters.priceRange.max}
-                value={selectedFilters.priceRange || [filters.priceRange.min, filters.priceRange.max]}
-                onChange={(value) => onFilterChange('priceRange', value)}
-              />
-            </div>
-          )}
-
-          {filters.compatibleOS && filters.compatibleOS.length > 0 && (
-            <FilterSection
-              title="Compatible OS"
-              options={filters.compatibleOS}
-              selectedValues={selectedFilters.compatibleOS || []}
-              onToggle={handleToggle('compatibleOS')}
-            />
-          )}
-
-          {filters.chipType && filters.chipType.length > 0 && (
-            <FilterSection
-              title="Chip type"
-              options={filters.chipType}
-              selectedValues={selectedFilters.chipType || []}
-              onToggle={handleToggle('chipType')}
-            />
-          )}
-
-          {filters.function && filters.function.length > 0 && (
-            <FilterSection
-              title="Function"
-              options={filters.function}
-              selectedValues={selectedFilters.function || []}
-              onToggle={handleToggle('function')}
-              showViewMore
-              maxVisible={5}
-            />
-          )}
-
-          {filters.brand && filters.brand.length > 0 && (
-            <FilterSection
-              title="Brand"
-              options={filters.brand}
-              selectedValues={selectedFilters.brand || []}
-              onToggle={handleToggle('brand')}
-              showViewMore
-              maxVisible={5}
-            />
-          )}
-
-          {filters.colors && filters.colors.length > 0 && (
-            <div className="border-b border-gray-200 py-4">
-              <h3 className="mb-4 font-semibold uppercase text-gray-900">Color</h3>
-              <ColorFilter
-                colors={filters.colors}
-                selectedValues={selectedFilters.colors || []}
-                onToggle={handleToggle('colors')}
-              />
-            </div>
-          )}
-
-          {filters.discount && filters.discount.length > 0 && (
-            <div className="border-b border-gray-200 py-4">
-              <h3 className="mb-4 font-semibold uppercase text-gray-900">Discount</h3>
-              <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm">
-                <option>Choose your discount</option>
-                {filters.discount.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
       </div>
-    </aside>
+    )
+  }
+
+  const renderPriceRangeSection = () => {
+    if (!filters.priceRange) return null
+
+    const { min, max } = filters.priceRange
+    const currentRange = selectedFilters.priceRange || [min, max]
+
+    return (
+      <div className="border-b border-gray-100">
+        <Button
+          variant="ghost"
+          className="w-full justify-between p-4 h-auto font-medium"
+          onClick={() => toggleSection('priceRange')}
+        >
+          Price Range
+          {openSections.priceRange ? (
+            <ChevronUp className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )}
+        </Button>
+        {openSections.priceRange && (
+          <div className="px-4 pb-4">
+            <div className="space-y-4">
+              <div className="flex gap-2 items-center">
+                <div className="flex-1">
+                  <Label htmlFor="price-min" className="text-sm">Min</Label>
+                  <Input
+                    id="price-min"
+                    type="number"
+                    value={currentRange[0]}
+                    onChange={(e) => handlePriceRangeChange([Number(e.target.value), currentRange[1]])}
+                    min={min}
+                    max={max}
+                    className="mt-1"
+                  />
+                </div>
+                <div className="flex-1">
+                  <Label htmlFor="price-max" className="text-sm">Max</Label>
+                  <Input
+                    id="price-max"
+                    type="number"
+                    value={currentRange[1]}
+                    onChange={(e) => handlePriceRangeChange([currentRange[0], Number(e.target.value)])}
+                    min={min}
+                    max={max}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-full lg:w-80 bg-white border-r border-gray-200">
+      <div className="sticky top-0 p-4 border-b border-gray-200 bg-white">
+        <h2 className="text-lg font-semibold">
+          {categoryName ? `Filters for ${categoryName}` : 'Filters'}
+        </h2>
+      </div>
+
+      <div className="divide-y divide-gray-100">
+        {renderFilterSection('Warehouse', 'warehouse', filters.warehouse, openSections.warehouse)}
+        {renderFilterSection('Sale Status', 'onSale', filters.onSale, openSections.onSale)}
+        {renderPriceRangeSection()}
+        {renderFilterSection('Compatible OS', 'compatibleOS', filters.compatibleOS)}
+        {renderFilterSection('Chip Type', 'chipType', filters.chipType)}
+        {renderFilterSection('Function', 'function', filters.function)}
+        {renderFilterSection('Brand', 'brand', filters.brand)}
+        {renderFilterSection('Colors', 'colors', filters.colors)}
+        {renderFilterSection('Discount', 'discount', filters.discount)}
+      </div>
+    </div>
   )
 }
-

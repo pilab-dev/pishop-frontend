@@ -11,7 +11,7 @@ interface CartIconProps {
   variant?: 'mobile' | 'desktop'
 }
 
-export const CartIcon = ({ variant = 'desktop' }: CartIconProps = {}) => {
+export const CartIconButton = ({ variant = 'desktop' }: CartIconProps = {}) => {
   const { cart, isMobileDrawerOpen, setIsMobileDrawerOpen } = useCartStore()
   const itemCount = cart?.totals.itemCount || 0
 
@@ -50,7 +50,7 @@ export const CartIcon = ({ variant = 'desktop' }: CartIconProps = {}) => {
 
   // Desktop variant - use popover
   const trigger = (
-    <button className="relative focus:outline-none" aria-label="Open cart">
+    <button className="relative focus:outline-none cursor-pointer" aria-label="Open cart">
       <FaCartPlus fontSize={20} className="text-white hover:text-primary transition-colors" />
       {itemCount > 0 && (
         <Badge

@@ -47,3 +47,4 @@ export const hotDealsData: HotDeal[] = [
 ]
 
 
+
