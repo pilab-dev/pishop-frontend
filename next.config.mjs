@@ -13,15 +13,15 @@ const nextConfig = {
   experimental: {
     // Optimize package imports
     optimizePackageImports: [
-      'react-icons',
-      'react-icons/si',
-      'react-icons/fa',
-      'react-icons/tfi',
-      'lucide-react',
-      '@radix-ui/react-icons',
+      // 'react-icons',
+      // 'react-icons/si',
+      // 'react-icons/fa',
+      // 'react-icons/tfi',
+      // 'lucide-react',
+      // '@radix-ui/react-icons',
       '@opentelemetry/api',
-      'framer-motion',
-      'date-fns',
+      // 'framer-motion',
+      // 'date-fns',
     ],
     // Optimize CSS
     optimizeCss: true,
@@ -41,8 +41,6 @@ const nextConfig = {
     // Number of pages that should be kept simultaneously without being disposed
     pagesBufferLength: 5,
   },
-  turbopack: {
-  },
   images: {
     // loader: "default",
     formats: ['image/avif', 'image/webp'],
@@ -57,6 +55,10 @@ const nextConfig = {
       },
     ],
   },
+  serverExternalPackages: [
+    'thread-stream',
+    'pino',
+  ],
 }
 
 export default bundleAnalyzer(withPayload(nextConfig))

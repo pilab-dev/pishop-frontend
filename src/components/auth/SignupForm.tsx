@@ -77,8 +77,10 @@ export const SignupForm = () => {
       {/* Quick Signup Form */}
       <form onSubmit={form.handleSubmit(async (data) => {
         try {
-          await signup(data.email, data.password)
-          // The auth store will handle the redirect
+          if (data.email && data.password) {
+            await signup(data.email, data.password)
+            // The auth store will handle the redirect
+          }
         } catch (error) {
           // Error is handled by the auth store
         }

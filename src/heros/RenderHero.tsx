@@ -19,7 +19,9 @@ const heroes = {
 }
 
 export const RenderHero: React.FC<Page['hero']> = (props) => {
-  const { type } = props || {}
+  if (!props) return null
+  
+  const { type } = props
 
   if (!type || type === 'none') return null
 
@@ -27,5 +29,6 @@ export const RenderHero: React.FC<Page['hero']> = (props) => {
 
   if (!HeroToRender) return null
 
-  return <HeroToRender {...props} />
+  // Pass props with type assertion to handle null values
+  return <HeroToRender {...(props as any)} />
 }

@@ -5,6 +5,7 @@ import { FancyTitle } from "@/components/fancy-title";
 import { SectionDecor } from "@/components/ui/section-decor";
 import { Button } from "@/components/ui/button";
 import type { ProductGridProps } from "@/payload-types";
+import type { Product } from "@/lib/client";
 
 type Props = ProductGridProps & {};
 
@@ -22,11 +23,10 @@ export const ProductGridBlock: React.FC<Props> = (props) => {
 
   // For now, we'll use mock data or need to implement data fetching logic
   // This is a placeholder - in a real implementation, you'd fetch products based on the source
-  const mockProducts = [
-    // Mock products would be fetched based on source configuration
-  ];
+  // TODO: Fetch actual Product objects based on product IDs from the products array
+  const mockProducts: Product[] = [];
 
-  const productsToDisplay = products?.map(p => p.productId) || mockProducts;
+  const productsToDisplay = mockProducts; // TODO: Replace with actual product fetching logic
   const view = displaySettings?.view || 'grid';
   const maxItems = displaySettings?.maxItems || 12;
   const showPrices = displaySettings?.showPrices !== false;

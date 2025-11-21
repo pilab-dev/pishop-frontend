@@ -122,7 +122,7 @@ export const BentoBoxBlock: React.FC<Props> = (props) => {
               )}
             >
               <div className="w-full">
-                <RichText content={item.content} />
+                <RichText data={item.content} />
               </div>
             </BentoBoxItem>
           ))}

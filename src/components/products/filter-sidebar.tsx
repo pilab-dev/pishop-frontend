@@ -210,8 +210,8 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       </div>
 
       <div className="divide-y divide-gray-100">
-        {renderFilterSection('Warehouse', 'warehouse', filters.warehouse, openSections.warehouse)}
-        {renderFilterSection('Sale Status', 'onSale', filters.onSale, openSections.onSale)}
+        {renderFilterSection('Warehouse', 'warehouse', filters.warehouse)}
+        {renderFilterSection('Sale Status', 'onSale', filters.onSale)}
         {renderPriceRangeSection()}
         {renderFilterSection('Compatible OS', 'compatibleOS', filters.compatibleOS)}
         {renderFilterSection('Chip Type', 'chipType', filters.chipType)}
