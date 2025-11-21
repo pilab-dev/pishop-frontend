@@ -13,8 +13,15 @@ const nextConfig = {
   experimental: {
     // Optimize package imports
     optimizePackageImports: [
-      'react-icons', 'lucide-react', 
-      '@radix-ui/react-icons', '@opentelemetry/api'
+      'react-icons',
+      'react-icons/si',
+      'react-icons/fa',
+      'react-icons/tfi',
+      'lucide-react',
+      '@radix-ui/react-icons',
+      '@opentelemetry/api',
+      'framer-motion',
+      'date-fns',
     ],
     // Optimize CSS
     optimizeCss: true,
@@ -27,46 +34,14 @@ const nextConfig = {
     },
     resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.json'],
   },
-  // // Webpack optimizations for better bundle splitting
-  // webpack: (config, { dev, isServer }) => {
-  //   // Optimize bundle splitting
-  //   if (!dev && !isServer) {
-  //     config.optimization.splitChunks = {
-  //       chunks: 'all',
-  //       cacheGroups: {
-  //         vendor: {
-  //           test: /[\\/]node_modules[\\/]/,
-  //           name: 'vendors',
-  //           chunks: 'all',
-  //           priority: 10,
-  //         },
-  //         radix: {
-  //           test: /[\\/]node_modules[\\/]@radix-ui[\\/]/,
-  //           name: 'radix-ui',
-  //           chunks: 'all',
-  //           priority: 20,
-  //         },
-  //         payload: {
-  //           test: /[\\/]node_modules[\\/]@payloadcms[\\/]/,
-  //           name: 'payload',
-  //           chunks: 'all',
-  //           priority: 20,
-  //         },
-  //       },
-  //     }
-  //   }
-
-  //   return config
-  // },
   // Memory optimizations for development
   onDemandEntries: {
     // Period (in ms) where the server will keep pages in the buffer
-    maxInactiveAge: 25 * 1000,
+    maxInactiveAge: 60 * 1000,
     // Number of pages that should be kept simultaneously without being disposed
-    pagesBufferLength: 2,
+    pagesBufferLength: 5,
   },
   turbopack: {
-
   },
   images: {
     // loader: "default",

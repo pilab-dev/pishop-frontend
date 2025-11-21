@@ -7,6 +7,7 @@ import { HighImpactHero } from '@/heros/HighImpact'
 import { LowImpactHero } from '@/heros/LowImpact'
 import { MediumImpactHero } from '@/heros/MediumImpact'
 import { SideBySideHero } from '@/heros/SideBySide'
+import { TechHero } from '@/heros/TechHero'
 
 const heroes = {
   highImpact: HighImpactHero,
@@ -14,6 +15,7 @@ const heroes = {
   mediumImpact: MediumImpactHero,
   centeredImpact: CenteredImpactHero,
   sideBySide: SideBySideHero,
+  techHero: TechHero,
 }
 
 export const RenderHero: React.FC<Page['hero']> = (props) => {

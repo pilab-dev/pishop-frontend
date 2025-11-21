@@ -54,3 +54,4 @@ export const CopyrightSection: FC<CopyrightSectionProps> = ({ copyright }) => {
     </div>
   )
 }
+

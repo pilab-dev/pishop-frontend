@@ -33,3 +33,4 @@ export const ThumbnailCarousel = ({ currentDealIndex, onSelectDeal }: ThumbnailC
 
 
 
+
