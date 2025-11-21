@@ -69,6 +69,7 @@ export interface Config {
     bentoBox: BentoBoxProps;
     bestSellers: BestSellersProps;
     featuredProducts: FeaturedProductsProps;
+    hero: HeroBlockProps;
     hotDealsBlock: HotDealsBlock;
     productGrid: ProductGridProps;
     productShowcase: ProductShowcaseProps;
@@ -620,6 +621,24 @@ export interface FeaturedProductsProps {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlockProps".
+ */
+export interface HeroBlockProps {
+  /**
+   * Select a product to display in the hero section
+   */
+  product: {
+    /**
+     * Select product from storefront to feature in hero section
+     */
+    productSlug: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HotDealsBlock".
  */
 export interface HotDealsBlock {
@@ -955,6 +974,7 @@ export interface Page {
   elements: (
     | BentoBoxProps
     | FeaturedProductsProps
+    | HeroBlockProps
     | HotDealsBlock
     | ProductGridProps
     | CallToActionBlock
@@ -972,7 +992,8 @@ export interface Page {
     description?: string | null;
   };
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'centeredImpact' | 'sideBySide';
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'centeredImpact' | 'sideBySide' | 'techHero';
+    style?: ('standard' | 'card') | null;
     richText?: {
       root: {
         type: string;
@@ -1748,6 +1769,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         bentoBox?: T | BentoBoxPropsSelect<T>;
         featuredProducts?: T | FeaturedProductsPropsSelect<T>;
+        hero?: T | HeroBlockPropsSelect<T>;
         hotDealsBlock?: T | HotDealsBlockSelect<T>;
         productGrid?: T | ProductGridPropsSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
@@ -1767,6 +1789,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
+        style?: T;
         richText?: T;
         links?:
           | T
@@ -1854,6 +1877,19 @@ export interface FeaturedProductsPropsSelect<T extends boolean = true> {
         text?: T;
         link?: T;
         style?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlockProps_select".
+ */
+export interface HeroBlockPropsSelect<T extends boolean = true> {
+  product?:
+    | T
+    | {
+        productId?: T;
       };
   id?: T;
   blockName?: T;

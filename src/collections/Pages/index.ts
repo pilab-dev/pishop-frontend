@@ -6,6 +6,7 @@ import { CallToAction } from '@/blocks/CallToAction/config'
 import { Content } from '@/blocks/Content/config'
 import { BentoBoxBlock } from '@/blocks/BentoBoxBlock/config'
 import { FeaturedProductsBlock } from '@/blocks/FeaturedProductsBlock/config'
+import { HeroBlock } from '@/blocks/HeroBlock/config'
 import { ProductGridBlock } from '@/blocks/ProductGridBlock/config'
 import { FormBlock } from '@/blocks/Form/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
@@ -82,6 +83,7 @@ export const Pages: CollectionConfig<'pages'> = {
       blocks: [
         BentoBoxBlock,
         FeaturedProductsBlock,
+        HeroBlock,
         HotDealsBlock,
         ProductGridBlock,
         CallToAction,

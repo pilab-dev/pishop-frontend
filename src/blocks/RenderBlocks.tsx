@@ -10,6 +10,7 @@ import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { BestSellersBlock } from './BestSellersBlock/Component'
 import { FeaturedProductsBlock } from './FeaturedProductsBlock/Component'
+import { HeroBlock } from './HeroBlock/Component'
 import { HotDealsBlock } from './HotDealsBlock/Component'
 import { ProductGridBlock } from './ProductGridBlock/Component'
 import { ProductShowcaseBlock } from './ProductShowcaseBlock/Component'
@@ -19,6 +20,7 @@ const blockComponents = {
   bentoBox: BentoBoxBlock,
   featuredProducts: FeaturedProductsBlock,
   bestSellers: BestSellersBlock,
+  hero: HeroBlock,
   hotDealsBlock: HotDealsBlock,
   productGrid: ProductGridBlock,
   productShowcase: ProductShowcaseBlock,

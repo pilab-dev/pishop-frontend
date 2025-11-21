@@ -18,6 +18,7 @@ import { getServerSideURL } from './utilities/getURL'
 import { BentoBoxBlock } from './blocks/BentoBoxBlock/config'
 import { BestSellersBlock } from './blocks/BestSellersBlock/config'
 import { FeaturedProductsBlock } from './blocks/FeaturedProductsBlock/config'
+import { HeroBlock } from './blocks/HeroBlock/config'
 import { HotDealsBlock } from './blocks/HotDealsBlock/config'
 import { ProductGridBlock } from './blocks/ProductGridBlock/config'
 import { ProductShowcaseBlock } from './blocks/ProductShowcaseBlock/config'
@@ -81,7 +82,7 @@ export default buildConfig({
   // database-adapter-config-end
   collections: [Pages, Posts, Media, Users, PromotionalContent],
   cors: [getServerSideURL()].filter(Boolean),
-  blocks: [BentoBoxBlock, BestSellersBlock, FeaturedProductsBlock, HotDealsBlock, ProductGridBlock, ProductShowcaseBlock, PromotionalBannerBlock],
+  blocks: [BentoBoxBlock, BestSellersBlock, FeaturedProductsBlock, HeroBlock, HotDealsBlock, ProductGridBlock, ProductShowcaseBlock, PromotionalBannerBlock],
   globals: [Header, Footer, Promotions],
   plugins: [
     ...plugins,

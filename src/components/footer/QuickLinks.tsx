@@ -72,3 +72,4 @@ export const QuickLinks: FC<QuickLinksProps> = async () => {
     </div>
   )
 }
+

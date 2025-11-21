@@ -9,3 +9,4 @@ export const getPageFooter = async () => {
 
   return (await footerReponse).navItems
 }
+
