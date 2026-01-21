@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { createRef } from 'react'
 import { FancyTitle } from '../fancy-title'
 import { FloatingLabelInput } from './floating-label-input'
+import {Input} from "@ui/input";
 
 /**
  * Subscribe form
@@ -21,7 +22,7 @@ export const SubscribeForm = () => {
 
   return (
     <form className="w-full page-gray-950 text-white">
-      <div className="mx-auto px-4 md:px-12 py-8 max-w-[1280px]">
+      <div className="mx-auto px-4 md:px-12 py-8 max-w-7xl">
         <div className="flex flex-col lg:flex-row gap-5 justify-center content-center">
           <div className="font-medium uppercase my-auto">
             <span
@@ -42,14 +43,12 @@ export const SubscribeForm = () => {
           </div>
 
           <div className="flex-1">
-            <FloatingLabelInput
+            <Input
+              variant="dark"
               ref={ref}
               type="email"
               placeholder="Email address"
-              placeholderClasses={['placeholder:text-gray-500']}
               className={cn(
-                `border-gray-600 bg-white`,
-                `placeholder:text-gray-500`,
                 `active:border-primary active:outline-none`,
               )}
             />

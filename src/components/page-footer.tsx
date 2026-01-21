@@ -24,7 +24,7 @@ export const PageFooter = async () => {
       <SubscribeForm />
 
       <div>
-        <div className="mx-auto px-5 my-5 md:px-12 md:my-12 w-full max-w-[1280px]">
+        <div className="mx-auto px-5 my-5 md:px-12 md:my-12 w-full max-w-7xl">
           <div className="flex flex-col gap-16 md:flex-row">
             <div className="flex-1 ">
               <FooterContactSection
