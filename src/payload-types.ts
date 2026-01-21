@@ -629,7 +629,7 @@ export interface HeroBlockProps {
    */
   product: {
     /**
-     * Select product from storefront to feature in hero section
+     * Select product slug from storefront to feature in hero section
      */
     productSlug: string;
   };
@@ -1889,7 +1889,7 @@ export interface HeroBlockPropsSelect<T extends boolean = true> {
   product?:
     | T
     | {
-        productId?: T;
+        productSlug?: T;
       };
   id?: T;
   blockName?: T;
@@ -2557,6 +2557,23 @@ export interface Footer {
      */
     contactAddress: string;
   };
+  /**
+   * Social media links
+   */
+  socialLinks?: {
+    /**
+     * The facebook page link (starting with https://)
+     */
+    facebookLink?: string | null;
+    /**
+     * The twitter link (starting with https://)
+     */
+    twitterLink?: string | null;
+    /**
+     * The instagram link (starting with https://)
+     */
+    instagramLink?: string | null;
+  };
   navItems?:
     | {
         link: {
@@ -2752,6 +2769,13 @@ export interface FooterSelect<T extends boolean = true> {
         contactEmail?: T;
         contactPhone?: T;
         contactAddress?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        facebookLink?: T;
+        twitterLink?: T;
+        instagramLink?: T;
       };
   navItems?:
     | T

@@ -16,7 +16,7 @@ export const Footer: GlobalConfig = {
         previewSecret: process.env.PREVIEW_SECRET || '',
       })
 
-      return `/preview?${encodedParams.toString()}` 
+      return `/preview?${encodedParams.toString()}`
     },
   },
   access: {
@@ -71,6 +71,43 @@ export const Footer: GlobalConfig = {
           defaultValue: 'HU 1067 Budapest, Bajza u. 1',
         },
       ],
+    },
+    {
+      type: 'group',
+      label: 'Social Links',
+      name: 'socialLinks',
+      admin: {
+        description: "Social media links",
+      },
+      fields: [
+        {
+          name: 'facebookLink',
+          type: 'text',
+          label: 'Facebook Page Link',
+          required: false,
+          admin: {
+            description: 'The facebook page link (starting with https://)'  ,
+          },
+        },
+        {
+          name: 'twitterLink',
+          type: 'text',
+          label: 'Twitter Link',
+          required: false,
+          admin: {
+            description: 'The twitter link (starting with https://)'  ,
+          },
+        },
+        {
+          name: 'instagramLink',
+          type: 'text',
+          label: 'Instagram Link',
+          required: false,
+          admin: {
+            description: 'The instagram link (starting with https://)'  ,
+          },
+        },
+      ]
     },
     {
       label: 'Quick links',
