@@ -66,8 +66,12 @@ export interface Config {
     users: UserAuthOperations;
   };
   blocks: {
+    bentoBox: BentoBoxProps;
     bestSellers: BestSellersProps;
+    featuredProducts: FeaturedProductsProps;
+    hero: HeroBlockProps;
     hotDealsBlock: HotDealsBlock;
+    productGrid: ProductGridProps;
     productShowcase: ProductShowcaseProps;
     promotionalBanner: PromotionalBannerProps;
   };
@@ -149,6 +153,78 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BentoBoxProps".
+ */
+export interface BentoBoxProps {
+  /**
+   * Optional title for this bento box section
+   */
+  title?: string | null;
+  /**
+   * Add items to display in the bento box grid
+   */
+  items?:
+    | {
+        /**
+         * Content to display in this bento box item
+         */
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        /**
+         * How many columns this item should span
+         */
+        colSpan?: ('1' | '2' | '3') | null;
+        /**
+         * How many rows this item should span
+         */
+        rowSpan?: ('1' | '2' | '3') | null;
+        /**
+         * Background color for this bento box item
+         */
+        backgroundColor?: ('default' | 'primary' | 'secondary' | 'accent' | 'white') | null;
+        /**
+         * Text alignment within this item
+         */
+        textAlign?: ('left' | 'center' | 'right') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Layout settings for the bento box
+   */
+  layout?: {
+    /**
+     * Number of columns in the grid
+     */
+    columns?: ('2' | '3' | '4') | null;
+    /**
+     * Gap between grid items
+     */
+    gap?: ('2' | '4' | '6') | null;
+    /**
+     * Maximum width of the bento box container
+     */
+    maxWidth?: ('768' | '1024' | '1280' | 'full') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'bentoBox';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -449,6 +525,120 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedProductsProps".
+ */
+export interface FeaturedProductsProps {
+  /**
+   * Optional title for this featured products section
+   */
+  title?: string | null;
+  /**
+   * Optional subtitle for this section
+   */
+  subtitle?: string | null;
+  /**
+   * How to source the featured products
+   */
+  source: 'manual' | 'promotionalContent' | 'collection';
+  /**
+   * Select promotional content to display
+   */
+  promotionalContent?: (string | null) | PromotionalContent;
+  /**
+   * Select collection from storefront API to feature products from
+   */
+  collection?: string | null;
+  /**
+   * Manually selected products to feature
+   */
+  products?:
+    | {
+        /**
+         * Select product from storefront
+         */
+        productId: string;
+        /**
+         * Optional custom title to display instead of product name
+         */
+        overrideTitle?: string | null;
+        /**
+         * Optional custom description to display
+         */
+        overrideDescription?: string | null;
+        /**
+         * Badge text to display (e.g., 'NEW', 'SALE', 'FEATURED')
+         */
+        badge?: string | null;
+        /**
+         * Sort order within this block
+         */
+        sortOrder?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Display settings for this featured products section
+   */
+  displaySettings?: {
+    /**
+     * How to display the featured products
+     */
+    layout?: ('grid' | 'carousel' | 'list' | 'hero') | null;
+    /**
+     * Number of columns (for grid layout)
+     */
+    columns?: ('1' | '2' | '3' | '4' | '6') | null;
+    /**
+     * Show product prices
+     */
+    showPrice?: boolean | null;
+    /**
+     * Show product badges
+     */
+    showBadges?: boolean | null;
+    /**
+     * Maximum number of products to display
+     */
+    maxItems?: number | null;
+  };
+  /**
+   * Call-to-action settings for this section
+   */
+  callToAction?: {
+    /**
+     * Button text (e.g., 'Shop Now', 'View All')
+     */
+    text?: string | null;
+    /**
+     * URL or path to link to
+     */
+    link?: string | null;
+    style?: ('primary' | 'secondary' | 'outline' | 'link') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featuredProducts';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlockProps".
+ */
+export interface HeroBlockProps {
+  /**
+   * Select a product to display in the hero section
+   */
+  product: {
+    /**
+     * Select product slug from storefront to feature in hero section
+     */
+    productSlug: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HotDealsBlock".
  */
 export interface HotDealsBlock {
@@ -459,6 +649,86 @@ export interface HotDealsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'hotDealsBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductGridProps".
+ */
+export interface ProductGridProps {
+  /**
+   * Optional title for this product grid section
+   */
+  title?: string | null;
+  /**
+   * Optional subtitle for this section
+   */
+  subtitle?: string | null;
+  /**
+   * How to source the products for this grid
+   */
+  source: 'manual' | 'collection' | 'latest' | 'featured';
+  /**
+   * Select collection from storefront API to display products from
+   */
+  collection?: string | null;
+  /**
+   * Manually selected products to display in the grid
+   */
+  products?:
+    | {
+        /**
+         * Select product from storefront
+         */
+        productId: string;
+        /**
+         * Sort order within this block
+         */
+        sortOrder?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Display settings for this product grid
+   */
+  displaySettings?: {
+    /**
+     * Display products in grid or list format
+     */
+    view?: ('grid' | 'list') | null;
+    /**
+     * Number of columns (for grid view only)
+     */
+    columns?: ('2' | '3' | '4' | '5' | '6') | null;
+    /**
+     * Maximum number of products to display
+     */
+    maxItems?: number | null;
+    /**
+     * Show product prices
+     */
+    showPrices?: boolean | null;
+    /**
+     * Show product action buttons (add to cart, etc.)
+     */
+    showButtons?: boolean | null;
+  };
+  /**
+   * Call-to-action settings for this section
+   */
+  callToAction?: {
+    /**
+     * Button text (e.g., 'View All Products', 'Shop Now')
+     */
+    text?: string | null;
+    /**
+     * URL or path to link to
+     */
+    link?: string | null;
+    style?: ('primary' | 'secondary' | 'outline' | 'link') | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'productGrid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -702,8 +972,11 @@ export interface Page {
       }[]
     | null;
   elements: (
+    | BentoBoxProps
     | FeaturedProductsProps
+    | HeroBlockProps
     | HotDealsBlock
+    | ProductGridProps
     | CallToActionBlock
     | ContentBlock
     | MediaBlock
@@ -719,7 +992,8 @@ export interface Page {
     description?: string | null;
   };
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'centeredImpact' | 'sideBySide';
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'centeredImpact' | 'sideBySide' | 'techHero';
+    style?: ('standard' | 'card') | null;
     richText?: {
       root: {
         type: string;
@@ -782,102 +1056,6 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FeaturedProductsProps".
- */
-export interface FeaturedProductsProps {
-  /**
-   * Optional title for this featured products section
-   */
-  title?: string | null;
-  /**
-   * Optional subtitle for this section
-   */
-  subtitle?: string | null;
-  /**
-   * How to source the featured products
-   */
-  source: 'manual' | 'promotionalContent' | 'collection';
-  /**
-   * Select promotional content to display
-   */
-  promotionalContent?: (string | null) | PromotionalContent;
-  /**
-   * Select collection from storefront API to feature products from
-   */
-  collection?: string | null;
-  /**
-   * Manually selected products to feature
-   */
-  products?:
-    | {
-        /**
-         * Select product from storefront
-         */
-        productId: string;
-        /**
-         * Optional custom title to display instead of product name
-         */
-        overrideTitle?: string | null;
-        /**
-         * Optional custom description to display
-         */
-        overrideDescription?: string | null;
-        /**
-         * Badge text to display (e.g., 'NEW', 'SALE', 'FEATURED')
-         */
-        badge?: string | null;
-        /**
-         * Sort order within this block
-         */
-        sortOrder?: number | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Display settings for this featured products section
-   */
-  displaySettings?: {
-    /**
-     * How to display the featured products
-     */
-    layout?: ('grid' | 'carousel' | 'list' | 'hero') | null;
-    /**
-     * Number of columns (for grid layout)
-     */
-    columns?: ('1' | '2' | '3' | '4' | '6') | null;
-    /**
-     * Show product prices
-     */
-    showPrice?: boolean | null;
-    /**
-     * Show product badges
-     */
-    showBadges?: boolean | null;
-    /**
-     * Maximum number of products to display
-     */
-    maxItems?: number | null;
-  };
-  /**
-   * Call-to-action settings for this section
-   */
-  callToAction?: {
-    /**
-     * Button text (e.g., 'Shop Now', 'View All')
-     */
-    text?: string | null;
-    /**
-     * URL or path to link to
-     */
-    link?: string | null;
-    style?: ('primary' | 'secondary' | 'outline' | 'link') | null;
-  };
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'featuredProducts';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1589,8 +1767,11 @@ export interface PagesSelect<T extends boolean = true> {
   elements?:
     | T
     | {
+        bentoBox?: T | BentoBoxPropsSelect<T>;
         featuredProducts?: T | FeaturedProductsPropsSelect<T>;
+        hero?: T | HeroBlockPropsSelect<T>;
         hotDealsBlock?: T | HotDealsBlockSelect<T>;
+        productGrid?: T | ProductGridPropsSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
@@ -1608,6 +1789,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
+        style?: T;
         richText?: T;
         links?:
           | T
@@ -1633,6 +1815,32 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BentoBoxProps_select".
+ */
+export interface BentoBoxPropsSelect<T extends boolean = true> {
+  title?: T;
+  items?:
+    | T
+    | {
+        content?: T;
+        colSpan?: T;
+        rowSpan?: T;
+        backgroundColor?: T;
+        textAlign?: T;
+        id?: T;
+      };
+  layout?:
+    | T
+    | {
+        columns?: T;
+        gap?: T;
+        maxWidth?: T;
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1675,6 +1883,19 @@ export interface FeaturedProductsPropsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlockProps_select".
+ */
+export interface HeroBlockPropsSelect<T extends boolean = true> {
+  product?:
+    | T
+    | {
+        productSlug?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HotDealsBlock_select".
  */
 export interface HotDealsBlockSelect<T extends boolean = true> {
@@ -1683,6 +1904,41 @@ export interface HotDealsBlockSelect<T extends boolean = true> {
     | {
         product?: T;
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductGridProps_select".
+ */
+export interface ProductGridPropsSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  source?: T;
+  collection?: T;
+  products?:
+    | T
+    | {
+        productId?: T;
+        sortOrder?: T;
+        id?: T;
+      };
+  displaySettings?:
+    | T
+    | {
+        view?: T;
+        columns?: T;
+        maxItems?: T;
+        showPrices?: T;
+        showButtons?: T;
+      };
+  callToAction?:
+    | T
+    | {
+        text?: T;
+        link?: T;
+        style?: T;
       };
   id?: T;
   blockName?: T;
@@ -2301,6 +2557,23 @@ export interface Footer {
      */
     contactAddress: string;
   };
+  /**
+   * Social media links
+   */
+  socialLinks?: {
+    /**
+     * The facebook page link (starting with https://)
+     */
+    facebookLink?: string | null;
+    /**
+     * The twitter link (starting with https://)
+     */
+    twitterLink?: string | null;
+    /**
+     * The instagram link (starting with https://)
+     */
+    instagramLink?: string | null;
+  };
   navItems?:
     | {
         link: {
@@ -2496,6 +2769,13 @@ export interface FooterSelect<T extends boolean = true> {
         contactEmail?: T;
         contactPhone?: T;
         contactAddress?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        facebookLink?: T;
+        twitterLink?: T;
+        instagramLink?: T;
       };
   navItems?:
     | T

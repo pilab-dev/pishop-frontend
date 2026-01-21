@@ -1,4 +1,5 @@
 export { AuthSectionTop as AuthPopover } from './auth-section-top'
+export { AuthProvider } from './AuthProvider'
 export { LoginForm } from './LoginForm'
 export { SignupForm } from './SignupForm'
 export { SocialButton } from './SocialButton'

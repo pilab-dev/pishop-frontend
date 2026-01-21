@@ -47,7 +47,7 @@ export const AnimatedPopover = ({
           >
             <animated.div style={styles}>
               <PopoverArrow className={arrowClassName} />
-              <div className="bg-white rounded-lg">{children}</div>
+              <div className="bg-white">{children}</div>
             </animated.div>
           </PopoverContent>
         ) : null,

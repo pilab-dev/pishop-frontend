@@ -36,10 +36,7 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
         origin-top scaled-product-tile
         `}
     >
-      <h3
-        className="products-font text-gray-800 text-normal font-semibold mb-3 
-      md:text-medium"
-      >
+      <h3 className="products-font text-gray-800 text-normal font-semibold mb-3 md:text-medium">
         {product.name}
       </h3>
       <p className="products-font font-light text-md uppercase text-gray-600 mb-6 md:text-md">
@@ -72,12 +69,66 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
 type ProductGridProps = {
   products: Product[]
   variant?: GridVariant
+  view?: 'grid' | 'list'
 }
 
-export const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
+const ProductTileList: React.FC<ProductTileProps> = ({ product }) => {
+  const [hover, setHover] = useState(false)
+
   return (
     <div
-      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      className="flex gap-4 border-b border-gray-200 bg-white p-4 transition-all hover:bg-gray-50"
+    >
+      {product.images && product.images[0] && (
+        <div className="relative h-32 w-32 shrink-0">
+          <Image
+            alt={product.images[0].altText || product.name}
+            src={product.images[0].url}
+            fill
+            className="object-cover rounded-md"
+          />
+        </div>
+      )}
+      <div className="flex-1">
+        <h3 className="products-font mb-2 text-lg font-semibold text-gray-800">{product.name}</h3>
+        <p className="products-font mb-2 text-sm text-gray-600">
+          {product.shortDescription ||
+            'Lorem Ipsum is simply dummy text of the printing and typesetting.'}
+        </p>
+        <p className="products-font font-light text-md uppercase text-gray-600">
+          Price:
+          <span className="ml-3 text-yellow-500 font-normal">
+            {formatCurrency(product.basePrice?.amount ?? 0).trimEnd()}
+          </span>
+        </p>
+      </div>
+      <div className="flex items-center">
+        <ProductButtons product={product} show={hover} handle={product.slug} />
+      </div>
+    </div>
+  )
+}
+
+export const ProductGrid: React.FC<ProductGridProps> = ({
+  products,
+  variant = 'primary',
+  view = 'grid',
+}) => {
+  if (view === 'list') {
+    return (
+      <div className="space-y-0">
+        {products.map((product, index) => (
+          <ProductTileList key={index} product={product} />
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
       style={{
         gap: '2px',
       }}

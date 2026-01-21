@@ -41,6 +41,12 @@ export const generateMetadata = async ({
 
   const doc = await getPageBySlug(slug)
 
+  if (!doc) {
+    console.log('Page not found', slug)
+
+    return notFound()
+  }
+
   return {
     title: doc.meta?.title,
     description: doc.meta?.description,

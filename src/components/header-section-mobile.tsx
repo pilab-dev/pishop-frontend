@@ -19,10 +19,13 @@ const AuthPopover = dynamic(
     loading: () => <div className="w-30 h-6 bg-gray-200 animate-pulse rounded" />,
   },
 )
-const CartIcon = dynamic(() => import('./cart-icon').then((mod) => ({ default: mod.CartIcon })), {
-  ssr: false,
-  loading: () => <div className="w-4 h-4 animate-pulse rounded" />,
-})
+const CartIcon = dynamic(
+  () => import('./cart-icon-button').then((mod) => ({ default: mod.CartIconButton })),
+  {
+    ssr: false,
+    loading: () => <div className="w-4 h-4 animate-pulse rounded" />,
+  },
+)
 
 interface HeaderSectionMobileProps {
   headerData: Header

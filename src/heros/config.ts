@@ -43,8 +43,31 @@ export const hero: Field = {
           label: 'Side-by-side',
           value: 'sideBySide',
         },
+        {
+          label: 'Tech Hero',
+          value: 'techHero',
+        },
       ],
       required: true,
+    },
+    {
+      name: 'style',
+      type: 'select',
+      defaultValue: 'standard',
+      label: 'Style',
+      options: [
+        {
+          label: 'Standard',
+          value: 'standard',
+        },
+        {
+          label: 'Card',
+          value: 'card',
+        },
+      ],
+      admin: {
+        condition: (_, { type } = {}) => type === 'techHero',
+      },
     },
     {
       name: 'richText',
@@ -71,7 +94,7 @@ export const hero: Field = {
       type: 'upload',
       admin: {
         condition: (_, { type } = {}) =>
-          ['highImpact', 'mediumImpact', 'centeredImpact', 'sideBySide'].includes(type),
+          ['highImpact', 'mediumImpact', 'centeredImpact', 'sideBySide', 'techHero'].includes(type),
       },
       relationTo: 'media',
       required: true,

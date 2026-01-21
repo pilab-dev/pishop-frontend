@@ -18,13 +18,13 @@ export const BreadcrumbBar: FC<BreadcrumbBarProps> = ({ segments }) => {
   return (
     // <!-- Breadcrumb -->
     <div className="breadcrumb-bg py-3">
-      <div className="max-w-[1280px] mx-auto px-5">
+      <div className="max-w-7xl mx-auto px-5">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse text-sm">
             <li className="inline-flex items-center">
               <Link
                 href="/"
-                className="inline-flex transition-colors items-center font-medium 
+                className="inline-flex transition-colors items-center font-medium
                 text-gray-900 hover:text-primary dark:text-gray-400 dark:hover:text-white"
               >
                 Home
