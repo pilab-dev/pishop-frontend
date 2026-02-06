@@ -11,7 +11,7 @@ export const HeroBlock: React.FC<Props> = async (props) => {
   const { product } = props
 
   if (!product?.productSlug) {
-    console.error('No product slug provided for HeroBlock.. Mi a cukros fasz ez?!')
+    console.error('No product slug provided for HeroBlock.')
 
     return null
   }
