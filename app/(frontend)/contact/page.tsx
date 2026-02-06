@@ -3,13 +3,10 @@
 import {BreadcrumbBar} from '@/components/products/breadcrumb-bar'
 import {FancyTitle} from '@/components/fancy-title'
 import {ContactForm} from './contact-form'
-import {FaFacebook, FaLocationArrow, FaMailBulk, FaPhoneAlt} from "react-icons/fa";
-import {LuFacebook} from "react-icons/lu";
-import {LiaFacebook, LiaFacebookF, LiaGoogle, LiaInstagram, LiaTwitter} from "react-icons/lia";
+import {LiaFacebookF, LiaGoogle, LiaInstagram, LiaTwitter} from "react-icons/lia";
 import {Footer, Media} from "@/payload-types";
 import {getCachedGlobal} from "@/utilities/getGlobals";
-import {SubscribeForm} from "@ui/subscribe-form";
-import {FooterContactSection} from "@/components/footer";
+import {BiCurrentLocation, BiMailSend, BiSolidPhone} from "react-icons/bi";
 import {BiCurrentLocation, BiMailSend, BiSolidPhone} from "react-icons/bi";
 
 export default async function PricingPage() {
