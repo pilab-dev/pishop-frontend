@@ -1,5 +1,4 @@
 import { Product } from '@/lib/client'
-import Image from 'next/image'
 import React from 'react'
 
 function isProduct(product: string | Product | null | undefined): product is Product {
@@ -25,8 +24,6 @@ export const TopSalesSection: React.FC<FeaturedProductsProps> = async ({
     .filter((tile) => tile.product && isProduct(tile.product))
     .map((tile) => tile.product as Product)
 
-  console.log('TopSalesSection products', products)
-
   return (
     <div className="pt-14 pb-16">
       <div className="max-w-[1280px] mx-auto">
@@ -34,12 +31,12 @@ export const TopSalesSection: React.FC<FeaturedProductsProps> = async ({
           {products.map((product, i) => {
             switch (productTiles[i].tileType) {
               case 'default':
-                return <ProductTile key={i} product={product} />
+                return <DefaultProductTile key={i} product={product} />
               default:
                 return (
                   <div
                     key={i}
-                    className="border-1 border-gray-200 bg-gray-200 p-4 transition-all ease-in-out hover:scale-105 origin-bottom hover:z-50 hover:shadow-lg"
+                    className="border border-gray-200 bg-gray-200 p-4 transition-all ease-in-out hover:scale-105 origin-bottom hover:z-50 hover:shadow-lg"
                   >
                     <h3 className="text-3xl font-bold mb-1">{product.name}</h3>
                     <p className="text-gray-600">{product.description}</p>
@@ -75,33 +72,29 @@ const isImage = (resource: any): resource is MediaResource => {
   )
 }
 
-const ProductTile: React.FC<{ product: Product }> = ({ product }) => {
-  console.log('ProductTile product', isImage(product.images?.[0]))
+const DefaultProductTile: React.FC<{ product: Product }> = ({ product }) => {
+  console.log('DefaultProductTile product', isImage(product.images?.[0]))
 
   const productImage: MediaResource | undefined = isImage(product.images?.[0])
     ? product.images?.[0]
     : undefined
 
   return (
-    <div
-      role="button"
-      className="
-              border-1 border-gray-200 bg-gray-200 transition-all ease-in-out 
-              hover:scale-105 origin-bottom hover:z-50 hover:shadow-lg"
-    >
-      {/* Here comes the background image which is absolute to the box, and aligns top-left without overflowing (cover the box) */}
-      <div className="relative pb-4 h-50 overflow-clip">
-        <Image
-          className="w-full absolute left-0 bottom-0 object-cover h-full"
-          src={productImage?.url.url || ''}
-          alt={productImage?.alt || ''}
-          width={400}
-          height={200}
+    <div className="transition-all flex flex-row shadow-sm hover:shadow-2xl hover:bg-gray-100">
+      <div className="shrink-0" style={{ height: 150 }}>
+        <img
+          src="https://stacweudevotpeco01apps.blob.core.windows.net/images/30343ea9-a999-4a83-a141-ecc0ec3b2d2d.jpg"
+          height={120}
+          style={{
+            maxHeight: 150,
+          }}
+          alt="lol"
+          title="lol"
         />
-        <div className="absolute p-5 inset-0 text-right flex flex-col justify-end">
-          <h3 className="text-3xl font-bold mb-1">{product.name}</h3>
-          <p className="text-gray-600">{product.description}</p>
-        </div>
+      </div>
+      <div className="flex-grow p-4">
+        <h3 className="text-3xl font-bold mb-1">{product.name}</h3>
+        <p className="text-gray-600">{product.description}</p>
       </div>
     </div>
   )

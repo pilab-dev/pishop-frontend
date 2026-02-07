@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 async function getCategories() {
   try {
     const categories = await client.getCategories({
-      limit: 300,
+      limit: 100,
     })
     return categories
   } catch (error) {
