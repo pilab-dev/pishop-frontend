@@ -357,140 +357,140 @@ const CheckoutPage = () => {
         ]}
       />
       <div className="max-w-7xl mx-auto p-4 py-8 min-h-screen">
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Main Content Area */}
-        <div className="flex-1 space-y-6">
-          {/* Header */}
-          <div className="text-center lg:text-left">
-            <h1 className="text-4xl font-bold tracking-tight mb-2">Checkout</h1>
-            <p className="text-muted-foreground">Complete your order securely</p>
-          </div>
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main Content Area */}
+          <div className="flex-1 space-y-6">
+            {/* Header */}
+            <div className="text-center lg:text-left">
+              <h1 className="text-4xl font-bold tracking-tight mb-2">Checkout</h1>
+              <p className="text-muted-foreground">Complete your order securely</p>
+            </div>
 
-          {/* Checkout Error Display */}
-          {checkoutError && (
-            <Card className="border-destructive/50 bg-destructive/5">
-              <CardContent className="p-4">
-                <p className="text-sm text-destructive">{checkoutError}</p>
+            {/* Checkout Error Display */}
+            {checkoutError && (
+              <Card className="border-destructive/50 bg-destructive/5">
+                <CardContent className="p-4">
+                  <p className="text-sm text-destructive">{checkoutError}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Step Indicator */}
+            <CheckoutSteps currentStep={currentStep} />
+
+            {/* Step Content */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  {currentStep === 1 && (
+                    <>
+                      <MapPin className="w-5 h-5" />
+                      <span>Contact Information</span>
+                    </>
+                  )}
+                  {currentStep === 2 && (
+                    <>
+                      <Truck className="w-5 h-5" />
+                      <span>Shipping Method & Destination</span>
+                    </>
+                  )}
+                  {currentStep === 3 && (
+                    <>
+                      <CreditCard className="w-5 h-5" />
+                      <span>Payment Details</span>
+                    </>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6 relative overflow-hidden min-h-[400px]">
+                {/* Information Step */}
+                <div
+                  className={`transition-all duration-500 ease-in-out ${
+                    currentStep === 1
+                      ? 'opacity-100 transform translate-x-0'
+                      : 'opacity-0 transform -translate-x-4 pointer-events-none absolute inset-0'
+                  }`}
+                >
+                  {currentStep === 1 && (
+                    <CheckoutInformationForm
+                      formData={{
+                        email: formData.email,
+                        firstName: formData.firstName,
+                        lastName: formData.lastName,
+                        phone: formData.phone,
+                      }}
+                      formErrors={formErrors}
+                      onInputChange={handleInputChange}
+                      onNext={() => setCurrentStep(2)}
+                    />
+                  )}
+                </div>
+
+                {/* Shipping Step */}
+                <div
+                  className={`transition-all duration-500 ease-in-out ${
+                    currentStep === 2
+                      ? 'opacity-100 transform translate-x-0'
+                      : currentStep > 2
+                        ? 'opacity-0 transform -translate-x-4 pointer-events-none absolute inset-0'
+                        : 'opacity-0 transform translate-x-4 pointer-events-none absolute inset-0'
+                  }`}
+                >
+                  {currentStep === 2 && (
+                    <CheckoutShippingForm
+                      formData={{
+                        shippingMethod: formData.shippingMethod,
+                        shippingDestination: formData.shippingDestination,
+                        shippingAddress: formData.shippingAddress,
+                      }}
+                      formErrors={formErrors}
+                      onInputChange={handleInputChange}
+                      onAddressChange={handleAddressChange}
+                      onBack={() => setCurrentStep(1)}
+                      onNext={() => {
+                        if (validateShippingInfo()) {
+                          setCurrentStep(3)
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+
+                {/* Payment Step */}
+                <div
+                  className={`transition-all duration-500 ease-in-out ${
+                    currentStep === 3
+                      ? 'opacity-100 transform translate-x-0'
+                      : 'opacity-0 transform translate-x-4 pointer-events-none absolute inset-0'
+                  }`}
+                >
+                  {currentStep === 3 && (
+                    <CheckoutPaymentForm
+                      paymentMethod={formData.paymentMethod}
+                      formErrors={formErrors}
+                      paymentProcessing={paymentProcessing}
+                      onInputChange={handleInputChange}
+                      onBack={() => setCurrentStep(2)}
+                      onPlaceOrder={handlePlaceOrder}
+                    />
+                  )}
+                </div>
               </CardContent>
             </Card>
-          )}
+          </div>
 
-          {/* Step Indicator */}
-          <CheckoutSteps currentStep={currentStep} />
-
-          {/* Step Content */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                {currentStep === 1 && (
-                  <>
-                    <MapPin className="w-5 h-5" />
-                    <span>Contact Information</span>
-                  </>
-                )}
-                {currentStep === 2 && (
-                  <>
-                    <Truck className="w-5 h-5" />
-                    <span>Shipping Method & Destination</span>
-                  </>
-                )}
-                {currentStep === 3 && (
-                  <>
-                    <CreditCard className="w-5 h-5" />
-                    <span>Payment Details</span>
-                  </>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 relative overflow-hidden min-h-[400px]">
-              {/* Information Step */}
-              <div
-                className={`transition-all duration-500 ease-in-out ${
-                  currentStep === 1
-                    ? 'opacity-100 transform translate-x-0'
-                    : 'opacity-0 transform -translate-x-4 pointer-events-none absolute inset-0'
-                }`}
-              >
-                {currentStep === 1 && (
-                  <CheckoutInformationForm
-                    formData={{
-                      email: formData.email,
-                      firstName: formData.firstName,
-                      lastName: formData.lastName,
-                      phone: formData.phone,
-                    }}
-                    formErrors={formErrors}
-                    onInputChange={handleInputChange}
-                    onNext={() => setCurrentStep(2)}
-                  />
-                )}
-              </div>
-
-              {/* Shipping Step */}
-              <div
-                className={`transition-all duration-500 ease-in-out ${
-                  currentStep === 2
-                    ? 'opacity-100 transform translate-x-0'
-                    : currentStep > 2
-                      ? 'opacity-0 transform -translate-x-4 pointer-events-none absolute inset-0'
-                      : 'opacity-0 transform translate-x-4 pointer-events-none absolute inset-0'
-                }`}
-              >
-                {currentStep === 2 && (
-                  <CheckoutShippingForm
-                    formData={{
-                      shippingMethod: formData.shippingMethod,
-                      shippingDestination: formData.shippingDestination,
-                      shippingAddress: formData.shippingAddress,
-                    }}
-                    formErrors={formErrors}
-                    onInputChange={handleInputChange}
-                    onAddressChange={handleAddressChange}
-                    onBack={() => setCurrentStep(1)}
-                    onNext={() => {
-                      if (validateShippingInfo()) {
-                        setCurrentStep(3)
-                      }
-                    }}
-                  />
-                )}
-              </div>
-
-              {/* Payment Step */}
-              <div
-                className={`transition-all duration-500 ease-in-out ${
-                  currentStep === 3
-                    ? 'opacity-100 transform translate-x-0'
-                    : 'opacity-0 transform translate-x-4 pointer-events-none absolute inset-0'
-                }`}
-              >
-                {currentStep === 3 && (
-                  <CheckoutPaymentForm
-                    paymentMethod={formData.paymentMethod}
-                    formErrors={formErrors}
-                    paymentProcessing={paymentProcessing}
-                    onInputChange={handleInputChange}
-                    onBack={() => setCurrentStep(2)}
-                    onPlaceOrder={handlePlaceOrder}
-                  />
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          {/* Order Summary Sidebar */}
+          <CheckoutOrderSummary
+            cart={cart}
+            couponCode={couponCode}
+            couponLoading={couponLoading}
+            couponError={couponError}
+            onCouponCodeChange={setCouponCode}
+            onApplyCoupon={applyCoupon}
+            onRemoveCoupon={removeCoupon}
+          />
         </div>
-
-        {/* Order Summary Sidebar */}
-        <CheckoutOrderSummary
-          cart={cart}
-          couponCode={couponCode}
-          couponLoading={couponLoading}
-          couponError={couponError}
-          onCouponCodeChange={setCouponCode}
-          onApplyCoupon={applyCoupon}
-          onRemoveCoupon={removeCoupon}
-        />
       </div>
-    </div>
     </>
   )
 }
