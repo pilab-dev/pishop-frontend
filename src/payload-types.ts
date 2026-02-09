@@ -111,6 +111,7 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
+  fallbackLocale: null;
   globals: {
     header: Header;
     footer: Footer;
@@ -122,9 +123,7 @@ export interface Config {
     promotions: PromotionsSelect<false> | PromotionsSelect<true>;
   };
   locale: null;
-  user: User & {
-    collection: 'users';
-  };
+  user: User;
   jobs: {
     tasks: {
       schedulePublish: TaskSchedulePublish;
@@ -529,14 +528,6 @@ export interface Media {
  */
 export interface FeaturedProductsProps {
   /**
-   * Optional title for this featured products section
-   */
-  title?: string | null;
-  /**
-   * Optional subtitle for this section
-   */
-  subtitle?: string | null;
-  /**
    * How to source the featured products
    */
   source: 'manual' | 'promotionalContent' | 'collection';
@@ -556,65 +547,10 @@ export interface FeaturedProductsProps {
         /**
          * Select product from storefront
          */
-        productId: string;
-        /**
-         * Optional custom title to display instead of product name
-         */
-        overrideTitle?: string | null;
-        /**
-         * Optional custom description to display
-         */
-        overrideDescription?: string | null;
-        /**
-         * Badge text to display (e.g., 'NEW', 'SALE', 'FEATURED')
-         */
-        badge?: string | null;
-        /**
-         * Sort order within this block
-         */
-        sortOrder?: number | null;
+        productSlug: string;
         id?: string | null;
       }[]
     | null;
-  /**
-   * Display settings for this featured products section
-   */
-  displaySettings?: {
-    /**
-     * How to display the featured products
-     */
-    layout?: ('grid' | 'carousel' | 'list' | 'hero') | null;
-    /**
-     * Number of columns (for grid layout)
-     */
-    columns?: ('1' | '2' | '3' | '4' | '6') | null;
-    /**
-     * Show product prices
-     */
-    showPrice?: boolean | null;
-    /**
-     * Show product badges
-     */
-    showBadges?: boolean | null;
-    /**
-     * Maximum number of products to display
-     */
-    maxItems?: number | null;
-  };
-  /**
-   * Call-to-action settings for this section
-   */
-  callToAction?: {
-    /**
-     * Button text (e.g., 'Shop Now', 'View All')
-     */
-    text?: string | null;
-    /**
-     * URL or path to link to
-     */
-    link?: string | null;
-    style?: ('primary' | 'secondary' | 'outline' | 'link') | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'featuredProducts';
@@ -957,6 +893,10 @@ export interface PromotionalBannerProps {
 export interface Page {
   id: string;
   title: string;
+  /**
+   * With this switch you can enable or disable the visibility of the breadcrumb bar
+   */
+  showBreadcrumbs?: boolean | null;
   tags?:
     | {
         /**
@@ -1181,6 +1121,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1753,6 +1694,7 @@ export interface PayloadMigration {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  showBreadcrumbs?: T;
   tags?:
     | T
     | {
@@ -1847,36 +1789,14 @@ export interface BentoBoxPropsSelect<T extends boolean = true> {
  * via the `definition` "FeaturedProductsProps_select".
  */
 export interface FeaturedProductsPropsSelect<T extends boolean = true> {
-  title?: T;
-  subtitle?: T;
   source?: T;
   promotionalContent?: T;
   collection?: T;
   products?:
     | T
     | {
-        productId?: T;
-        overrideTitle?: T;
-        overrideDescription?: T;
-        badge?: T;
-        sortOrder?: T;
+        productSlug?: T;
         id?: T;
-      };
-  displaySettings?:
-    | T
-    | {
-        layout?: T;
-        columns?: T;
-        showPrice?: T;
-        showBadges?: T;
-        maxItems?: T;
-      };
-  callToAction?:
-    | T
-    | {
-        text?: T;
-        link?: T;
-        style?: T;
       };
   id?: T;
   blockName?: T;

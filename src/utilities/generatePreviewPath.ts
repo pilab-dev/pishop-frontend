@@ -19,7 +19,7 @@ export const generatePreviewPath = ({ collection, slug }: Props) => {
     previewSecret: process.env.PREVIEW_SECRET || '',
   })
 
-  const url = `/preview?${encodedParams.toString()}`
+  const url = `/api/preview?${encodedParams.toString()}`
 
   return url
 }

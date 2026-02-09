@@ -54,6 +54,8 @@ export const Pages: CollectionConfig<'pages'> = {
           req,
         })
 
+        console.log('live preview path', path)
+
         return path
       },
     },
@@ -70,6 +72,15 @@ export const Pages: CollectionConfig<'pages'> = {
       name: 'title',
       type: 'text',
       required: true,
+    },
+    {
+      label: 'Show Breadcrumbs',
+      name: 'showBreadcrumbs',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        description: "With this switch you can enable or disable the visibility of the breadcrumb bar"
+      }
     },
     {
       name: 'tags',
@@ -159,6 +170,6 @@ export const Pages: CollectionConfig<'pages'> = {
       },
       schedulePublish: true,
     },
-    maxPerDoc: 50,
+    maxPerDoc: 10,
   },
 }
