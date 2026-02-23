@@ -2,13 +2,14 @@ export function formatCurrency(
   amount: number,
   currencyCode = "HUF",
   locale = "hu-HU",
+  forcedDigits?: number
 ) {
   try {
     const formatter = new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currencyCode,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      minimumFractionDigits: forcedDigits,
+      maximumFractionDigits: forcedDigits,
     });
 
     return formatter.format(amount);

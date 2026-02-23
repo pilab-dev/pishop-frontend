@@ -1,18 +1,7 @@
 import { Product, client } from '@/lib/client'
+import { fetchProductsBySlugs } from '@/services/product-service'
 import React from 'react'
 import DefaultProductTile from "@/components/products/default-product-tile";
-
-/**
- * Check if the product is a valid product (type guard)
- * @param product the product to check
- */
-export function isProduct(product: any): product is Product {
-  return product?.id !== undefined
-  && typeof product.name === 'string'
-  && typeof product.slug === 'string'
-  && typeof product.description === 'string'
-  && typeof product.images === 'object'
-}
 
 type FeaturedProductsProps = {
   products: string[] // Product slug array
@@ -22,9 +11,7 @@ type FeaturedProductsProps = {
 export const FeaturedProducts: React.FC<FeaturedProductsProps> = async ({
   products: productTiles,
 }) => {
-  const promises = productTiles.map((productSlug) => client.getProduct(productSlug))
-  const products = await Promise.all(promises)
-  console.log('Fetching product data for: ', productTiles)
+  const products = await fetchProductsBySlugs(productTiles)
 
   return (
     <div className="pt-14 pb-16">
