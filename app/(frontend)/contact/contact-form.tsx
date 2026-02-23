@@ -25,7 +25,7 @@ export function ContactForm() {
 
   return (
     <form action={formAction} className="flex flex-col gap-8" method="POST">
-      <div className="flex flex-row gap-4 w-full">
+      <div className="flex flex-col sm:flex-row gap-4 w-full">
         <FloatingLabelInput
           type="text"
           label="Your Name"
@@ -57,9 +57,11 @@ export function ContactForm() {
         rows={8}
       />
 
-      <Button type="submit" disabled={pending}>
+      <div>
+      <Button type="submit" className="cursor-pointer rounded-4xl text-white bg-black px-6 py-4 w-full sm:w-auto" disabled={pending}>
         {pending ? "Submitting..." : "Submit"}
       </Button>
+      </div>
     </form>
   );
 }

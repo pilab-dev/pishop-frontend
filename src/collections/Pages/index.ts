@@ -4,7 +4,10 @@ import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { Archive } from '@/blocks/ArchiveBlock/config'
 import { CallToAction } from '@/blocks/CallToAction/config'
 import { Content } from '@/blocks/Content/config'
+import { BentoBoxBlock } from '@/blocks/BentoBoxBlock/config'
 import { FeaturedProductsBlock } from '@/blocks/FeaturedProductsBlock/config'
+import { HeroBlock } from '@/blocks/HeroBlock/config'
+import { ProductGridBlock } from '@/blocks/ProductGridBlock/config'
 import { FormBlock } from '@/blocks/Form/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { slugField } from '@/fields/slug'
@@ -51,6 +54,8 @@ export const Pages: CollectionConfig<'pages'> = {
           req,
         })
 
+        console.log('live preview path', path)
+
         return path
       },
     },
@@ -69,6 +74,15 @@ export const Pages: CollectionConfig<'pages'> = {
       required: true,
     },
     {
+      label: 'Show Breadcrumbs',
+      name: 'showBreadcrumbs',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        description: "With this switch you can enable or disable the visibility of the breadcrumb bar"
+      }
+    },
+    {
       name: 'tags',
       type: 'array',
       fields: [...tagField()],
@@ -78,8 +92,11 @@ export const Pages: CollectionConfig<'pages'> = {
       label: 'Elements',
       type: 'blocks',
       blocks: [
+        BentoBoxBlock,
         FeaturedProductsBlock,
+        HeroBlock,
         HotDealsBlock,
+        ProductGridBlock,
         CallToAction,
         Content,
         MediaBlock,
@@ -153,6 +170,6 @@ export const Pages: CollectionConfig<'pages'> = {
       },
       schedulePublish: true,
     },
-    maxPerDoc: 50,
+    maxPerDoc: 10,
   },
 }

@@ -21,6 +21,7 @@ type PagePropsPromise = Promise<{ slug: string }>
 const getPageBySlug = cache(async (slug: string): Promise<Page> => {
   const page = await payload.find({
     collection: 'pages',
+    draft: true, // Necessary for page live preview
     where: { slug: { equals: slug } },
     limit: 1,
   })
@@ -41,6 +42,12 @@ export const generateMetadata = async ({
 
   const doc = await getPageBySlug(slug)
 
+  if (!doc) {
+    console.log('Page not found', slug)
+
+    return notFound()
+  }
+
   return {
     title: doc.meta?.title,
     description: doc.meta?.description,
@@ -60,15 +67,17 @@ export default async function Page({ params }: { params: PagePropsPromise }) {
 
   return (
     <>
-      <BreadcrumbBar
-        segments={[
-          {
-            name: page.title || page.slug || 'Page',
-            href: `/${page.slug || ''}`,
-          },
-        ]}
-      />
       <LivePreviewListener />
+      {page.showBreadcrumbs && (
+        <BreadcrumbBar
+          segments={[
+            {
+              name: page.title || page.slug || 'Page',
+              href: `/${page.slug || ''}`,
+            },
+          ]}
+        />
+      )}
       <RenderBlocks blocks={page.elements} />
     </>
   )

@@ -4,21 +4,25 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import sharp from 'sharp' // sharp-import
 import { fileURLToPath } from 'url'
+import { Footer } from './Footer/config'
+import { Header } from './Header/config'
+import { Promotions } from './Promotions/config'
+import { BentoBoxBlock } from './blocks/BentoBoxBlock/config'
+import { BestSellersBlock } from './blocks/BestSellersBlock/config'
+import { FeaturedProductsBlock } from './blocks/FeaturedProductsBlock/config'
+import { HeroBlock } from './blocks/HeroBlock/config'
+import { HotDealsBlock } from './blocks/HotDealsBlock/config'
+import { ProductGridBlock } from './blocks/ProductGridBlock/config'
+import { ProductShowcaseBlock } from './blocks/ProductShowcaseBlock/config'
+import { PromotionalBannerBlock } from './blocks/PromotionalBannerBlock/config'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { PromotionalContent } from './collections/PromotionalContent'
 import { Users } from './collections/Users'
 import { defaultLexical } from './fields/defaultLexical'
-import { Footer } from './Footer/config'
-import { Header } from './Header/config'
-import { Promotions } from './Promotions/config'
 import { plugins } from './plugins'
 import { getServerSideURL } from './utilities/getURL'
-import { BestSellersBlock } from './blocks/BestSellersBlock/config'
-import { HotDealsBlock } from './blocks/HotDealsBlock/config'
-import { ProductShowcaseBlock } from './blocks/ProductShowcaseBlock/config'
-import { PromotionalBannerBlock } from './blocks/PromotionalBannerBlock/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -37,6 +41,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     user: Users.slug,
+    autoRefresh: true,
     livePreview: {
       breakpoints: [
         {
@@ -59,6 +64,14 @@ export default buildConfig({
         },
       ],
     },
+    autoLogin:
+      process.env.NODE_ENV === 'development'
+        ? {
+            email: 'gyula@pilab.hu',
+            password: 'susegoofyY5',
+            prefillOnly: true,
+          }
+        : false,
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
@@ -69,7 +82,16 @@ export default buildConfig({
   // database-adapter-config-end
   collections: [Pages, Posts, Media, Users, PromotionalContent],
   cors: [getServerSideURL()].filter(Boolean),
-  blocks: [BestSellersBlock, HotDealsBlock, ProductShowcaseBlock, PromotionalBannerBlock],
+  blocks: [
+    BentoBoxBlock,
+    BestSellersBlock,
+    FeaturedProductsBlock,
+    HeroBlock,
+    HotDealsBlock,
+    ProductGridBlock,
+    ProductShowcaseBlock,
+    PromotionalBannerBlock,
+  ],
   globals: [Header, Footer, Promotions],
   plugins: [
     ...plugins,

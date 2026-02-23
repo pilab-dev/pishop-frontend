@@ -1,4 +1,4 @@
-import type { SelectField } from 'payload'
+import type { SelectField, TextField } from 'payload'
 
 import deepMerge from '@/utilities/deepMerge'
 
@@ -15,12 +15,13 @@ export const productSelectField = ({
   name = 'productId',
   width = '100%',
 }: ProductSelectFieldOptions = {
-}): SelectField => {
-  const field: SelectField = {
+}): TextField => {
+  const field: TextField = {
     name,
     label: 'Product',
-    type: 'select',
+    type: 'text',
     required,
+    // virtual: true, 
     admin: {
       width,
       components: {
@@ -32,7 +33,7 @@ export const productSelectField = ({
     },
     // Options are dynamically populated from GraphQL in the custom Field component
     // This empty array satisfies the type requirement
-    options: [],
+    // options: [],
     // Custom validation to allow any string value since options are fetched dynamically
     // The actual validation happens in the custom Field component
     validate: (value) => {
@@ -45,6 +46,8 @@ export const productSelectField = ({
 
   return deepMerge(field, overrides)
 }
+
+
 
 
 

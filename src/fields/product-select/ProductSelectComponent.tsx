@@ -18,7 +18,7 @@ export const ProductSelectComponent: SelectFieldClientComponent = (props) => {
         setError(null)
 
         const products = await client.getProducts({
-          limit: 1000,
+          limit: 50,
           page: 1,
         })
 
@@ -38,7 +38,7 @@ export const ProductSelectComponent: SelectFieldClientComponent = (props) => {
   const options = useMemo(() => {
     return products.map((product) => ({
       label: product.name || product.slug,
-      value: product.id,
+      value: product.slug,
     }))
   }, [products])
 
@@ -72,10 +72,3 @@ export const ProductSelectComponent: SelectFieldClientComponent = (props) => {
 
   return <PayloadSelectField {...newProps} />
 }
-
-
-
-
-
-
-

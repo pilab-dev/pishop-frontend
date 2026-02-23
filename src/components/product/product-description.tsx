@@ -1,13 +1,13 @@
 'use client'
 
 import Price from '@/components/price'
-import { ColorSwatchSelector } from '@/components/product/color-swatch-selector'
 import { useProduct, useUpdateURL } from '@/components/product/product-context'
+import { useProductHandlers } from '@/hooks/use-product-handlers'
 import { QuantitySelector } from '@/components/product/quantity-selector'
-import { SizeSelector } from '@/components/product/size-selector'
 import { StarRating } from '@/components/product/star-rating'
 import { VariantSelector } from '@/components/product/variant-selector'
 import { Product } from '@/lib/client'
+import { getProductSubtitle } from '@/services/product-service'
 import { useCartStore } from '@/store/cart-store'
 import { Heart, ShoppingCart } from 'lucide-react'
 import { FC, useState } from 'react'
@@ -24,21 +24,13 @@ export const ProductDescription: FC<ProductDescriptionProps> = ({ product }) => 
 
   if (!product) return null
 
-  const handleSizeSelect = (value: string) => {
-    const newState = updateOption('size', value)
-    updateURL(newState)
-  }
+  const { handleSizeSelect, handleColorSelect, handleBuyNow } = useProductHandlers(
+    updateOption,
+    updateURL,
+    addToCart
+  )
 
-  const handleColorSelect = (value: string) => {
-    const newState = updateOption('color', value)
-    updateURL(newState)
-  }
-
-  const handleBuyNow = () => {
-    addToCart(product, quantity)
-  }
-
-  const subtitle = product.category?.name || product.collections?.[0]?.name || ''
+  const subtitle = getProductSubtitle(product)
 
   return (
     <div
@@ -82,12 +74,15 @@ export const ProductDescription: FC<ProductDescriptionProps> = ({ product }) => 
           {product.options.some((opt) => opt.name.toLowerCase() === 'size') && (
             <div>
               <label className="mb-2 block text-sm font-medium uppercase tracking-wide">Size</label>
-              <SizeSelector
-                optionGroups={product.options}
-                variants={product.variants || []}
-                selectedValue={state.size}
-                onSelect={handleSizeSelect}
-              />
+              <div>
+                Here comes the size selector if any
+              </div>
+              {/*<SizeSelector*/}
+              {/*  optionGroups={product.options}*/}
+              {/*  variants={product.variants || []}*/}
+              {/*  selectedValue={state.size}*/}
+              {/*  onSelect={handleSizeSelect}*/}
+              {/*/>*/}
             </div>
           )}
 
@@ -96,12 +91,15 @@ export const ProductDescription: FC<ProductDescriptionProps> = ({ product }) => 
               <label className="mb-2 block text-sm font-medium uppercase tracking-wide">
                 Color
               </label>
-              <ColorSwatchSelector
-                optionGroups={product.options}
-                variants={product.variants || []}
-                selectedValue={state.color}
-                onSelect={handleColorSelect}
-              />
+              <div>
+                Here comes the color selector if any
+              </div>
+              {/*<ColorSwatchSelector*/}
+              {/*  optionGroups={product.options}*/}
+              {/*  variants={product.variants || []}*/}
+              {/*  selectedValue={state.color}*/}
+              {/*  onSelect={handleColorSelect}*/}
+              {/*/>*/}
             </div>
           )}
 
@@ -118,14 +116,14 @@ export const ProductDescription: FC<ProductDescriptionProps> = ({ product }) => 
         <QuantitySelector value={quantity} onChange={setQuantity} />
         <div className="flex gap-2">
           <button
-            onClick={handleBuyNow}
+            onClick={() => handleBuyNow(product, quantity)}
             className="flex items-center gap-2 bg-yellow-400 px-6 py-3 font-medium text-gray-900 transition-colors hover:bg-yellow-500"
           >
             <ShoppingCart className="h-5 w-5" />
             Buy now
           </button>
           <button
-            onClick={handleBuyNow}
+            onClick={() => handleBuyNow(product, quantity)}
             className="flex items-center gap-2 border border-white/30 bg-transparent px-6 py-3 font-medium text-white transition-colors hover:bg-white/10"
           >
             Buy now

@@ -5,10 +5,14 @@ import { FaCartPlus, FaEye } from 'react-icons/fa'
 import { HeroButton } from './ui/hero-button'
 import { HeroImage } from './ui/hero-image'
 
-export const HeroSection = async () => {
+type HeroSectionProps = {
+  productSlug: string
+}
+
+export const HeroSection = async ({ productSlug }: HeroSectionProps) => {
   let product: Awaited<ReturnType<typeof client.getProduct>> = null
   try {
-    product = await client.getProduct('akkumulatorcsipesz-200a-150-mm-piros')
+    product = await client.getProduct(productSlug)
   } catch (error) {
     console.error('Failed to fetch product:', error)
     // Continue with null - section will still render

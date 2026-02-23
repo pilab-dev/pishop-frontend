@@ -1,16 +1,18 @@
-import React from "react";
+import React from 'react'
 
-import { TopSalesSection } from "@/components/products/top-sales-seection";
-import { FeaturedProductsProps } from "@/payload-types";
+import { FeaturedProducts } from '@/components/products/featured-products'
+import { FeaturedProductsProps } from '@/payload-types'
 
-type Props = FeaturedProductsProps & {};
+type Props = FeaturedProductsProps & {}
 
 export const FeaturedProductsBlock: React.FC<Props> = (props) => {
-  const { products, blockType } = props;
+  const { products, source } = props
 
   if (!products || products.length === 0) {
-    return null;
+    return null
   }
 
-  return <TopSalesSection products={products} />;
-};
+  // TODO: check for manual slugs
+
+  return <FeaturedProducts products={products.map((p) => p.productSlug)} />
+}
