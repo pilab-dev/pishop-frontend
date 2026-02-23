@@ -16,22 +16,33 @@ const payload = await getPayload({ config })
  * Get the home page from PayloadCMS.
  * @returns The home page or null if not found.
  */
-const getHomePage = cache(async (): Promise<Page> => {
+const getHomePage = cache(async (): Promise<Page | null> => {
   const page = await payload.find({
     collection: 'pages',
     where: { slug: { equals: 'home' } },
     limit: 1,
   })
 
-  if (!page.docs?.[0]) {
-    throw new Error('Home page not found in PayloadCMS')
-  }
-
-  return page.docs[0]
+  return page.docs?.[0] ?? null
 })
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getHomePage()
+
+  if (!page) {
+    return {
+      title: 'ShopPi - 2nd hand tech marketplace | Buy and sell second hand tech products',
+      description:
+        'ShopPi is a 2nd hand tech marketplace where you can buy and sell second hand tech stuffs. Find great deals on laptops, smartphones, headphones and more.',
+    }
+  }
+
+  const imageUrl =
+    typeof page.meta?.image === 'object' && page.meta.image?.url
+      ? page.meta.image.url
+      : page.meta?.image
+        ? `${baseUrl}/api/media/file/${page.meta.image}`
+        : `${baseUrl}/og-image.jpg`
 
   return {
     title:
@@ -51,23 +62,14 @@ export async function generateMetadata(): Promise<Metadata> {
       url: baseUrl,
       siteName: 'ShopPi',
       type: 'website',
-      images: page.meta?.image
-        ? [
-            {
-              url: `${baseUrl}/api/media/file/${page.meta.image}`,
-              width: 1200,
-              height: 630,
-              alt: page.meta?.title || 'ShopPi - 2nd Hand Tech Marketplace',
-            },
-          ]
-        : [
-            {
-              url: `${baseUrl}/og-image.jpg`,
-              width: 1200,
-              height: 630,
-              alt: 'ShopPi - 2nd Hand Tech Marketplace',
-            },
-          ],
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: page.meta?.title || 'ShopPi - 2nd Hand Tech Marketplace',
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
@@ -75,9 +77,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         page.meta?.description ||
         'Buy and sell second hand tech products. Find great deals on laptops, smartphones, headphones and more.',
-      images: page.meta?.image
-        ? [`${baseUrl}/api/media/file/${page.meta.image}`]
-        : [`${baseUrl}/og-image.jpg`],
+      images: [imageUrl],
     },
   }
 }
