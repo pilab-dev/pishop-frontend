@@ -1,5 +1,5 @@
 # Single stage build, the app should be compiled in this stage
-FROM node:22-alpine AS runner
+FROM oven/bun:alpine AS runner
 
 LABEL org.opencontainers.image.authors="Paal Gyula <gyula@pilab.hu>"
 LABEL org.opencontainers.image.source="https://github.com/pilab-dev/pishop-frontend"
@@ -21,7 +21,7 @@ USER nextjs
 
 # Copy the compiled assets and the app
 COPY public /app/public
-COPY .next/standalone .
+COPY .next/standalone /app
 COPY .next/static ./.next/static
 
 # Create cache directory
@@ -34,4 +34,4 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # Start the server
-CMD ["node", "server.js"]
+CMD ["bunx", "next", "start"]

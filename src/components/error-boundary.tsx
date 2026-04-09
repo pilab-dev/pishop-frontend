@@ -27,11 +27,11 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
               Error Details (Development Only)
             </summary>
             <pre className="text-xs bg-gray-100 p-3 rounded border overflow-auto max-h-32">
-              {error.message}
-              {error.stack && (
+              {(error as Error).message}
+              {(error as Error).stack && (
                 <>
                   {'\n\n'}
-                  {error.stack}
+                  {(error as Error).stack}
                 </>
               )}
             </pre>
@@ -66,7 +66,7 @@ interface AppErrorBoundaryProps {
 }
 
 export function AppErrorBoundary({ children }: AppErrorBoundaryProps) {
-  const handleError = (error: Error, errorInfo: ErrorInfo) => {
+  const handleError = (error: unknown, errorInfo: ErrorInfo) => {
     // Log error to console in development
     if (process.env.NODE_ENV === 'development') {
       console.error('Error Boundary caught an error:', error, errorInfo)
