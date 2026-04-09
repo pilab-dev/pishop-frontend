@@ -39,26 +39,30 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0 # Fetch full history for proper git operations
 
+      - name: ⚙️ Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # Or your preferred Node.js version
-          cache: 'yarn'
+          node-version: '22'
+          cache: 'pnpm'
 
-      - name: 🗄️ Cache Yarn dependencies
+      - name: 🗄️ Cache pnpm dependencies
         uses: actions/cache@v3
         with:
           path: |
             **/node_modules
-            */.yarn/cache
-            */.yarn/unplugged
+            ${{ github.workspace }}/.pnpm-store
             ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-pnpm-
 
       - name: 📥 Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: 🧹 Ensure clean working tree
         run: |
@@ -87,9 +91,9 @@ jobs:
           OLD_VERSION=$(node -p "require('./package.json').version")
           echo "Current version: $OLD_VERSION"
 
-          # Bump version using yarn version command
-          # This command also updates yarn.lock and creates a git tag
-          yarn version --${{ inputs.version_type }} --message "Release: %s [skip ci]" --no-git-tag-version
+          # Bump version using pnpm version command
+          # This command also updates pnpm-lock.yaml and creates a git tag
+          pnpm version --${{ inputs.version_type }} --message "Release: %s [skip ci]" --no-git-tag-version --allow-same-version
 
           # Get the new version after bump
           NEW_VERSION=$(node -p "require('./package.json').version")
@@ -109,8 +113,8 @@ jobs:
         id: pishop_client
         run: |
           cd lib/pishop-client
-          yarn install --frozen-lockfile
-          yarn build
+          pnpm install --frozen-lockfile
+          pnpm build
           CLIENT_VERSION=$(node -p "require('./package.json').version")
           echo "client_version=$CLIENT_VERSION" >> $GITHUB_OUTPUT
           echo "Pishop Client Version: $CLIENT_VERSION"
@@ -120,7 +124,7 @@ jobs:
           VITE_PISHOP_VERSION: ${{ steps.pishop_client.outputs.client_version }}
           VITE_PISHOP_CLIENT_VERSION: ${{ steps.pishop_client.outputs.client_version }}
           NEXT_PUBLIC_API_BASE: "http://shop.pilab.hu"
-        run: yarn build # Ensure your package.json has a "build" script
+        run: pnpm build
 
       - name: ⬆️ Push the version commit and the new tag
         if: success()
