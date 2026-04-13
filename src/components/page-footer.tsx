@@ -1,9 +1,7 @@
 import { Footer, Media } from '@/payload-types'
 import { getCachedGlobal } from '@/utilities/getGlobals'
-import config from '@payload-config'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getPayload } from 'payload'
 import { FC } from 'react'
 import {
   FaFacebook,
@@ -17,16 +15,33 @@ import { SiX } from 'react-icons/si'
 import { FancyTitle } from './fancy-title'
 import { SubscribeForm } from './ui/subscribe-form'
 
-type MenuItem = {
-  title: string
-  path: string
+type NavItem = {
+  link: {
+    type?: ('reference' | 'custom') | null
+    newTab?: boolean | null
+    reference?: {
+      relationTo: 'pages' | 'posts'
+      value: { slug: string }
+    } | null
+    url?: string | null
+    label: string
+  }
+  id?: string
 }
 
 type QuckLinksProps = {
-  categories: MenuItem[]
+  navItems?: never
 }
 
-const QuckLinks: FC<QuckLinksProps> = ({ categories }) => {
+const QuckLinks: FC<QuckLinksProps> = ({ navItems }) => {
+  const links = [
+    { label: 'Home', url: '/' },
+    { label: 'About us', url: '/about' },
+    { label: 'Blog', url: '/blog' },
+    { label: 'Services', url: '/service' },
+    { label: 'Contact us', url: '/contact' },
+  ]
+
   return (
     <div className="footer-links flex flex-col gap-8 md:flex-row md:gap-16">
       <div>
@@ -38,41 +53,40 @@ const QuckLinks: FC<QuckLinksProps> = ({ categories }) => {
         md:justify-normal"
         >
           <ul className="list list-outside space-y-3 text-sm md:text-base">
-            {categories.map((item) => (
-              <li className="list-item" key={item.title}>
-                <Link href={`/collections/${item.path}`}>{item.title}</Link>
+            {links.map((link) => (
+              <li className="list-item" key={link.url}>
+                <Link href={link.url} className="hover:text-primary">
+                  {link.label}
+                </Link>
               </li>
             ))}
-          </ul>
-
-          <ul
-            className="list list-outside space-y-3 text-sm md:text-base text-right
-          md:text-left
-          "
-          >
-            <li className="list-item">Home</li>
-            <li className="list-item">About us</li>
-            <li className="list-item">Blog</li>
-            <li className="list-item">Service</li>
-            <li className="list-item">Contact us</li>
           </ul>
         </div>
       </div>
 
-      {/* <!-- Customer Care --> */}
       <div>
         <h3 className="font-bold text-lg md:text-xl mb-5 uppercase">
           <FancyTitle label="Customer Care" />
         </h3>
         <div className="flex flex-row space-x-12">
           <ul className="list list-outside space-y-3 text-sm md:text-base">
-            <li className="list-item">My account</li>
-            <li className="list-item">Order tracking</li>
-            <li className="list-item">Whish list</li>
-            <li className="list-item">Returns/Exchange</li>
-            <li className="list-item">FAQs</li>
             <li className="list-item">
-              <Link href="/">Product support</Link>
+              <Link href="/account">My account</Link>
+            </li>
+            <li className="list-item">
+              <Link href="/track-order">Order tracking</Link>
+            </li>
+            <li className="list-item">
+              <Link href="/wishlist">Wish list</Link>
+            </li>
+            <li className="list-item">
+              <Link href="/contact">Returns/Exchange</Link>
+            </li>
+            <li className="list-item">
+              <Link href="/docs">FAQs</Link>
+            </li>
+            <li className="list-item">
+              <Link href="/docs">Product support</Link>
             </li>
           </ul>
         </div>
@@ -172,23 +186,10 @@ const CopyrightSection = ({ copyright }: { copyright: string }) => {
   )
 }
 
-const getPageFooter = async () => {
-  const payload = await getPayload({ config })
-  const footerReponse = payload.findGlobal({
-    slug: 'footer',
-  })
-
-  return (await footerReponse).navItems
-}
-
 export const PageFooter = async () => {
   const footerData: Footer = await getCachedGlobal('footer', 1)()
 
-  const categories =
-    (footerData?.navItems?.map(({ link }) => ({
-      title: link?.label,
-      path: link?.url,
-    })) as MenuItem[]) || []
+  const navItems = (footerData?.navItems as NavItem[]) || []
 
   return (
     <footer className="w-full page-gray-800">
@@ -206,7 +207,7 @@ export const PageFooter = async () => {
               />
             </div>
             <div>
-              <QuckLinks categories={categories} />
+              <QuckLinks navItems={navItems} />
             </div>
           </div>
         </div>
