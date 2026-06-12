@@ -30,7 +30,7 @@ type NavItem = {
 }
 
 type QuckLinksProps = {
-  navItems?: never
+  navItems?: { link: { label: string } }[]
 }
 
 const QuckLinks: FC<QuckLinksProps> = ({ navItems }) => {

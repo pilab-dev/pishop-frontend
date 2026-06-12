@@ -1,12 +1,14 @@
-import LoginForm from "./login-form.client";
+import { Suspense } from 'react'
+import { LoginContent } from './LoginContent'
+import { LoginLoading } from './LoginLoading'
 
-/**
- * Login page
- */
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function LoginPage() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <LoginForm />
-    </div>
-  );
+    <Suspense fallback={<LoginLoading />}>
+      <LoginContent />
+    </Suspense>
+  )
 }

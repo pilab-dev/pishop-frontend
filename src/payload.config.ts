@@ -19,6 +19,7 @@ import { BestSellersBlock } from './blocks/BestSellersBlock/config'
 import { HotDealsBlock } from './blocks/HotDealsBlock/config'
 import { ProductShowcaseBlock } from './blocks/ProductShowcaseBlock/config'
 import { PromotionalBannerBlock } from './blocks/PromotionalBannerBlock/config'
+import { FeaturedProductsBlock } from './blocks/FeaturedProductsBlock/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -69,7 +70,13 @@ export default buildConfig({
   // database-adapter-config-end
   collections: [Pages, Posts, Media, Users, PromotionalContent],
   cors: [getServerSideURL()].filter(Boolean),
-  blocks: [BestSellersBlock, HotDealsBlock, ProductShowcaseBlock, PromotionalBannerBlock],
+  blocks: [
+    BestSellersBlock,
+    HotDealsBlock,
+    ProductShowcaseBlock,
+    PromotionalBannerBlock,
+    FeaturedProductsBlock,
+  ],
   globals: [Header, Footer, Promotions],
   plugins: [
     ...plugins,

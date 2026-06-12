@@ -1,20 +1,14 @@
-import { title } from '@/components/primitives'
-import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
+import { Suspense } from 'react'
+import { DocsContent } from './DocsContent'
+import { DocsLoading } from './DocsLoading'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default function DocsPage() {
   return (
-    <>
-      <BreadcrumbBar
-        segments={[
-          {
-            name: 'Docs',
-            href: '/docs',
-          },
-        ]}
-      />
-      <div>
-        <h1 className={title()}>Docs</h1>
-      </div>
-    </>
+    <Suspense fallback={<DocsLoading />}>
+      <DocsContent />
+    </Suspense>
   )
 }

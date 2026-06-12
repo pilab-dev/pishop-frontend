@@ -436,9 +436,107 @@ export const GET_COLLECTION = gql`
   }
 `
 
+export const SEARCH_PRODUCTS = gql`
+  query SearchProducts($input: ProductSearchInput!) {
+    searchProducts(input: $input) {
+      products {
+        id
+        sku
+        name
+        slug
+        description
+        shortDescription
+        basePrice {
+          amount
+          currencyCode
+        }
+        compareAtPrice {
+          amount
+          currencyCode
+        }
+        isActive
+        images {
+          id
+          url
+          altText
+          width
+          height
+        }
+        inventory {
+          trackQuantity
+          quantity
+          allowBackorder
+        }
+        tags
+        createdAt
+        updatedAt
+      }
+      pagination {
+        page
+        limit
+        total
+        totalPages
+        hasNext
+        hasPrev
+      }
+    }
+  }
+`
+
+export const GET_PRODUCTS_BY_IDS = gql`
+  query GetProductsByIds($ids: [ID!]!) {
+    products {
+      id
+      sku
+      name
+      slug
+      description
+      shortDescription
+      basePrice {
+        amount
+        currencyCode
+      }
+      compareAtPrice {
+        amount
+        currencyCode
+      }
+      isActive
+      images {
+        id
+        url
+        altText
+        width
+        height
+      }
+      inventory {
+        trackQuantity
+        quantity
+        allowBackorder
+      }
+      tags
+      createdAt
+      updatedAt
+    }
+  }
+`
+
 export const GET_CATEGORY_TREE = gql`
-  query GetCategoryTree($includeInactive: Boolean, $maxDepth: Int, $rootSlug: String, $includeCounts: Boolean, $sortBy: String, $sortDirection: String) {
-    categoryTree(includeInactive: $includeInactive, maxDepth: $maxDepth, rootSlug: $rootSlug, includeCounts: $includeCounts, sortBy: $sortBy, sortDirection: $sortDirection) {
+  query GetCategoryTree(
+    $includeInactive: Boolean
+    $maxDepth: Int
+    $rootSlug: String
+    $includeCounts: Boolean
+    $sortBy: String
+    $sortDirection: String
+  ) {
+    categoryTree(
+      includeInactive: $includeInactive
+      maxDepth: $maxDepth
+      rootSlug: $rootSlug
+      includeCounts: $includeCounts
+      sortBy: $sortBy
+      sortDirection: $sortDirection
+    ) {
       category {
         id
         name
@@ -552,4 +650,3 @@ export const GET_CATEGORY_TREE = gql`
     }
   }
 `
-

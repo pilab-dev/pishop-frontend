@@ -1,107 +1,246 @@
-import { Product } from '@/lib/client'
-import Image from 'next/image'
-import React from 'react'
+'use client'
 
-function isProduct(product: string | Product | null | undefined): product is Product {
-  return (product as Product)?.id !== undefined && typeof (product as Product).name === 'string'
-}
+import { Product } from '@/lib/client'
+import { formatCurrency } from '@/lib/formatCurrrency'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState } from 'react'
 
 type ProductTile = {
-  product?: string | Product | null | undefined
-  tileType?: 'default' | null
-  id?: string | null
+  product?: Product
+  tileType?: 'default' | 'featured'
+  badge?: string
+  overrideTitle?: string
+  overrideDescription?: string
 }
 
-type FeaturedProductsProps = {
+type TopSalesSectionProps = {
   products: ProductTile[]
-  blockType?: string
+  title?: string
+  subtitle?: string
+  layout?: 'grid' | 'carousel' | 'list' | 'hero'
+  columns?: '1' | '2' | '3' | '4' | '6'
+  showPrice?: boolean
+  showBadges?: boolean
+  callToAction?: {
+    text?: string
+    link?: string
+    style?: 'primary' | 'secondary' | 'outline' | 'link'
+  }
 }
 
-export const TopSalesSection: React.FC<FeaturedProductsProps> = async ({
-  products: productTiles,
-}) => {
-  // Get products from payload
-  const products: Product[] = productTiles
-    .filter((tile) => tile.product && isProduct(tile.product))
-    .map((tile) => tile.product as Product)
+const ProductTileCard: React.FC<{
+  tile: ProductTile
+  showPrice: boolean
+  showBadges: boolean
+}> = ({ tile, showPrice, showBadges }) => {
+  const product = tile.product
+  if (!product) return null
 
-  console.log('TopSalesSection products', products)
+  const [isHovered, setIsHovered] = useState(false)
 
   return (
-    <div className="pt-14 pb-16">
-      <div className="max-w-[1280px] mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10">
-          {products.map((product, i) => {
-            switch (productTiles[i].tileType) {
-              case 'default':
-                return <ProductTile key={i} product={product} />
-              default:
-                return (
-                  <div
-                    key={i}
-                    className="border-1 border-gray-200 bg-gray-200 p-4 transition-all ease-in-out hover:scale-105 origin-bottom hover:z-50 hover:shadow-lg"
-                  >
-                    <h3 className="text-3xl font-bold mb-1">{product.name}</h3>
-                    <p className="text-gray-600">{product.description}</p>
-                  </div>
-                )
-            }
-          })}
+    <div
+      className={`
+        group relative flex flex-col
+        border border-gray-200 bg-white
+        transition-all duration-300 ease-in-out
+        hover:shadow-lg hover:z-10
+        ${tile.tileType === 'featured' ? 'ring-2 ring-primary' : ''}
+      `}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {showBadges && tile.badge && (
+        <span className="absolute left-2 top-2 z-10 rounded bg-primary px-2 py-1 text-xs font-bold text-white">
+          {tile.badge}
+        </span>
+      )}
+
+      <Link href={`/product/${product.slug}`} className="block flex-1 p-4">
+        <div className="relative mb-3 aspect-square overflow-hidden rounded-md bg-gray-100">
+          {product.images?.[0] ? (
+            <Image
+              src={product.images[0].url}
+              alt={product.images[0].altText || product.name}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-gray-400">
+              No Image
+            </div>
+          )}
         </div>
-      </div>
+
+        <h3 className="mb-1 line-clamp-2 text-sm font-semibold text-gray-900 md:text-base">
+          {tile.overrideTitle || product.name}
+        </h3>
+
+        {tile.overrideDescription && (
+          <p className="mb-2 text-xs text-gray-600">{tile.overrideDescription}</p>
+        )}
+
+        {showPrice && (
+          <div className="mt-auto">
+            {product.compareAtPrice?.amount &&
+              product.compareAtPrice.amount > (product.basePrice?.amount || 0) && (
+                <span className="text-xs text-gray-500 line-through">
+                  {formatCurrency(product.compareAtPrice.amount).trimEnd()}
+                </span>
+              )}
+            <span className="text-lg font-bold text-primary">
+              {formatCurrency(product.basePrice?.amount ?? 0).trimEnd()}
+            </span>
+          </div>
+        )}
+      </Link>
     </div>
   )
 }
 
-type MediaResource = {
-  alt: string
-  url: {
-    alt: string
-    url: string
-    width: number
-    height: number
-    thumbnailURL: string
+export const TopSalesSection: React.FC<TopSalesSectionProps> = ({
+  products,
+  title,
+  subtitle,
+  layout = 'grid',
+  columns = '3',
+  showPrice = true,
+  showBadges = true,
+  callToAction,
+}) => {
+  if (!products || products.length === 0) {
+    return null
   }
-}
 
-const isImage = (resource: any): resource is MediaResource => {
-  return (
-    typeof resource.alt === 'string' &&
-    typeof resource.url === 'object' &&
-    typeof resource.url.url === 'string' &&
-    typeof resource.url.width === 'number' &&
-    typeof resource.url.height === 'number' &&
-    typeof resource.url.thumbnailURL === 'string'
-  )
-}
+  const gridCols = {
+    '1': 'grid-cols-1',
+    '2': 'grid-cols-1 sm:grid-cols-2',
+    '3': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+    '4': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
+    '6': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6',
+  }[columns]
 
-const ProductTile: React.FC<{ product: Product }> = ({ product }) => {
-  console.log('ProductTile product', isImage(product.images?.[0]))
+  if (layout === 'list') {
+    return (
+      <div className="py-14">
+        <div className="mx-auto max-w-[1280px] px-5">
+          {(title || subtitle) && (
+            <div className="mb-8">
+              {title && <h2 className="text-3xl font-bold">{title}</h2>}
+              {subtitle && <p className="mt-2 text-gray-600">{subtitle}</p>}
+            </div>
+          )}
 
-  const productImage: MediaResource | undefined = isImage(product.images?.[0])
-    ? product.images?.[0]
-    : undefined
+          <div className="flex flex-col gap-4">
+            {products.map((tile, i) => (
+              <ProductTileCard key={i} tile={tile} showPrice={showPrice} showBadges={showBadges} />
+            ))}
+          </div>
 
-  return (
-    <div
-      role="button"
-      className="
-              border-1 border-gray-200 bg-gray-200 transition-all ease-in-out 
-              hover:scale-105 origin-bottom hover:z-50 hover:shadow-lg"
-    >
-      {/* Here comes the background image which is absolute to the box, and aligns top-left without overflowing (cover the box) */}
-      <div className="relative pb-4 h-50 overflow-clip">
-        <Image
-          className="w-full absolute left-0 bottom-0 object-cover h-full"
-          src={productImage?.url.url || ''}
-          alt={productImage?.alt || ''}
-          width={400}
-          height={200}
-        />
-        <div className="absolute p-5 inset-0 text-right flex flex-col justify-end">
-          <h3 className="text-3xl font-bold mb-1">{product.name}</h3>
-          <p className="text-gray-600">{product.description}</p>
+          {callToAction?.text && callToAction?.link && (
+            <div className="mt-8 text-center">
+              <Link
+                href={callToAction.link}
+                className={`
+                  inline-block rounded px-6 py-3 font-semibold
+                  ${
+                    callToAction.style === 'outline'
+                      ? 'border-2 border-primary text-primary hover:bg-primary hover:text-white'
+                      : callToAction.style === 'secondary'
+                        ? 'bg-gray-900 text-white hover:bg-gray-700'
+                        : 'bg-primary text-white hover:bg-primary/90'
+                  }
+                `}
+              >
+                {callToAction.text}
+              </Link>
+            </div>
+          )}
         </div>
+      </div>
+    )
+  }
+
+  if (layout === 'carousel') {
+    return (
+      <div className="py-14">
+        <div className="mx-auto max-w-[1280px] px-5">
+          {(title || subtitle) && (
+            <div className="mb-8">
+              {title && <h2 className="text-3xl font-bold">{title}</h2>}
+              {subtitle && <p className="mt-2 text-gray-600">{subtitle}</p>}
+            </div>
+          )}
+
+          <div className="scrollbar-hide -mx-5 flex snap-x snap-mandatory overflow-x-auto gap-6 px-5">
+            {products.map((tile, i) => (
+              <div key={i} className="w-[280px] flex-shrink-0 snap-start">
+                <ProductTileCard tile={tile} showPrice={showPrice} showBadges={showBadges} />
+              </div>
+            ))}
+          </div>
+
+          {callToAction?.text && callToAction?.link && (
+            <div className="mt-8 text-center">
+              <Link
+                href={callToAction.link}
+                className={`
+                  inline-block rounded px-6 py-3 font-semibold
+                  ${
+                    callToAction.style === 'outline'
+                      ? 'border-2 border-primary text-primary hover:bg-primary hover:text-white'
+                      : callToAction.style === 'secondary'
+                        ? 'bg-gray-900 text-white hover:bg-gray-700'
+                        : 'bg-primary text-white hover:bg-primary/90'
+                  }
+                `}
+              >
+                {callToAction.text}
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="py-14">
+      <div className="mx-auto max-w-[1280px] px-5">
+        {(title || subtitle) && (
+          <div className="mb-8">
+            {title && <h2 className="text-3xl font-bold">{title}</h2>}
+            {subtitle && <p className="mt-2 text-gray-600">{subtitle}</p>}
+          </div>
+        )}
+
+        <div className={`grid gap-6 ${gridCols}`}>
+          {products.map((tile, i) => (
+            <ProductTileCard key={i} tile={tile} showPrice={showPrice} showBadges={showBadges} />
+          ))}
+        </div>
+
+        {callToAction?.text && callToAction?.link && (
+          <div className="mt-8 text-center">
+            <Link
+              href={callToAction.link}
+              className={`
+                inline-block rounded px-6 py-3 font-semibold
+                ${
+                  callToAction.style === 'outline'
+                    ? 'border-2 border-primary text-primary hover:bg-primary hover:text-white'
+                    : callToAction.style === 'secondary'
+                      ? 'bg-gray-900 text-white hover:bg-gray-700'
+                      : 'bg-primary text-white hover:bg-primary/90'
+                }
+              `}
+            >
+              {callToAction.text}
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )
