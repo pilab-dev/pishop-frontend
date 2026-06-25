@@ -13,7 +13,18 @@ import { HotDealsBlock } from "./HotDealsBlock/Component";
 import { ProductShowcaseBlock } from "./ProductShowcaseBlock/Component";
 import { PromotionalBannerBlock } from "./PromotionalBannerBlock/Component";
 
+import { HeroSliderBlock } from "@/blocks/HeroSliderBlock/Component";
+import { PromoBannersBlock } from "@/blocks/PromoBannersBlock/Component";
+import { BrandLogosBlock } from "@/blocks/BrandLogosBlock/Component";
+import { MiniProductListBlock } from "@/blocks/MiniProductListBlock/Component";
+import { FeaturedProductBlock } from "@/blocks/FeaturedProductBlock/Component";
+
 const blockComponents = {
+  heroSlider: HeroSliderBlock,
+  promoBanners: PromoBannersBlock,
+  brandLogos: BrandLogosBlock,
+  miniProductList: MiniProductListBlock,
+  featuredProduct: FeaturedProductBlock,
   featuredProducts: FeaturedProductsBlock,
   bestSellers: BestSellersBlock,
   hotDealsBlock: HotDealsBlock,

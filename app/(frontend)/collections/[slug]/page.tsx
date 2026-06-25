@@ -5,6 +5,8 @@ import { notFound } from 'next/navigation'
 import { FancyTitle } from '@/components/fancy-title'
 import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
 import { ProductGrid } from '@/components/products/product-grid'
+import { CollectionSidebar } from '@/components/products/collection-sidebar'
+import { CollectionToolbar } from '@/components/products/collection-toolbar'
 import { SectionDecor } from '@/components/ui/section-decor'
 import { ErrorBoundary } from 'next/dist/client/components/error-boundary'
 import React, { cache } from 'react'
@@ -83,16 +85,25 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({ params }) 
         ]}
       />
 
-      <div className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-        <div className="max-w-[1280px]">
-          <section className="max-w-[1280px] mx-auto px-5 py-5">
-            <h2 className="flex items-center uppercase text-3xl font-bold">
-              <SectionDecor />
-              <FancyTitle label={collection.name} />
-            </h2>
-          </section>
+      <div className="max-w-[1280px] mx-auto px-5 py-8 md:py-10">
+        <section className="mb-8">
+          <h2 className="flex items-center uppercase text-3xl font-bold">
+            <SectionDecor />
+            <FancyTitle label={collection.name} />
+          </h2>
+        </section>
 
-          <ProductGrid products={products} variant="primary" />
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+          {/* Sidebar */}
+          <div className="md:col-span-3">
+            <CollectionSidebar />
+          </div>
+
+          {/* Main Content Area */}
+          <div className="md:col-span-9">
+            <CollectionToolbar />
+            <ProductGrid products={products} variant="primary" />
+          </div>
         </div>
       </div>
     </>

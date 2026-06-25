@@ -125,36 +125,90 @@ export const HeaderSectionMobile = ({
             className="sm:hidden fixed inset-0 z-40 bg-black/50"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          {/* Drawer */}
           <div
             className={cn(
-              'sm:hidden fixed right-0 top-0 z-50 h-full w-80 max-w-[90vw] bg-white shadow-xl transform transition-all duration-300 ease-in-out',
+              'sm:hidden fixed left-0 top-0 z-50 h-full w-80 max-w-[85vw] bg-white shadow-2xl transform transition-all duration-300 ease-in-out',
               isMobileMenuOpen
                 ? 'translate-x-0 opacity-100'
-                : 'translate-x-full opacity-0 pointer-events-none',
+                : '-translate-x-full opacity-0 pointer-events-none',
             )}
           >
             {/* Drawer Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
+            <div className="flex items-center justify-between p-4 bg-gray-900 text-white">
+              <h2 className="text-lg font-bold uppercase tracking-wider">Menu</h2>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-300 hover:text-white hover:bg-gray-800"
               >
                 <FaTimes />
               </Button>
             </div>
 
             {/* Drawer Content */}
-            <div className="flex-1 overflow-y-auto p-4">
-              {/* Navigation Items */}
-              <ul className="space-y-4 mb-6">
+            <div className="flex-1 overflow-y-auto h-full pb-20">
+              <ul className="flex flex-col w-full">
+                {/* Static demo items matching reference functionality */}
+                <li className="border-b border-gray-100">
+                  <MobileAccordionItem title="Headphone">
+                    <ul className="py-1">
+                      <li><a href="#" className="block py-2 text-gray-500 hover:text-primary pl-4 border-b border-gray-50">Headphone 1</a></li>
+                      <li><a href="#" className="block py-2 text-gray-500 hover:text-primary pl-4 border-b border-gray-50">Headphone 2</a></li>
+                      <li><a href="#" className="block py-2 text-gray-500 hover:text-primary pl-4 border-b border-gray-50">Headphone 3</a></li>
+                      <li><a href="#" className="block py-2 text-gray-500 hover:text-primary pl-4">Headphone 4</a></li>
+                    </ul>
+                  </MobileAccordionItem>
+                </li>
+                <li className="border-b border-gray-100">
+                  <MobileAccordionItem title="Smart watch">
+                    <ul className="py-1">
+                      <li>
+                        <MobileAccordionItem title="Laptop" isSubLevel={true}>
+                          <ul className="py-1">
+                            <li><a href="#" className="block py-2 text-gray-500 hover:text-primary pl-8 border-b border-gray-50">Apple</a></li>
+                            <li><a href="#" className="block py-2 text-gray-500 hover:text-primary pl-8 border-b border-gray-50">Samsung</a></li>
+                            <li><a href="#" className="block py-2 text-gray-500 hover:text-primary pl-8">Sony</a></li>
+                          </ul>
+                        </MobileAccordionItem>
+                      </li>
+                      <li>
+                        <MobileAccordionItem title="Accessories" isSubLevel={true}>
+                          <ul className="py-1">
+                            <li><a href="#" className="block py-2 text-gray-500 hover:text-primary pl-8 border-b border-gray-50">Submenu1</a></li>
+                            <li><a href="#" className="block py-2 text-gray-500 hover:text-primary pl-8 border-b border-gray-50">Submenu2</a></li>
+                            <li><a href="#" className="block py-2 text-gray-500 hover:text-primary pl-8">Submenu3</a></li>
+                          </ul>
+                        </MobileAccordionItem>
+                      </li>
+                    </ul>
+                  </MobileAccordionItem>
+                </li>
+                
+                {/* Dynamic Collections from Payload */}
+                <li className="border-b border-gray-100">
+                  <MobileAccordionItem title="Collections">
+                    <ul className="py-1">
+                      {collections?.map((collection) => (
+                        <li key={collection?.id}>
+                          <Link
+                            href={`/collections/${collection.collection}`}
+                            className="block py-2 text-gray-500 hover:text-primary pl-4 border-b border-gray-50"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {collection.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </MobileAccordionItem>
+                </li>
+
+                {/* Dynamic Nav Items */}
                 {navItems.map(({ link }, i) => (
-                  <li key={i}>
+                  <li key={i} className="border-b border-gray-100 block py-3 px-4">
                     <CMSLink
-                      className="block text-gray-900 hover:text-primary transition-colors text-lg font-medium"
+                      className="text-gray-800 hover:text-primary font-medium uppercase text-[13px]"
                       {...link}
                       appearance="inline"
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -162,40 +216,34 @@ export const HeaderSectionMobile = ({
                   </li>
                 ))}
               </ul>
-
-              {/* Collections */}
-              <div className="border-t border-gray-200 pt-4">
-                <h3 className="text-gray-900 font-semibold uppercase mb-3 text-sm">Collections</h3>
-                <ul className="space-y-3">
-                  {collections?.map((collection) => (
-                    <li key={collection?.id}>
-                      <Link
-                        href={`/collections/${collection.collection}`}
-                        className="block text-gray-700 hover:text-primary transition-colors text-base"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {collection.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Action Icons */}
-              <div className="border-t border-gray-200 pt-4 mt-6">
-                <div className="flex justify-around">
-                  <button className="text-gray-600 hover:text-primary transition-colors p-2">
-                    <TfiReload fontSize={24} />
-                  </button>
-                  <button className="text-gray-600 hover:text-primary transition-colors p-2">
-                    <TfiHeart fontSize={24} />
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </>
       )}
     </>
+  )
+}
+
+// Local helper component for accordion behavior
+const MobileAccordionItem = ({ title, children, isSubLevel = false }: { title: string; children: React.ReactNode; isSubLevel?: boolean }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  
+  return (
+    <div className="w-full">
+      <button 
+        className={`w-full flex justify-between items-center py-3 text-gray-800 transition-colors ${isSubLevel ? 'pl-4 pr-4 font-normal' : 'px-4 font-medium uppercase text-[13px]'}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {title}
+        <span className="text-lg leading-none font-light text-gray-500">{isOpen ? '-' : '+'}</span>
+      </button>
+      <div 
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+      >
+        <div className="bg-gray-50/50">
+          {children}
+        </div>
+      </div>
+    </div>
   )
 }

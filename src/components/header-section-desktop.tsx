@@ -16,6 +16,7 @@ import {
 } from 'react-icons/fa'
 import { SiX } from 'react-icons/si'
 import { TfiHeart, TfiReload } from 'react-icons/tfi'
+import { MegaMenu } from './mega-menu'
 
 // Dynamically import heavy components to reduce initial bundle size
 const AuthPopover = dynamic(
@@ -158,15 +159,11 @@ export const HeaderSectionDesktop = ({
       </div>
 
       {/* Desktop Bottom Row */}
-      <div className="hidden sm:block page-gray-950">
+      <div className="hidden sm:block page-gray-950 text-white">
         <div className="max-w-[1280px] uppercase mx-auto px-5 py-4 flex flex-row justify-between items-center">
-          <ul className="footer-links flex flex-col md:flex-row gap-10 text-sm font-bold">
-            {collections?.map((collection) => (
-              <li key={collection?.id}>
-                <Link href={`/collections/${collection.collection}`}>{collection.label}</Link>
-              </li>
-            ))}
-          </ul>
+          <div className="flex-1">
+            <MegaMenu categoryTree={categoryTree} />
+          </div>
 
           <div>
             <ul className="flex flex-row gap-8">

@@ -5,6 +5,12 @@ import { Archive } from '@/blocks/ArchiveBlock/config'
 import { CallToAction } from '@/blocks/CallToAction/config'
 import { Content } from '@/blocks/Content/config'
 import { FeaturedProductsBlock } from '@/blocks/FeaturedProductsBlock/config'
+import { FeaturedProductBlock } from '@/blocks/FeaturedProductBlock/config'
+import { BestSellersBlock } from '@/blocks/BestSellersBlock/config'
+import { HeroSliderBlock } from '@/blocks/HeroSliderBlock/config'
+import { PromoBannersBlock } from '@/blocks/PromoBannersBlock/config'
+import { BrandLogosBlock } from '@/blocks/BrandLogosBlock/config'
+import { MiniProductListBlock } from '@/blocks/MiniProductListBlock/config'
 import { FormBlock } from '@/blocks/Form/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { slugField } from '@/fields/slug'
@@ -78,7 +84,13 @@ export const Pages: CollectionConfig<'pages'> = {
       label: 'Elements',
       type: 'blocks',
       blocks: [
+        HeroSliderBlock,
+        PromoBannersBlock,
         FeaturedProductsBlock,
+        FeaturedProductBlock,
+        BestSellersBlock,
+        MiniProductListBlock,
+        BrandLogosBlock,
         HotDealsBlock,
         CallToAction,
         Content,

@@ -29,146 +29,81 @@ export const CartPopover = () => {
   }
 
   return (
-    <div className="w-full max-h-[60vh] overflow-hidden bg-white">
-      {/* Header */}
-      <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-primary/5 to-primary/10">
-        <ShoppingBag className="h-5 w-5 text-primary" />
-        <h3 className="text-lg font-semibold text-gray-900">Your Cart</h3>
-        <span className="ml-auto text-sm text-gray-600">({totals.itemCount} items)</span>
-      </div>
-
+    <div className="w-[320px] max-h-[80vh] overflow-hidden bg-white p-6 border border-gray-100 shadow-2xl">
       {/* Content */}
-      <div className="max-h-64 overflow-y-auto">
+      <div className="max-h-72 overflow-y-auto pr-2 custom-scrollbar">
         {items.length === 0 ? (
-          <div className="p-6 text-center text-gray-500">
-            <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-50" />
+          <div className="py-6 text-center text-gray-500">
+            <ShoppingBag className="h-12 w-12 mx-auto mb-3 opacity-30" />
             <p className="text-sm">Your cart is empty</p>
             <Link href="/collections">
-              <Button variant="outline" size="sm" className="mt-3">
+              <Button variant="outline" size="sm" className="mt-3 rounded-none uppercase text-xs tracking-wider">
                 Start Shopping
               </Button>
             </Link>
           </div>
         ) : (
-          <div className="p-4 space-y-3">
+          <ul className="space-y-4 mb-4">
             {items.map((item) => (
-              <div
+              <li
                 key={item.id}
-                className="flex gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-4 relative group pb-4 border-b border-gray-50 last:border-0 last:pb-0"
               >
                 {/* Product Image */}
-                <div className="w-12 h-12 bg-gray-200 rounded-md flex-shrink-0 overflow-hidden">
+                <Link href={`/product/${item.product.slug}`} className="w-[70px] h-[70px] bg-gray-100 flex-shrink-0 border border-gray-200">
                   {item.product.images[0] && (
                     <Image
                       src={item.product.images[0].url}
                       alt={item.product.name}
-                      width={48}
-                      height={48}
+                      width={70}
+                      height={70}
                       className="w-full h-full object-cover"
                     />
                   )}
-                </div>
+                </Link>
 
                 {/* Product Details */}
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-[13px] text-gray-800 font-medium truncate mb-1">
                     {item.product.name}
-                  </h4>
-                  <p className="text-xs text-gray-600 mt-1">
-                    {formatCurrency(item.unitPrice.amount, item.unitPrice.currencyCode)} each
                   </p>
-
-                  {/* Quantity Controls */}
-                  <div className="flex items-center gap-2 mt-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-6 w-6 p-0"
-                      onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                      disabled={isLoading}
-                    >
-                      <Minus className="h-3 w-3" />
-                    </Button>
-                    <span className="text-sm font-medium min-w-[2rem] text-center">
-                      {item.quantity}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-6 w-6 p-0"
-                      onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                      disabled={isLoading}
-                    >
-                      <Plus className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 ml-2"
-                      onClick={() => removeFromCart(item.id)}
-                      disabled={isLoading}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Item Total */}
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">
-                    {formatCurrency(item.totalPrice.amount, item.totalPrice.currencyCode)}
+                  <p className="text-[13px] text-gray-500 font-light">
+                    {item.quantity} x <span className="font-semibold text-gray-800">{formatCurrency(item.unitPrice.amount, item.unitPrice.currencyCode)}</span>
                   </p>
                 </div>
-              </div>
+
+                {/* Delete button */}
+                <button
+                  className="text-gray-400 hover:text-red-500 transition-colors ml-2"
+                  onClick={() => removeFromCart(item.id)}
+                  disabled={isLoading}
+                >
+                  <Trash2 className="h-[14px] w-[14px]" />
+                </button>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
 
       {/* Totals & Actions */}
       {items.length > 0 && (
-        <div className="bg-gray-50">
-          {/* Detailed Totals */}
-          <div className="p-4 space-y-2 text-sm">
-            <div className="flex justify-between text-gray-600">
-              <span>Subtotal:</span>
-              <span>{formatCurrency(totals.subtotal.amount, totals.subtotal.currencyCode)}</span>
-            </div>
-            {totals.shipping.amount > 0 && (
-              <div className="flex justify-between text-gray-600">
-                <span>Shipping:</span>
-                <span>{formatCurrency(totals.shipping.amount, totals.shipping.currencyCode)}</span>
-              </div>
-            )}
-            {totals.tax.amount > 0 && (
-              <div className="flex justify-between text-gray-600">
-                <span>Tax:</span>
-                <span>{formatCurrency(totals.tax.amount, totals.tax.currencyCode)}</span>
-              </div>
-            )}
-            {totals.discount.amount > 0 && (
-              <div className="flex justify-between text-green-600">
-                <span>Discount:</span>
-                <span>-{formatCurrency(totals.discount.amount, totals.discount.currencyCode)}</span>
-              </div>
-            )}
-            <div className="pt-2 mt-3 flex justify-between font-semibold text-gray-900">
-              <span>Total:</span>
-              <span>{formatCurrency(totals.total.amount, totals.total.currencyCode)}</span>
-            </div>
-          </div>
+        <div className="pt-5 border-t border-gray-100 mt-2">
+          <p className="flex justify-between items-center text-lg font-bold text-gray-900 mb-5">
+            <span className="text-gray-500 text-[13px] font-normal uppercase">Total cost</span>
+            {formatCurrency(totals.total.amount, totals.total.currencyCode)}
+          </p>
 
-          {/* Action Buttons */}
-          <div className="p-4 pt-0 space-y-2">
-            <Link href="/cart">
-              <Button className="w-full" size="sm">
+          <div className="flex flex-col gap-2">
+            <Link href="/cart" className="w-full">
+              <button className="w-full py-3 border border-gray-200 text-gray-600 uppercase text-[11px] tracking-widest font-semibold hover:border-gray-800 hover:text-gray-800 transition-colors">
                 View Cart
-              </Button>
+              </button>
             </Link>
-            <Link href="/checkout">
-              <Button variant="outline" className="w-full" size="sm">
-                Checkout
-              </Button>
+            <Link href="/checkout" className="w-full">
+              <button className="w-full py-3 bg-black text-white uppercase text-[11px] tracking-widest font-semibold hover:bg-gray-900 transition-colors">
+                Check out
+              </button>
             </Link>
           </div>
         </div>
