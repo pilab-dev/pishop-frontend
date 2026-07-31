@@ -68,9 +68,11 @@ whichever side (frontend adaptation or backend resolver/seed/data bug) is at fau
 6. **Checkout** — `/checkout` steps (information → shipping → payment), order creation.
 7. **Payment** — Stripe test-mode charge (or stub, per above) completes the order.
 8. **Order confirmation** — `/order-confirmation` shows the created order.
-9. **Auth** — `/login`, `/signup`: determine whether these currently authenticate
-   against Payload's own auth or should call pi-shop-api's `auth-service` /
-   `customer-service`, and wire correctly.
+9. **Auth** — out of scope for this pass. Investigation found the storefront GraphQL
+   schema has no login/register mutations at all (guest checkout is the only supported
+   flow), so wiring real accounts would mean adding new mutations across
+   `auth-service`/`customer-service`/`graphql-service` — a separate follow-up project.
+   `/login` and `/signup` remain UI stubs.
 
 ## 4. Validation approach
 
@@ -85,3 +87,5 @@ reading code. Fix issues found and re-run the affected step.
 - Building new business features not already represented in the frontend codebase.
 - Full observability stack wiring (Jaeger/Prometheus/Grafana dashboards) beyond what's
   needed to see the app work.
+- Real customer authentication (login/register). No GraphQL mutations for this exist
+  anywhere in the backend yet; adding them is a separate follow-up project.
