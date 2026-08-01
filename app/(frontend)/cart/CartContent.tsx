@@ -1,6 +1,7 @@
 'use client'
 
-import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react'
+import { useState } from 'react'
+import { Minus, Plus, ShoppingCart, Trash2, X } from 'lucide-react'
 import Link from 'next/link'
 
 import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
@@ -10,6 +11,89 @@ import { Input } from '@/components/ui/input'
 import Image from 'next/image'
 import { formatCurrency } from '@/lib/formatCurrrency'
 import { useCartStore } from '@/store/cart-store'
+import { client } from '@/lib/client'
+
+function CouponForm() {
+  // Calls the client directly (not the store's applyCoupon/removeCoupon,
+  // which swallow errors into a shared `error` field that would otherwise
+  // switch the whole cart page to its full-page error view for what should
+  // be an inline validation message).
+  const { cart, isLoading, refresh } = useCartStore()
+  const [code, setCode] = useState('')
+  const [couponError, setCouponError] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+
+  const appliedCoupons = cart?.appliedCoupons || []
+
+  const handleApply = async () => {
+    if (!code.trim()) return
+    setCouponError(null)
+    setBusy(true)
+    try {
+      await client.applyCoupon(code.trim())
+      setCode('')
+      await refresh()
+    } catch (err) {
+      setCouponError(err instanceof Error ? err.message : 'Failed to apply coupon')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const handleRemove = async (couponId: string) => {
+    setCouponError(null)
+    setBusy(true)
+    try {
+      await client.removeCoupon(couponId)
+      await refresh()
+    } catch (err) {
+      setCouponError(err instanceof Error ? err.message : 'Failed to remove coupon')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      {appliedCoupons.map((coupon) => (
+        <div
+          key={coupon.id}
+          className="flex items-center justify-between rounded-md bg-green-50 px-3 py-2 text-sm text-green-700"
+        >
+          <span>Coupon &quot;{coupon.couponCode}&quot; applied</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-green-700 hover:text-green-900"
+            disabled={busy}
+            onClick={() => handleRemove(coupon.id)}
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      ))}
+      <div className="flex gap-2">
+        <Input
+          type="text"
+          placeholder="Coupon code"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              handleApply()
+            }
+          }}
+          disabled={busy}
+        />
+        <Button type="button" variant="outline" onClick={handleApply} disabled={busy}>
+          Apply
+        </Button>
+      </div>
+      {couponError && <p className="text-sm text-destructive">{couponError}</p>}
+    </div>
+  )
+}
 
 export function CartContent() {
   const { cart, isLoading, error, removeFromCart, updateItemQuantity, refresh, reset } =
@@ -203,6 +287,7 @@ export function CartContent() {
                   </Button>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <CouponForm />
                   <div className="flex justify-between text-sm">
                     <span>Subtotal ({items.length} items)</span>
                     <span>
@@ -230,7 +315,7 @@ export function CartContent() {
                       )}
                     </span>
                   </div>
-                  {cart?.totals?.discount?.amount && cart?.totals?.discount?.amount > 0 && (
+                  {!!cart?.totals?.discount?.amount && cart.totals.discount.amount > 0 && (
                     <div className="flex justify-between text-sm text-green-600">
                       <span>Discount</span>
                       <span>
