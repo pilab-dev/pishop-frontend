@@ -27,16 +27,28 @@ const SORT_OPTIONS: Record<string, { sortBy: string; sortOrder?: string }> = {
 
 const getCollectionBySlug = cache(
   async (slug: string, sort?: string): Promise<{ collection: Collection; products: any[] }> => {
-    const collection = await client.getCollection(slug, sort ? SORT_OPTIONS[sort] : undefined)
+    const sortOption = sort ? SORT_OPTIONS[sort] : undefined
 
-    if (!collection) {
-      notFound()
+    // The mega-menu links both actual collections and categories to
+    // /collections/[slug] (categories have no dedicated route), so fall back
+    // to a category lookup when the slug isn't a real collection.
+    const collection = await client.getCollection(slug, sortOption)
+    if (collection) {
+      return {
+        collection,
+        products: collection.products || [],
+      }
     }
 
-    return {
-      collection,
-      products: collection.products || [],
+    const category = await client.getCategory(slug, sortOption)
+    if (category) {
+      return {
+        collection: category as unknown as Collection,
+        products: category.products || [],
+      }
     }
+
+    notFound()
   },
 )
 

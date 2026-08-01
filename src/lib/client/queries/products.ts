@@ -291,6 +291,22 @@ export const GET_CATEGORY = gql`
         createdAt
         updatedAt
       }
+      seo {
+        title
+        description
+        keywords
+      }
+      isActive
+      sortOrder
+      createdAt
+      updatedAt
+    }
+  }
+`
+
+export const GET_CATEGORY_PRODUCTS = gql`
+  query GetCategoryProducts($category: String!, $pagination: PaginationInput, $filters: ProductFiltersInput) {
+    categoryProducts(category: $category, pagination: $pagination, filters: $filters) {
       products {
         id
         sku
@@ -323,15 +339,7 @@ export const GET_CATEGORY = gql`
         createdAt
         updatedAt
       }
-      seo {
-        title
-        description
-        keywords
-      }
-      isActive
-      sortOrder
-      createdAt
-      updatedAt
+      total
     }
   }
 `

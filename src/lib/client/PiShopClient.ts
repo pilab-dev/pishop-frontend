@@ -40,6 +40,7 @@ import {
   GET_PRODUCT,
   GET_CATEGORIES,
   GET_CATEGORY,
+  GET_CATEGORY_PRODUCTS,
   GET_COLLECTIONS,
   GET_COLLECTION,
   GET_COLLECTION_PRODUCTS,
@@ -322,7 +323,10 @@ export class PiShopClient {
    * @param slugOrId - Category slug or ID
    * @returns Promise resolving to category or null
    */
-  async getCategory(slugOrId: string): Promise<Category | null> {
+  async getCategory(
+    slugOrId: string,
+    sort?: { sortBy: string; sortOrder?: string },
+  ): Promise<Category | null> {
     try {
       const isId = slugOrId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
 
@@ -336,7 +340,26 @@ export class PiShopClient {
         return null
       }
 
-      return result.data?.category || null
+      const category = result.data?.category
+      if (!category) return null
+
+      // The Category type has no `products` field in the schema; products
+      // for a category are fetched separately via categoryProducts.
+      const productsResult = await this.client.query<{
+        categoryProducts: { products: Product[]; total: number }
+      }>({
+        query: GET_CATEGORY_PRODUCTS,
+        variables: {
+          category: category.slug,
+          pagination: { page: 1, limit: 100 },
+          filters: sort ? { sortBy: sort.sortBy, sortOrder: sort.sortOrder } : undefined,
+        },
+      })
+
+      return {
+        ...category,
+        products: productsResult.data?.categoryProducts?.products || [],
+      }
     } catch (error) {
       console.error('Error fetching category:', error)
       return null
