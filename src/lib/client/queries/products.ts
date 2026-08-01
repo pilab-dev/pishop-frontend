@@ -391,6 +391,22 @@ export const GET_COLLECTION = gql`
         width
         height
       }
+      seo {
+        title
+        description
+        keywords
+      }
+      isActive
+      sortOrder
+      createdAt
+      updatedAt
+    }
+  }
+`
+
+export const GET_COLLECTION_PRODUCTS = gql`
+  query GetCollectionProducts($collection: String!, $pagination: PaginationInput, $filters: ProductFiltersInput) {
+    collectionProducts(collection: $collection, pagination: $pagination, filters: $filters) {
       products {
         id
         sku
@@ -423,15 +439,7 @@ export const GET_COLLECTION = gql`
         createdAt
         updatedAt
       }
-      seo {
-        title
-        description
-        keywords
-      }
-      isActive
-      sortOrder
-      createdAt
-      updatedAt
+      total
     }
   }
 `
@@ -560,20 +568,6 @@ export const GET_CATEGORY_TREE = gql`
           slug
           isActive
         }
-        products {
-          id
-          name
-          slug
-          basePrice {
-            amount
-            currencyCode
-          }
-          images {
-            id
-            url
-            altText
-          }
-        }
         seo {
           title
           description
@@ -607,20 +601,6 @@ export const GET_CATEGORY_TREE = gql`
             name
             slug
             isActive
-          }
-          products {
-            id
-            name
-            slug
-            basePrice {
-              amount
-              currencyCode
-            }
-            images {
-              id
-              url
-              altText
-            }
           }
           seo {
             title

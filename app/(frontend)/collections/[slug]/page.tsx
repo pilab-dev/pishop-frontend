@@ -18,9 +18,16 @@ import { client } from '@/lib/client'
 // Force dynamic rendering to avoid build-time API calls
 export const dynamic = 'force-dynamic'
 
+const SORT_OPTIONS: Record<string, { sortBy: string; sortOrder?: string }> = {
+  newest: { sortBy: 'NEWEST' },
+  price_high_to_low: { sortBy: 'PRICE_HIGH_TO_LOW' },
+  price_low_to_high: { sortBy: 'PRICE_LOW_TO_HIGH' },
+  best_selling: { sortBy: 'BEST_SELLING' },
+}
+
 const getCollectionBySlug = cache(
-  async (slug: string): Promise<{ collection: Collection; products: any[] }> => {
-    const collection = await client.getCollection(slug)
+  async (slug: string, sort?: string): Promise<{ collection: Collection; products: any[] }> => {
+    const collection = await client.getCollection(slug, sort ? SORT_OPTIONS[sort] : undefined)
 
     if (!collection) {
       notFound()
@@ -67,12 +74,16 @@ type CollectionPageProps = {
   params: Promise<{
     slug: string
   }>
+  searchParams: Promise<{
+    sort?: string
+  }>
 }
 
-const CollectionPageContent: React.FC<CollectionPageProps> = async ({ params }) => {
+const CollectionPageContent: React.FC<CollectionPageProps> = async ({ params, searchParams }) => {
   const { slug } = await params
+  const { sort } = await searchParams
 
-  const { collection, products } = await getCollectionBySlug(slug)
+  const { collection, products } = await getCollectionBySlug(slug, sort)
 
   return (
     <>
@@ -101,7 +112,7 @@ const CollectionPageContent: React.FC<CollectionPageProps> = async ({ params }) 
 
           {/* Main Content Area */}
           <div className="md:col-span-9">
-            <CollectionToolbar />
+            <CollectionToolbar activeSort={sort} />
             <ProductGrid products={products} variant="primary" />
           </div>
         </div>
