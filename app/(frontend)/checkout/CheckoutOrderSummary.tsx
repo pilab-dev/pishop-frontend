@@ -69,7 +69,9 @@ export const CheckoutOrderSummary = ({
                   <p className="text-sm font-medium truncate">{item.product.name}</p>
                   <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
                 </div>
-                <p className="text-sm font-medium">${item.totalPrice.amount.toFixed(2)}</p>
+                <p className="text-sm font-medium">
+                  {formatCurrency(item.totalPrice.amount, item.totalPrice.currencyCode)}
+                </p>
               </div>
             ))}
           </div>
@@ -121,7 +123,7 @@ export const CheckoutOrderSummary = ({
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm font-medium text-green-800">
-                        -${coupon.discountAmount.amount.toFixed(2)}
+                        -{formatCurrency(coupon.discountAmount.amount, coupon.discountAmount.currencyCode)}
                       </span>
                       <Button
                         onClick={() => onRemoveCoupon(coupon.id)}
