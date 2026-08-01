@@ -1,11 +1,11 @@
-import type { SelectField } from 'payload'
+import type { TextField } from 'payload'
 
 import deepMerge from '@/utilities/deepMerge'
 
 type ProductSelectFieldOptions = {
   name?: string,
   required?: boolean,
-  overrides?: Partial<SelectField>
+  overrides?: Partial<TextField>
   width?: string
 }
 
@@ -15,11 +15,18 @@ export const productSelectField = ({
   name = 'productId',
   width = '100%',
 }: ProductSelectFieldOptions = {
-}): SelectField => {
-  const field: SelectField = {
+}): TextField => {
+  // Stored as a plain text field (the product ID) because the allowed values
+  // come from pi-shop-api's product catalog, not a fixed set known at schema
+  // build time. Using Payload's `select` type here would bake an empty enum
+  // into the MongoDB schema (Mongoose validates `select` fields against the
+  // `options` present when the schema was built) and reject every real
+  // product ID. The admin UI still renders a proper dropdown via the custom
+  // Field component below, which fetches live options from GraphQL.
+  const field: TextField = {
     name,
     label: 'Product',
-    type: 'select',
+    type: 'text',
     required,
     admin: {
       width,
@@ -29,17 +36,6 @@ export const productSelectField = ({
         },
       },
       description: 'Select a product from the storefront.',
-    },
-    // Options are dynamically populated from GraphQL in the custom Field component
-    // This empty array satisfies the type requirement
-    options: [],
-    // Custom validation to allow any string value since options are fetched dynamically
-    // The actual validation happens in the custom Field component
-    validate: (value) => {
-      if (value && typeof value === 'string' && value.length > 0) {
-        return true
-      }
-      return true // Allow empty values if field is not required
     },
   }
 

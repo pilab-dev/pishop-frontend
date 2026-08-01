@@ -484,8 +484,8 @@ export const SEARCH_PRODUCTS = gql`
 `
 
 export const GET_PRODUCTS_BY_IDS = gql`
-  query GetProductsByIds($ids: [ID!]!) {
-    products {
+  query GetProductsByIds($limit: Int!) {
+    products(pagination: { page: 1, limit: $limit }) {
       id
       sku
       name

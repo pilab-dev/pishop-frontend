@@ -269,8 +269,11 @@ export class PiShopClient {
     }
 
     try {
+      // The storefront schema has no "fetch by IDs" filter, so we fetch a page
+      // large enough to cover the catalog and filter client-side.
       const result = await this.client.query<{ products: Product[] }>({
         query: GET_PRODUCTS_BY_IDS,
+        variables: { limit: 200 },
       })
 
       if (result.error) {
@@ -279,7 +282,8 @@ export class PiShopClient {
       }
 
       const allProducts = result.data?.products || []
-      return allProducts.filter((p) => ids.includes(p.id))
+      const byId = new Map(allProducts.map((p) => [p.id, p]))
+      return ids.map((id) => byId.get(id)).filter((p): p is Product => Boolean(p))
     } catch (error) {
       console.error('Error fetching products by IDs:', error)
       return []
