@@ -1,8 +1,9 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-import { client, Product, PaginationInput, ProductFilterInput } from '@/lib/client'
+import { client, Product, ProductSearchInput, ProductSortBy, SortOrder } from '@/lib/client'
 import { ProductGrid } from '@/components/products/product-grid'
 import { BreadcrumbBar } from '@/components/products/breadcrumb-bar'
+import { SearchSortSelect } from './SearchSortSelect'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,42 +29,32 @@ async function getSearchResults(
   const page = parseInt(searchParams.page || '1', 10)
   const limit = 12
 
-  const filter: ProductFilterInput = {}
-
-  if (searchParams.q) {
-    filter.tags = [searchParams.q]
+  const input: ProductSearchInput = {
+    query: searchParams.q || '',
+    pagination: { page, limit },
+    sortBy: (searchParams.sort as ProductSortBy) || ProductSortBy.RELEVANCE,
+    sortOrder: SortOrder.DESC,
   }
+
   if (searchParams.category) {
-    filter.category = searchParams.category
+    input.category = searchParams.category
   }
   if (searchParams.collection) {
-    filter.collection = searchParams.collection
+    input.collection = searchParams.collection
   }
   if (searchParams.minPrice) {
-    filter.priceMin = parseFloat(searchParams.minPrice)
+    input.priceMin = parseFloat(searchParams.minPrice)
   }
   if (searchParams.maxPrice) {
-    filter.priceMax = parseFloat(searchParams.maxPrice)
+    input.priceMax = parseFloat(searchParams.maxPrice)
   }
   if (searchParams.inStock === 'true') {
-    filter.inStock = true
-  }
-
-  const pagination: PaginationInput = {
-    page,
-    limit,
-    sortBy: searchParams.sort || 'RELEVANCE',
-    sortOrder: 'DESC',
+    input.inStock = true
   }
 
   try {
-    const products = await client.getProducts(pagination, filter)
-    return {
-      products,
-      total: products.length,
-      page,
-      totalPages: Math.ceil(products.length / limit),
-    }
+    const { products, total, totalPages } = await client.searchProducts(input)
+    return { products, total, page, totalPages }
   } catch (error) {
     console.error('Search error:', error)
     return {
@@ -97,15 +88,7 @@ const SearchFilters: React.FC<{
   if (searchParams.maxPrice) currentParams.set('maxPrice', searchParams.maxPrice)
   if (searchParams.inStock === 'true') currentParams.set('inStock', 'true')
 
-  const page = parseInt(searchParams.page || '1', 10)
   const sort = searchParams.sort || 'RELEVANCE'
-
-  const sortOptions = [
-    { value: 'RELEVANCE', label: 'Relevance' },
-    { value: 'PRICE_LOW_TO_HIGH', label: 'Price: Low to High' },
-    { value: 'PRICE_HIGH_TO_LOW', label: 'Price: High to Low' },
-    { value: 'NEWEST', label: 'Newest' },
-  ]
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 py-4">
@@ -115,21 +98,7 @@ const SearchFilters: React.FC<{
       </div>
 
       <div className="flex items-center gap-4">
-        <select
-          defaultValue={sort}
-          onChange={(e) => {
-            const params = new URLSearchParams(currentParams)
-            params.set('sort', e.target.value)
-            window.location.href = `/search?${params.toString()}`
-          }}
-          className="rounded border border-gray-300 px-3 py-2 text-sm"
-        >
-          {sortOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+        <SearchSortSelect sort={sort} paramsWithoutSort={currentParams.toString()} />
       </div>
     </div>
   )

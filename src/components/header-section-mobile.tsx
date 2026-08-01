@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { FaBars, FaSearch, FaTimes } from 'react-icons/fa'
 import { TfiHeart, TfiReload } from 'react-icons/tfi'
 import { CMSLink } from './Link'
+import { HeaderSearchForm } from './header-search-form'
 
 // Dynamically import heavy components to reduce initial bundle size
 const AuthPopover = dynamic(
@@ -94,25 +95,12 @@ export const HeaderSectionMobile = ({
       {isSearchOpen && (
         <div className="sm:hidden px-5 pb-4" onClick={(e) => e.stopPropagation()}>
           <div className="flex flex-row rounded-full bg-white border border-gray-700 text-gray-900 w-full">
-            <select className="bg-transparent flex-shrink ml-4 focus:outline-none text-sm min-w-0">
-              <option disabled value="">
-                Category
-              </option>
-              <option value="all">All</option>
-              {categories.map((category) => (
-                <option key={category.slug} value={category.slug || ''}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-            <input
-              className="focus:outline-none px-4 py-2 flex-1 rounded-full text-sm"
-              placeholder="Search..."
-              type="text"
+            <HeaderSearchForm
+              categories={categories}
+              selectClassName="bg-transparent flex-shrink ml-4 focus:outline-none text-sm min-w-0"
+              inputClassName="focus:outline-none px-4 py-2 flex-1 rounded-full text-sm"
+              buttonClassName="focus:outline-none px-4 py-2 flex-shrink-0"
             />
-            <button className="focus:outline-none px-4 py-2 flex-shrink-0">
-              <FaSearch className="w-4 h-4" />
-            </button>
           </div>
         </div>
       )}

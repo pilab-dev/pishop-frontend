@@ -17,6 +17,7 @@ import {
 import { SiX } from 'react-icons/si'
 import { TfiHeart, TfiReload } from 'react-icons/tfi'
 import { MegaMenu } from './mega-menu'
+import { HeaderSearchForm } from './header-search-form'
 
 // Dynamically import heavy components to reduce initial bundle size
 const AuthPopover = dynamic(
@@ -125,36 +126,12 @@ export const HeaderSectionDesktop = ({
 
         {/* This is the search box of the header section */}
         <div className="hidden md:flex flex-row flex-1 rounded-full bg-white border-gray-700 text-gray-900 max-w-[550px]">
-          <select className="bg-transparent flex-shrink ml-6 focus:outline-none">
-            <option disabled value="">
-              Select category
-            </option>
-            <option value="all">All</option>
-            {categories.map((category) => (
-              <option key={category.slug} value={category.slug || ''}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-          <input
-            className="focus:outline-none px-4 py-2 w-full rounded-full"
-            placeholder="Search..."
-            type="text"
+          <HeaderSearchForm
+            categories={categories}
+            selectClassName="bg-transparent flex-shrink ml-6 focus:outline-none"
+            inputClassName="focus:outline-none px-4 py-2 w-full rounded-full"
+            buttonClassName="focus:outline-none px-4 py-2"
           />
-          <button className="focus:outline-none px-4 py-2">
-            <svg
-              className="w-5 h-5"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                clipRule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                fillRule="evenodd"
-              />
-            </svg>
-          </button>
         </div>
       </div>
 

@@ -27,6 +27,7 @@ import type {
   CategoryTreeNode,
   PaginationInput,
   ProductFilterInput,
+  ProductSearchInput,
   ShippingProvider,
   ShippingMethod,
   PickupPoint,
@@ -228,6 +229,39 @@ export class PiShopClient {
     } catch (error) {
       console.error('Error fetching products:', error)
       return []
+    }
+  }
+
+  /**
+   * Full-text search for products by name/description, with optional filters
+   *
+   * @param input - Search text, filters, sort, and pagination
+   * @returns Promise resolving to matching products and pagination info
+   */
+  async searchProducts(
+    input: ProductSearchInput,
+  ): Promise<{ products: Product[]; total: number; totalPages: number }> {
+    try {
+      const result = await this.client.query<{
+        searchProducts: { products: Product[]; pagination: { total: number; totalPages: number } }
+      }>({
+        query: SEARCH_PRODUCTS,
+        variables: { input },
+      })
+
+      if (result.error) {
+        console.error('GraphQL error in searchProducts:', result.error)
+        return { products: [], total: 0, totalPages: 0 }
+      }
+
+      return {
+        products: result.data?.searchProducts?.products || [],
+        total: result.data?.searchProducts?.pagination?.total || 0,
+        totalPages: result.data?.searchProducts?.pagination?.totalPages || 0,
+      }
+    } catch (error) {
+      console.error('Error searching products:', error)
+      return { products: [], total: 0, totalPages: 0 }
     }
   }
 
