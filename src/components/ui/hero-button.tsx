@@ -4,6 +4,7 @@ import { FC } from 'react'
 type HeroButtonProps = {
   text: string
   buttonClasses?: string
+  knobClasses?: string
   onClick?: () => void
   ping?: boolean
   icon?: React.ReactNode
@@ -15,11 +16,14 @@ export const HeroButton: FC<HeroButtonProps> = ({
   text,
   icon,
   buttonClasses,
+  knobClasses,
   ping = false,
   noshadow = false,
   onClick,
   href,
 }) => {
+  const resolvedKnobClasses = knobClasses || buttonClasses || 'bg-primary text-[#212121]'
+
   return (
     <Link
       href={href || '#'}
@@ -32,7 +36,7 @@ export const HeroButton: FC<HeroButtonProps> = ({
     >
       <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
         <div
-          className={`relative p-4 ${noshadow ? '' : 'shadow-black shadow-xl'} rounded-full ${buttonClasses || 'bg-primary'}`}
+          className={`relative p-4 ${noshadow ? '' : 'shadow-black shadow-xl'} rounded-full ${resolvedKnobClasses}`}
         >
           {ping && (
             <div
@@ -40,8 +44,8 @@ export const HeroButton: FC<HeroButtonProps> = ({
                 transform: 'scale(1.2)',
                 opacity: '0.5',
               }}
-              className={`absolute left-0 top-0 -z-10 bg-primary rounded-full 
-                animate-ripple w-full h-full ${buttonClasses || 'bg-primary'}`}
+              className={`absolute left-0 top-0 -z-10 rounded-full
+                animate-ripple w-full h-full ${resolvedKnobClasses}`}
             />
           )}
           {icon}
@@ -50,11 +54,10 @@ export const HeroButton: FC<HeroButtonProps> = ({
 
       {/* Button content */}
       <div
-        className="text-sm font-semibold
+        className={`text-sm font-semibold
         md:text-base md:font-bold
-        transition bg-transparent border-2 rounded-full 
-      border-white hover:bg-white hover:text-black text-white 
-       py-2.5 pl-4 pr-8 whitespace-nowrap"
+        transition border-2 rounded-full
+       py-2.5 pl-4 pr-8 whitespace-nowrap ${buttonClasses || 'bg-primary border-primary text-[#212121]'}`}
       >
         {text}
       </div>

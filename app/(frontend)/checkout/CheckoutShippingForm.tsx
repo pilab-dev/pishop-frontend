@@ -1,9 +1,11 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { FancyTitle } from '@/components/fancy-title'
 import { Separator } from '@/components/ui/separator'
 import { ArrowLeft, ArrowRight, MapPin } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import { formatCurrency } from '@/lib/formatCurrrency'
 
 // Dynamically import heavy components to reduce initial bundle size
 const FloatingLabelInput = dynamic(
@@ -58,7 +60,9 @@ export const CheckoutShippingForm = ({
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Choose Shipping Method</h3>
+        <h3 className="text-lg font-semibold">
+          <FancyTitle label="Choose Shipping Method" />
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Parcel Box Services */}
           <div className="space-y-3">
@@ -129,7 +133,7 @@ export const CheckoutShippingForm = ({
                   <div className="text-sm text-muted-foreground">
                     Delivered to your door
                   </div>
-                  <div className="text-sm font-medium">$4.99</div>
+                  <div className="text-sm font-medium">{formatCurrency(1990, 'HUF')}</div>
                 </div>
               </label>
               <label className="flex items-center space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
@@ -148,7 +152,7 @@ export const CheckoutShippingForm = ({
                   <div className="text-sm text-muted-foreground">
                     Same-day delivery available
                   </div>
-                  <div className="text-sm font-medium">$6.99</div>
+                  <div className="text-sm font-medium">{formatCurrency(2990, 'HUF')}</div>
                 </div>
               </label>
             </div>

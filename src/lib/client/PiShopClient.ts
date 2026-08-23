@@ -27,6 +27,7 @@ import type {
   CategoryTreeNode,
   PaginationInput,
   ProductFilterInput,
+  ProductSearchInput,
   ShippingProvider,
   ShippingMethod,
   PickupPoint,
@@ -40,8 +41,10 @@ import {
   GET_PRODUCT,
   GET_CATEGORIES,
   GET_CATEGORY,
+  GET_CATEGORY_PRODUCTS,
   GET_COLLECTIONS,
   GET_COLLECTION,
+  GET_COLLECTION_PRODUCTS,
   GET_CATEGORY_TREE,
   SEARCH_PRODUCTS,
   GET_PRODUCTS_BY_IDS,
@@ -230,6 +233,39 @@ export class PiShopClient {
   }
 
   /**
+   * Full-text search for products by name/description, with optional filters
+   *
+   * @param input - Search text, filters, sort, and pagination
+   * @returns Promise resolving to matching products and pagination info
+   */
+  async searchProducts(
+    input: ProductSearchInput,
+  ): Promise<{ products: Product[]; total: number; totalPages: number }> {
+    try {
+      const result = await this.client.query<{
+        searchProducts: { products: Product[]; pagination: { total: number; totalPages: number } }
+      }>({
+        query: SEARCH_PRODUCTS,
+        variables: { input },
+      })
+
+      if (result.error) {
+        console.error('GraphQL error in searchProducts:', result.error)
+        return { products: [], total: 0, totalPages: 0 }
+      }
+
+      return {
+        products: result.data?.searchProducts?.products || [],
+        total: result.data?.searchProducts?.pagination?.total || 0,
+        totalPages: result.data?.searchProducts?.pagination?.totalPages || 0,
+      }
+    } catch (error) {
+      console.error('Error searching products:', error)
+      return { products: [], total: 0, totalPages: 0 }
+    }
+  }
+
+  /**
    * Fetch a single product by slug or ID
    *
    * @param slugOrId - Product slug or ID
@@ -269,8 +305,11 @@ export class PiShopClient {
     }
 
     try {
+      // The storefront schema has no "fetch by IDs" filter, so we fetch a page
+      // large enough to cover the catalog and filter client-side.
       const result = await this.client.query<{ products: Product[] }>({
         query: GET_PRODUCTS_BY_IDS,
+        variables: { limit: 200 },
       })
 
       if (result.error) {
@@ -279,7 +318,8 @@ export class PiShopClient {
       }
 
       const allProducts = result.data?.products || []
-      return allProducts.filter((p) => ids.includes(p.id))
+      const byId = new Map(allProducts.map((p) => [p.id, p]))
+      return ids.map((id) => byId.get(id)).filter((p): p is Product => Boolean(p))
     } catch (error) {
       console.error('Error fetching products by IDs:', error)
       return []
@@ -317,7 +357,10 @@ export class PiShopClient {
    * @param slugOrId - Category slug or ID
    * @returns Promise resolving to category or null
    */
-  async getCategory(slugOrId: string): Promise<Category | null> {
+  async getCategory(
+    slugOrId: string,
+    sort?: { sortBy: string; sortOrder?: string },
+  ): Promise<Category | null> {
     try {
       const isId = slugOrId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
 
@@ -331,7 +374,26 @@ export class PiShopClient {
         return null
       }
 
-      return result.data?.category || null
+      const category = result.data?.category
+      if (!category) return null
+
+      // The Category type has no `products` field in the schema; products
+      // for a category are fetched separately via categoryProducts.
+      const productsResult = await this.client.query<{
+        categoryProducts: { products: Product[]; total: number }
+      }>({
+        query: GET_CATEGORY_PRODUCTS,
+        variables: {
+          category: category.slug,
+          pagination: { page: 1, limit: 100 },
+          filters: sort ? { sortBy: sort.sortBy, sortOrder: sort.sortOrder } : undefined,
+        },
+      })
+
+      return {
+        ...category,
+        products: productsResult.data?.categoryProducts?.products || [],
+      }
     } catch (error) {
       console.error('Error fetching category:', error)
       return null
@@ -403,7 +465,10 @@ export class PiShopClient {
    * @param slugOrId - Collection slug or ID
    * @returns Promise resolving to collection or null
    */
-  async getCollection(slugOrId: string): Promise<Collection | null> {
+  async getCollection(
+    slugOrId: string,
+    sort?: { sortBy: string; sortOrder?: string },
+  ): Promise<Collection | null> {
     try {
       const isId = slugOrId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
 
@@ -418,7 +483,26 @@ export class PiShopClient {
         return null
       }
 
-      return result.data?.collection || null
+      const collection = result.data?.collection
+      if (!collection) return null
+
+      // The Collection type has no `products` field in the schema; products
+      // for a collection are fetched separately via collectionProducts.
+      const productsResult = await this.client.query<{
+        collectionProducts: { products: Product[]; total: number }
+      }>({
+        query: GET_COLLECTION_PRODUCTS,
+        variables: {
+          collection: collection.slug,
+          pagination: { page: 1, limit: 100 },
+          filters: sort ? { sortBy: sort.sortBy, sortOrder: sort.sortOrder } : undefined,
+        },
+      })
+
+      return {
+        ...collection,
+        products: productsResult.data?.collectionProducts?.products || [],
+      }
     } catch (error) {
       console.error('Error fetching collection:', error)
       console.error('Variables used:', { slugOrId })
@@ -967,19 +1051,22 @@ export class PiShopClient {
   }
 
   /**
-   * Process payment for checkout session
+   * Verify and finalize payment for a checkout session.
+   *
+   * Card confirmation itself happens client-side via Stripe.js against the
+   * session's clientSecret (see the checkout payment step) — this call
+   * checks that confirmation succeeded and transitions the session
+   * accordingly. `ProcessPaymentInput` only carries the session ID.
    *
    * @param sessionId - Checkout session ID
-   * @param paymentMethodId - Payment method ID
    * @returns Promise resolving to updated checkout session
    */
-  async processPayment(sessionId: string, paymentMethodId: string): Promise<CheckoutSession> {
+  async processPayment(sessionId: string): Promise<CheckoutSession> {
     const { data } = await this.client.mutate<ProcessPaymentResponse>({
       mutation: PROCESS_PAYMENT,
       variables: {
         input: {
           sessionId,
-          paymentMethodId,
         },
       },
     })

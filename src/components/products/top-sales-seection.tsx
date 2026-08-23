@@ -148,9 +148,7 @@ export const TopSalesSection: React.FC<TopSalesSectionProps> = ({
                   ${
                     callToAction.style === 'outline'
                       ? 'border-2 border-primary text-primary hover:bg-primary hover:text-white'
-                      : callToAction.style === 'secondary'
-                        ? 'bg-gray-900 text-white hover:bg-gray-700'
-                        : 'bg-primary text-white hover:bg-primary/90'
+                      : 'bg-neutral-900 text-white hover:bg-neutral-800'
                   }
                 `}
               >
@@ -191,9 +189,7 @@ export const TopSalesSection: React.FC<TopSalesSectionProps> = ({
                   ${
                     callToAction.style === 'outline'
                       ? 'border-2 border-primary text-primary hover:bg-primary hover:text-white'
-                      : callToAction.style === 'secondary'
-                        ? 'bg-gray-900 text-white hover:bg-gray-700'
-                        : 'bg-primary text-white hover:bg-primary/90'
+                      : 'bg-neutral-900 text-white hover:bg-neutral-800'
                   }
                 `}
               >

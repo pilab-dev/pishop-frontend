@@ -1,12 +1,14 @@
 'use client'
 
-import type { SelectFieldClientComponent } from 'payload'
+import type { TextFieldClientComponent } from 'payload'
 import { useEffect, useMemo, useState } from 'react'
 
 import { Product, client } from '@/lib/client'
 import { SelectField as PayloadSelectField } from '@payloadcms/ui'
 
-export const ProductSelectComponent: SelectFieldClientComponent = (props) => {
+// The underlying field is stored as `text` (see ../product-select/index.ts for why),
+// but we render it as a dropdown populated from live GraphQL product data.
+export const ProductSelectComponent: TextFieldClientComponent = (props) => {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

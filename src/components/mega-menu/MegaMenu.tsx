@@ -32,9 +32,9 @@ export const MegaMenu = ({ categoryTree }: MegaMenuProps) => {
                 <Link
                   href={`/collections/${category.slug}`}
                   className={cn(
-                    `group inline-flex h-9 w-max items-center justify-center rounded-md bg-background`,
-                    `px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground`,
-                    `focus:bg-accent focus:text-accent-foreground focus:outline-none`,
+                    `group inline-flex h-14 w-max items-center justify-center bg-transparent`,
+                    `px-4 py-2 text-sm font-bold uppercase transition-colors text-white hover:text-primary`,
+                    `focus:bg-transparent focus:text-primary focus:outline-none`,
                   )}
                 >
                   {category.name}
@@ -48,7 +48,9 @@ export const MegaMenu = ({ categoryTree }: MegaMenuProps) => {
 
           return (
             <NavigationMenuItem key={category.id}>
-              <NavigationMenuTrigger>{category.name}</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="bg-transparent text-white hover:bg-transparent hover:text-primary data-[state=open]:bg-transparent data-[state=open]:text-primary data-[active]:bg-transparent focus:bg-transparent text-sm font-bold uppercase h-14">
+                {category.name}
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="grid w-[800px] gap-3 p-4 md:w-[1000px] md:grid-cols-4 lg:w-[1200px]">
                   {columns.map((column, columnIndex) => (

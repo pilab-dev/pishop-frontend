@@ -74,7 +74,7 @@ const QuckLinks: FC<QuckLinksProps> = ({ navItems }) => {
               <Link href="/account">My account</Link>
             </li>
             <li className="list-item">
-              <Link href="/track-order">Order tracking</Link>
+              <Link href="/order-tracking">Order tracking</Link>
             </li>
             <li className="list-item">
               <Link href="/wishlist">Wish list</Link>
@@ -104,19 +104,21 @@ const FooterContactSection = ({
   contactEmail: string
   contactPhone: string
   contactAddress: string
-  logo: Media
+  logo?: Media | null
 }) => {
   return (
     <div className="flex flex-col gap-4">
       <div className="relative">
-        <Image
-          alt="PiShop Logo"
-          title="PiShop Logo"
-          src={logo.url!}
-          width={180}
-          height={100}
-          className="mb-8"
-        />
+        {logo?.url && (
+          <Image
+            alt="PiShop Logo"
+            title="PiShop Logo"
+            src={logo.url}
+            width={180}
+            height={100}
+            className="mb-8"
+          />
+        )}
         <FancyTitle label="PiShop" /> is the <i>fastest</i> e-commerce engine in th market! When you
         are looking for the best e-commerce solution, you can count on us! We have a{' '}
         <strong>
