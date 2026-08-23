@@ -9,8 +9,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        // Solid near-black CTA — the site's primary action treatment
+        // (checkout, forms, "add to cart"). Gold (bg-primary) is reserved
+        // for accents/links/small icon actions, not full-size buttons —
+        // white text on gold fails contrast and isn't used this way in
+        // the site's reference design.
+        default: "bg-neutral-900 text-white shadow hover:bg-neutral-800",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:

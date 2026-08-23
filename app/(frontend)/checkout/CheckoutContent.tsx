@@ -15,6 +15,7 @@ import { CheckoutLoading } from './CheckoutLoading'
 import { CheckoutOrderSummary } from './CheckoutOrderSummary'
 import { CheckoutPaymentForm } from './CheckoutPaymentForm'
 import { CheckoutSteps } from './CheckoutSteps'
+import { FancyTitle } from '@/components/fancy-title'
 
 interface CheckoutFormData {
   email: string
@@ -23,7 +24,6 @@ interface CheckoutFormData {
   phone: string
   shippingMethod: string
   shippingDestination?: string
-  paymentMethod: string
   shippingAddress: {
     address1: string
     address2?: string
@@ -62,7 +62,6 @@ export function CheckoutContent() {
     phone: '',
     shippingMethod: 'foxpost',
     shippingDestination: '',
-    paymentMethod: 'stripe',
     shippingAddress: {
       address1: '',
       address2: '',
@@ -161,83 +160,88 @@ export function CheckoutContent() {
     return Object.keys(errors).length === 0
   }
 
-  const validatePaymentInfo = () => {
-    const errors: Record<string, string> = {}
+  const buildCustomerData = () => ({
+    email: formData.email.trim(),
+    firstName: formData.firstName.trim(),
+    lastName: formData.lastName.trim(),
+    phone: formData.phone.trim() || undefined,
+    isGuest: true,
+    shippingAddress: {
+      ...formData.shippingAddress,
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+    },
+    billingAddress: {
+      ...formData.billingAddress,
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+    },
+  })
 
-    if (!formData.paymentMethod) {
-      errors.paymentMethod = 'Please select a payment method'
-    }
+  const buildShippingData = () => ({
+    methodId: formData.shippingMethod,
+    destination: formData.shippingDestination,
+    address: {
+      ...formData.shippingAddress,
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+    },
+  })
 
-    setFormErrors(errors)
-    return Object.keys(errors).length === 0
-  }
-
-  const handlePlaceOrder = async () => {
+  // Creates the checkout session (and its Stripe PaymentIntent + clientSecret)
+  // once, when the user first reaches the payment step, so Stripe Elements
+  // has a clientSecret to mount against before any card details are entered.
+  const goToPayment = async () => {
+    if (!validateShippingInfo()) return
     if (!cart) {
-      alert('Cart not available. Please refresh the page.')
+      setCheckoutError('Cart not available. Please refresh the page.')
       return
     }
 
-    if (!validateAllInfo()) {
-      setCurrentStep(1)
-      return
-    }
-
-    if (!validateShippingInfo()) {
-      setCurrentStep(2)
-      return
-    }
-
-    if (!validatePaymentInfo()) {
+    if (checkoutSession) {
       setCurrentStep(3)
       return
     }
 
-    setPaymentProcessing(true)
+    setLoadingSession(true)
+    setCheckoutError(null)
     try {
-      const customerData = {
-        email: formData.email.trim(),
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        phone: formData.phone.trim() || undefined,
-        isGuest: true,
-        shippingAddress: {
-          ...formData.shippingAddress,
-          firstName: formData.firstName.trim(),
-          lastName: formData.lastName.trim(),
-        },
-        billingAddress: {
-          ...formData.billingAddress,
-          firstName: formData.firstName.trim(),
-          lastName: formData.lastName.trim(),
-        },
-      }
+      const session = await client.createCheckout(cart.id, buildCustomerData(), buildShippingData())
+      setCheckoutSession(session)
+      setCurrentStep(3)
+    } catch (error) {
+      console.error('Error creating checkout session:', error)
+      setCheckoutError(
+        error instanceof Error ? error.message : 'Failed to start payment. Please try again.',
+      )
+    } finally {
+      setLoadingSession(false)
+    }
+  }
 
-      const shippingData = {
-        methodId: formData.shippingMethod,
-        destination: formData.shippingDestination,
-        address: {
-          ...formData.shippingAddress,
-          firstName: formData.firstName.trim(),
-          lastName: formData.lastName.trim(),
-        },
-      }
+  // Called after Stripe has already confirmed the PaymentIntent client-side.
+  const handlePlaceOrder = async () => {
+    if (!checkoutSession) {
+      setCheckoutError('Checkout session not found. Please go back and try again.')
+      return
+    }
 
-      console.log('Creating checkout with customer data:', customerData)
-      console.log('Creating checkout with shipping data:', shippingData)
-
-      const checkoutSession = await client.createCheckout(cart.id, customerData, shippingData)
-      const updatedSession = await client.processPayment(checkoutSession.id, formData.paymentMethod)
+    setPaymentProcessing(true)
+    setCheckoutError(null)
+    try {
+      const updatedSession = await client.processPayment(checkoutSession.id)
 
       if (updatedSession.status === 'PAYMENT_SUCCEEDED') {
         const order = await client.createOrder(checkoutSession.id)
         router.push(`/order-confirmation?order_id=${order.id}`)
       } else {
-        alert('Payment failed. Please try again.')
+        setCheckoutError('Payment could not be confirmed. Please try again.')
       }
     } catch (error) {
-      console.error('Error processing payment:', error)
-      alert('An error occurred while processing your payment. Please try again.')
+      console.error('Error finalizing order:', error)
+      setCheckoutError(
+        error instanceof Error ? error.message : 'An error occurred while finalizing your order.',
+      )
     } finally {
       setPaymentProcessing(false)
     }
@@ -271,12 +275,16 @@ export function CheckoutContent() {
     setCouponError(null)
 
     try {
-      const updatedCart = await client.applyCoupon(couponCode.trim())
+      await client.applyCoupon(couponCode.trim())
       refresh()
       setCouponCode('')
       if (checkoutSession) {
         try {
-          const updatedSession = await client.createCheckout(updatedCart.id)
+          const updatedSession = await client.createCheckout(
+            cart.id,
+            buildCustomerData(),
+            buildShippingData(),
+          )
           setCheckoutSession(updatedSession)
         } catch (error) {
           console.error('Error updating checkout session after coupon:', error)
@@ -298,11 +306,15 @@ export function CheckoutContent() {
     setCouponError(null)
 
     try {
-      const updatedCart = await client.removeCoupon(couponId)
+      await client.removeCoupon(couponId)
       refresh()
       if (checkoutSession) {
         try {
-          const updatedSession = await client.createCheckout(updatedCart.id)
+          const updatedSession = await client.createCheckout(
+            cart.id,
+            buildCustomerData(),
+            buildShippingData(),
+          )
           setCheckoutSession(updatedSession)
         } catch (error) {
           console.error('Error updating checkout session after removing coupon:', error)
@@ -363,19 +375,19 @@ export function CheckoutContent() {
                   {currentStep === 1 && (
                     <>
                       <MapPin className="w-5 h-5" />
-                      <span>Contact Information</span>
+                      <FancyTitle label="Contact Information" />
                     </>
                   )}
                   {currentStep === 2 && (
                     <>
                       <Truck className="w-5 h-5" />
-                      <span>Shipping Method & Destination</span>
+                      <FancyTitle label="Shipping Method & Destination" />
                     </>
                   )}
                   {currentStep === 3 && (
                     <>
                       <CreditCard className="w-5 h-5" />
-                      <span>Payment Details</span>
+                      <FancyTitle label="Payment Details" />
                     </>
                   )}
                 </CardTitle>
@@ -423,11 +435,7 @@ export function CheckoutContent() {
                       onInputChange={handleInputChange}
                       onAddressChange={handleAddressChange}
                       onBack={() => setCurrentStep(1)}
-                      onNext={() => {
-                        if (validateShippingInfo()) {
-                          setCurrentStep(3)
-                        }
-                      }}
+                      onNext={goToPayment}
                     />
                   )}
                 </div>
@@ -441,10 +449,8 @@ export function CheckoutContent() {
                 >
                   {currentStep === 3 && (
                     <CheckoutPaymentForm
-                      paymentMethod={formData.paymentMethod}
-                      formErrors={formErrors}
-                      paymentProcessing={paymentProcessing}
-                      onInputChange={handleInputChange}
+                      clientSecret={checkoutSession?.payment?.clientSecret ?? null}
+                      paymentProcessing={paymentProcessing || loadingSession}
                       onBack={() => setCurrentStep(2)}
                       onPlaceOrder={handlePlaceOrder}
                     />

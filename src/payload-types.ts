@@ -803,6 +803,8 @@ export interface Page {
   elements: (
     | HeroSliderProps
     | PromoBannersProps
+    | BestProposesProps
+    | PopularProductProps
     | FeaturedProductsProps
     | FeaturedProductProps
     | BestSellersProps
@@ -936,6 +938,22 @@ export interface PromoBannersProps {
   banners?:
     | {
         image: string | Media;
+        /**
+         * Tile headline, e.g. "Fly Camera"
+         */
+        heading: string;
+        /**
+         * Short line under the heading, e.g. "Hot Product"
+         */
+        subheading?: string | null;
+        /**
+         * Freeform price/offer text, e.g. "From $1200" or "Up to 45% off"
+         */
+        priceText?: string | null;
+        /**
+         * Optional button label, e.g. "Buy now"
+         */
+        ctaText?: string | null;
         link?: string | null;
         id?: string | null;
       }[]
@@ -943,6 +961,79 @@ export interface PromoBannersProps {
   id?: string | null;
   blockName?: string | null;
   blockType: 'promoBanners';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BestProposesProps".
+ */
+export interface BestProposesProps {
+  /**
+   * Section heading (first letter is highlighted)
+   */
+  title?: string | null;
+  /**
+   * Decorative tab labels shown above the section (e.g. Featured / One sale / Top rate)
+   */
+  tabs?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  primary: {
+    /**
+     * Select a product from the storefront.
+     */
+    productId: string;
+    badgeIcon?: ('headphones' | 'watch' | 'smartphone' | 'camera' | 'laptop') | null;
+    badgeColor?: ('red' | 'blue' | 'green') | null;
+  };
+  secondary?:
+    | {
+        /**
+         * Select a product from the storefront.
+         */
+        productId: string;
+        badgeIcon?: ('headphones' | 'watch' | 'smartphone' | 'camera' | 'laptop') | null;
+        badgeColor?: ('red' | 'blue' | 'green') | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'bestProposes';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopularProductProps".
+ */
+export interface PopularProductProps {
+  /**
+   * Section heading (first letter is highlighted)
+   */
+  title?: string | null;
+  /**
+   * Each tab shows its own icon and product grid
+   */
+  categories?:
+    | {
+        label: string;
+        icon: 'headphones' | 'watch' | 'smartphone' | 'gamepad' | 'laptop' | 'tv';
+        products?:
+          | {
+              /**
+               * Select a product from the storefront.
+               */
+              productId: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'popularProduct';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1731,6 +1822,8 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         heroSlider?: T | HeroSliderPropsSelect<T>;
         promoBanners?: T | PromoBannersPropsSelect<T>;
+        bestProposes?: T | BestProposesPropsSelect<T>;
+        popularProduct?: T | PopularProductPropsSelect<T>;
         featuredProducts?: T | FeaturedProductsPropsSelect<T>;
         featuredProduct?: T | FeaturedProductPropsSelect<T>;
         bestSellers?: T | BestSellersPropsSelect<T>;
@@ -1809,7 +1902,63 @@ export interface PromoBannersPropsSelect<T extends boolean = true> {
     | T
     | {
         image?: T;
+        heading?: T;
+        subheading?: T;
+        priceText?: T;
+        ctaText?: T;
         link?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BestProposesProps_select".
+ */
+export interface BestProposesPropsSelect<T extends boolean = true> {
+  title?: T;
+  tabs?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  primary?:
+    | T
+    | {
+        productId?: T;
+        badgeIcon?: T;
+        badgeColor?: T;
+      };
+  secondary?:
+    | T
+    | {
+        productId?: T;
+        badgeIcon?: T;
+        badgeColor?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PopularProductProps_select".
+ */
+export interface PopularProductPropsSelect<T extends boolean = true> {
+  title?: T;
+  categories?:
+    | T
+    | {
+        label?: T;
+        icon?: T;
+        products?:
+          | T
+          | {
+              productId?: T;
+              id?: T;
+            };
         id?: T;
       };
   id?: T;

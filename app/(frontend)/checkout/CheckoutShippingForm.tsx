@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { FancyTitle } from '@/components/fancy-title'
 import { Separator } from '@/components/ui/separator'
 import { ArrowLeft, ArrowRight, MapPin } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -59,7 +60,9 @@ export const CheckoutShippingForm = ({
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Choose Shipping Method</h3>
+        <h3 className="text-lg font-semibold">
+          <FancyTitle label="Choose Shipping Method" />
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Parcel Box Services */}
           <div className="space-y-3">

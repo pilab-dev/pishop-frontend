@@ -4,8 +4,17 @@ import { FaShoppingCart } from 'react-icons/fa'
 import type { Media } from '@/payload-types'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
+export type PromoBannerTile = {
+  image: string | Media
+  heading: string
+  subheading?: string | null
+  priceText?: string | null
+  ctaText?: string | null
+  link?: string | null
+}
+
 export type PromoBannersSectionProps = {
-  banners?: { image: string | Media; link?: string | null }[] | null
+  banners?: PromoBannerTile[] | null
 }
 
 export const PromoBannersSection = ({ banners }: PromoBannersSectionProps) => {
@@ -30,7 +39,7 @@ export const PromoBannersSection = ({ banners }: PromoBannersSectionProps) => {
                   {imageUrl ? (
                     <Image
                       src={imageUrl}
-                      alt={media?.alt || `Promo banner ${index + 1}`}
+                      alt={media?.alt || banner.heading}
                       fill
                       className="object-cover"
                     />
@@ -39,6 +48,23 @@ export const PromoBannersSection = ({ banners }: PromoBannersSectionProps) => {
                       <FaShoppingCart className="text-gray-400" size={24} />
                     </div>
                   )}
+
+                  <div className="absolute inset-0 flex flex-col justify-center gap-1 p-5 bg-gradient-to-r from-white/90 via-white/60 to-transparent">
+                    <p className="text-base font-bold uppercase text-gray-900 leading-tight">
+                      {banner.heading}
+                    </p>
+                    {banner.subheading && (
+                      <p className="text-sm text-gray-600">{banner.subheading}</p>
+                    )}
+                    {banner.priceText && (
+                      <p className="text-sm font-semibold text-primary">{banner.priceText}</p>
+                    )}
+                    {banner.ctaText && (
+                      <span className="mt-2 inline-flex w-fit items-center rounded-full bg-neutral-900 px-4 py-1.5 text-xs font-semibold text-white group-hover:bg-neutral-800 transition-colors">
+                        {banner.ctaText}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </Link>
             )

@@ -33,18 +33,14 @@ async function fetchProducts(limit: number): Promise<Product[]> {
 }
 
 // The Pages afterChange/afterDelete hooks call Next.js's revalidatePath, which
-// requires a live Next.js request context that doesn't exist when running this
-// script standalone. The underlying write already succeeds by the time the
-// hook runs, so this specific failure is expected here and safe to ignore.
-async function ignoringRevalidateOutsideNextContext(fn: () => Promise<unknown>) {
-  try {
-    await fn()
-  } catch (err) {
-    if (!(err instanceof Error) || !err.message.includes('static generation store missing')) {
-      throw err
-    }
-  }
-}
+// throws when there's no live Next.js request context (always true for this
+// standalone script). That throw happens inside the hook, which runs as part
+// of the same transaction as the write itself - Payload aborts the write
+// rather than committing it, so catching the error afterwards is too late,
+// the page never actually gets created. Passing disableRevalidate through
+// context (which revalidatePage.ts explicitly checks for) skips the call
+// instead of throwing-and-catching around it.
+const skipRevalidate = { disableRevalidate: true }
 
 async function main() {
   const payload = await getPayload({ config })
@@ -116,14 +112,12 @@ async function main() {
   })
   if (existing.docs.length > 0) {
     console.log('Home page already exists, deleting before re-seeding...')
-    await ignoringRevalidateOutsideNextContext(() =>
-      payload.delete({ collection: 'pages', id: existing.docs[0].id }),
-    )
+    await payload.delete({ collection: 'pages', id: existing.docs[0].id, context: skipRevalidate })
   }
 
-  await ignoringRevalidateOutsideNextContext(() =>
-    payload.create({
+  await payload.create({
     collection: 'pages',
+    context: skipRevalidate,
     data: {
       title: 'Home',
       _status: 'published',
@@ -141,7 +135,11 @@ async function main() {
         {
           blockType: 'promoBanners',
           title: 'Promo Banners',
-          banners: bannerImages.map((imageId) => ({ image: imageId, link: '/collections/electronics' })),
+          banners: [
+            { image: bannerImages[0], heading: 'Fly Camera', subheading: 'Hot Product', link: '/collections/electronics' },
+            { image: bannerImages[1], heading: 'HP Envy Laptop', priceText: 'From $1200', ctaText: 'Buy now', link: '/collections/electronics' },
+            { image: bannerImages[2], heading: 'Big Summer Sale', subheading: 'Headphones', priceText: 'Up to 45% off', link: '/collections/electronics' },
+          ],
         },
         {
           blockType: 'featuredProduct',
@@ -172,8 +170,7 @@ async function main() {
         },
       ],
     } as never,
-    }),
-  )
+  })
 
   console.log('Home page created successfully.')
   process.exit(0)

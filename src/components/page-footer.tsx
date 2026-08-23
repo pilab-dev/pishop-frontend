@@ -74,7 +74,7 @@ const QuckLinks: FC<QuckLinksProps> = ({ navItems }) => {
               <Link href="/account">My account</Link>
             </li>
             <li className="list-item">
-              <Link href="/track-order">Order tracking</Link>
+              <Link href="/order-tracking">Order tracking</Link>
             </li>
             <li className="list-item">
               <Link href="/wishlist">Wish list</Link>

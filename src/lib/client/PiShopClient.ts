@@ -1051,19 +1051,22 @@ export class PiShopClient {
   }
 
   /**
-   * Process payment for checkout session
+   * Verify and finalize payment for a checkout session.
+   *
+   * Card confirmation itself happens client-side via Stripe.js against the
+   * session's clientSecret (see the checkout payment step) — this call
+   * checks that confirmation succeeded and transitions the session
+   * accordingly. `ProcessPaymentInput` only carries the session ID.
    *
    * @param sessionId - Checkout session ID
-   * @param paymentMethodId - Payment method ID
    * @returns Promise resolving to updated checkout session
    */
-  async processPayment(sessionId: string, paymentMethodId: string): Promise<CheckoutSession> {
+  async processPayment(sessionId: string): Promise<CheckoutSession> {
     const { data } = await this.client.mutate<ProcessPaymentResponse>({
       mutation: PROCESS_PAYMENT,
       variables: {
         input: {
           sessionId,
-          paymentMethodId,
         },
       },
     })

@@ -1,6 +1,7 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { FancyTitle } from '@/components/fancy-title'
 import { Separator } from '@/components/ui/separator'
 import { Cart } from '@/lib/client/types'
 import { formatCurrency } from '@/lib/formatCurrrency'
@@ -42,10 +43,10 @@ export const CheckoutOrderSummary = ({
     <div className="lg:w-96">
       <Card className="sticky top-4">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <h2 className="flex items-center space-x-2 text-xl font-bold">
             <ShoppingBag className="w-5 h-5" />
-            <span>Order Summary</span>
-          </CardTitle>
+            <FancyTitle label="Order Summary" />
+          </h2>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Cart Items */}
