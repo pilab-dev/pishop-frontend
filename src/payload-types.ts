@@ -805,6 +805,7 @@ export interface Page {
     | PromoBannersProps
     | BestProposesProps
     | PopularProductProps
+    | ProductSliderProps
     | FeaturedProductsProps
     | FeaturedProductProps
     | BestSellersProps
@@ -972,7 +973,11 @@ export interface BestProposesProps {
    */
   title?: string | null;
   /**
-   * Decorative tab labels shown above the section (e.g. Featured / One sale / Top rate)
+   * How to display the products
+   */
+  layout?: ('grid' | 'carousel') | null;
+  /**
+   * Tab labels shown above the section (e.g. Featured / On sale / Top rate)
    */
   tabs?:
     | {
@@ -1034,6 +1039,40 @@ export interface PopularProductProps {
   id?: string | null;
   blockName?: string | null;
   blockType: 'popularProduct';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductSliderProps".
+ */
+export interface ProductSliderProps {
+  /**
+   * Section heading
+   */
+  title?: string | null;
+  /**
+   * Optional subtitle below the heading
+   */
+  subtitle?: string | null;
+  products?:
+    | {
+        /**
+         * Select a product from the storefront.
+         */
+        productId: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Number of visible columns on desktop
+   */
+  columns?: ('3' | '4' | '5') | null;
+  /**
+   * Show product prices
+   */
+  showPrice?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'productSlider';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1824,6 +1863,7 @@ export interface PagesSelect<T extends boolean = true> {
         promoBanners?: T | PromoBannersPropsSelect<T>;
         bestProposes?: T | BestProposesPropsSelect<T>;
         popularProduct?: T | PopularProductPropsSelect<T>;
+        productSlider?: T | ProductSliderPropsSelect<T>;
         featuredProducts?: T | FeaturedProductsPropsSelect<T>;
         featuredProduct?: T | FeaturedProductPropsSelect<T>;
         bestSellers?: T | BestSellersPropsSelect<T>;
@@ -1918,6 +1958,7 @@ export interface PromoBannersPropsSelect<T extends boolean = true> {
  */
 export interface BestProposesPropsSelect<T extends boolean = true> {
   title?: T;
+  layout?: T;
   tabs?:
     | T
     | {
@@ -1961,6 +2002,24 @@ export interface PopularProductPropsSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductSliderProps_select".
+ */
+export interface ProductSliderPropsSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  products?:
+    | T
+    | {
+        productId?: T;
+        id?: T;
+      };
+  columns?: T;
+  showPrice?: T;
   id?: T;
   blockName?: T;
 }

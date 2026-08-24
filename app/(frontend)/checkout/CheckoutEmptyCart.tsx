@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic'
 
 // Dynamically import heavy components to reduce initial bundle size
 const Button = dynamic(() => import('@/components/ui/button').then((mod) => mod.Button), {
-  loading: () => <div className="h-10 bg-gray-200 animate-pulse rounded" />,
+  loading: () => <div className="h-10 bg-gray-200 animate-pulse" />,
 })
 
 export const CheckoutEmptyCart = () => {

@@ -9,12 +9,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Solid near-black CTA — the site's primary action treatment
-        // (checkout, forms, "add to cart"). Gold (bg-primary) is reserved
-        // for accents/links/small icon actions, not full-size buttons —
-        // white text on gold fails contrast and isn't used this way in
-        // the site's reference design.
-        default: "bg-neutral-900 text-white shadow hover:bg-neutral-800",
+        // Solid near-black CTA — checkout, forms, "add to cart"
+        default: "bg-cta text-cta-foreground shadow hover:bg-cta/90",
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
@@ -23,14 +19,20 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        // Dana gold accent — badges, small accent actions
+        gold: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
       },
       size: {
         default: "h-9 px-4 py-2",
         clear: "h-9 px-4 py-2 background-transparent",
-        rounded: "h-9 px-4 py-2 rounded-full",
         sm: "h-8 px-3 text-xs",
         lg: "h-10 px-8",
         icon: "h-9 w-9",
+        // Dana pill-shaped CTA buttons
+        pill: "h-11 px-10 rounded-full text-sm font-semibold uppercase tracking-wide",
+      },
+      rounded: {
+        true: "rounded-full",
       },
     },
     defaultVariants: {

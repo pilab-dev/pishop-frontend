@@ -1,5 +1,5 @@
 import '@/globals.css'
-import { Inter, Lato } from 'next/font/google'
+import { Inter, Lato, Montserrat } from 'next/font/google'
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -13,6 +13,13 @@ const lato = Lato({
   weight: ['400', '700'],
   display: 'swap',
   variable: '--font-lato',
+})
+
+const montserrat = Montserrat({
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '600', '700', '800'],
+  display: 'swap',
+  variable: '--font-montserrat',
 })
 
 import { ConditionalToaster } from '@/components/ConditionalToaster'
@@ -58,7 +65,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning lang="en" className={`${inter.variable} ${lato.variable}`}>
+    <html suppressHydrationWarning lang="en" className={`${inter.variable} ${lato.variable} ${montserrat.variable}`}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

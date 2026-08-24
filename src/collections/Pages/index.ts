@@ -13,6 +13,7 @@ import { BrandLogosBlock } from '@/blocks/BrandLogosBlock/config'
 import { MiniProductListBlock } from '@/blocks/MiniProductListBlock/config'
 import { BestProposesBlock } from '@/blocks/BestProposesBlock/config'
 import { PopularProductBlock } from '@/blocks/PopularProductBlock/config'
+import { ProductSliderBlock } from '@/blocks/ProductSliderBlock/config'
 import { FormBlock } from '@/blocks/Form/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { slugField } from '@/fields/slug'
@@ -90,6 +91,7 @@ export const Pages: CollectionConfig<'pages'> = {
         PromoBannersBlock,
         BestProposesBlock,
         PopularProductBlock,
+        ProductSliderBlock,
         FeaturedProductsBlock,
         FeaturedProductBlock,
         BestSellersBlock,

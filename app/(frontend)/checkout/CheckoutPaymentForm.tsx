@@ -16,12 +16,12 @@ interface CheckoutPaymentFormProps {
 
 function ComingSoonOption({ label, description, badge }: { label: string; description: string; badge: string }) {
   return (
-    <label className="flex items-center space-x-3 p-4 border rounded-lg opacity-60 cursor-not-allowed">
+    <label className="flex items-center space-x-3 p-4 border opacity-60 cursor-not-allowed">
       <input type="radio" name="paymentMethod" disabled className="text-primary" />
       <div className="flex-1">
         <div className="font-medium flex items-center gap-2">
           {label}
-          <span className="text-xs font-normal px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+          <span className="text-xs font-normal px-1.5 py-0.5 bg-muted text-muted-foreground">
             Coming soon
           </span>
         </div>
@@ -107,7 +107,7 @@ export const CheckoutPaymentForm = ({
           <FancyTitle label="Payment Method" />
         </h3>
         <div className="grid grid-cols-1 gap-3">
-          <div className="p-4 border rounded-lg bg-muted/30">
+          <div className="p-4 border bg-muted/30">
             <div className="flex items-center space-x-3 mb-4">
               <input type="radio" name="paymentMethod" checked readOnly className="text-primary" />
               <div className="flex-1">

@@ -34,6 +34,10 @@ import type {
   ParcelBox,
   CategoriesResponse,
   CollectionsResponse,
+  AuthPayload,
+  LoginResponse,
+  RegisterResponse,
+  LogoutResponse,
 } from './types'
 import type { PiShopClientConfig } from './config'
 import {
@@ -74,6 +78,7 @@ import {
 } from './queries/checkout'
 import { CREATE_ORDER, GET_ORDER, GET_ORDERS, GET_ORDER_BY_NUMBER } from './queries/orders'
 import { GET_COLLECTIONS_QUERY } from './queries/collection'
+import { LOGIN, REGISTER, LOGOUT } from './queries/auth'
 
 /**
  * Headless GraphQL client for PiShop e-commerce platform
@@ -1217,6 +1222,85 @@ export class PiShopClient {
     }
 
     return data.orderByNumber
+  }
+
+  /**
+   * Authenticate a customer with email and password
+   *
+   * @param email - Account email
+   * @param password - Account password
+   * @returns Promise resolving to the auth payload (success/token/user/errors)
+   */
+  async login(email: string, password: string): Promise<AuthPayload> {
+    try {
+      const { data } = await this.client.mutate<LoginResponse>({
+        mutation: LOGIN,
+        variables: { input: { email, password } },
+      })
+
+      return (
+        data?.login || {
+          success: false,
+          errors: [{ code: 'UNKNOWN_ERROR', message: 'Login failed' }],
+        }
+      )
+    } catch (error) {
+      return {
+        success: false,
+        errors: [{ code: 'NETWORK_ERROR', message: (error as Error).message }],
+      }
+    }
+  }
+
+  /**
+   * Register a new customer account
+   *
+   * @param input - Registration details (email, password, firstName, lastName, acceptedTerms)
+   * @returns Promise resolving to the auth payload (success/token/user/errors)
+   */
+  async register(input: {
+    email: string
+    password: string
+    firstName: string
+    lastName: string
+    acceptedTerms: boolean
+  }): Promise<AuthPayload> {
+    try {
+      const { data } = await this.client.mutate<RegisterResponse>({
+        mutation: REGISTER,
+        variables: { input },
+      })
+
+      return (
+        data?.register || {
+          success: false,
+          errors: [{ code: 'UNKNOWN_ERROR', message: 'Registration failed' }],
+        }
+      )
+    } catch (error) {
+      return {
+        success: false,
+        errors: [{ code: 'NETWORK_ERROR', message: (error as Error).message }],
+      }
+    }
+  }
+
+  /**
+   * End a customer session by invalidating their refresh token
+   *
+   * @param refreshToken - The refresh token issued at login/registration
+   */
+  async logout(refreshToken: string): Promise<boolean> {
+    try {
+      const { data } = await this.client.mutate<LogoutResponse>({
+        mutation: LOGOUT,
+        variables: { input: { refreshToken } },
+      })
+
+      return data?.logout.success ?? false
+    } catch {
+      return false
+    }
   }
 
   /**

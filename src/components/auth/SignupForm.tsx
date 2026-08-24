@@ -32,7 +32,7 @@ export const SignupForm = () => {
       </div>
 
       {/* Social Signup Buttons */}
-      <div className="space-y-3">
+      <div className="flex items-center justify-center gap-3">
         <SocialButton
           variant="signup"
           icon={
@@ -94,15 +94,8 @@ export const SignupForm = () => {
             type={showPassword ? 'text' : 'password'}
             label="Create Password"
             placeholder="Create a strong password"
-            icon={
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors"
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            }
+            icon={showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            onIconClick={() => setShowPassword(!showPassword)}
             {...form.register('password')}
           />
           {form.formState.errors.password && (
@@ -112,8 +105,7 @@ export const SignupForm = () => {
 
         <Button
           type="submit"
-          variant="outline"
-          className="w-full"
+          className="w-full rounded-full bg-black text-white hover:bg-[#f5c615] hover:text-black transition-colors"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? 'Creating account...' : 'Continue with Email'}

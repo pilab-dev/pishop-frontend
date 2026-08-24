@@ -64,7 +64,11 @@ export const CartIcon = ({ variant = 'desktop' }: CartIconProps = {}) => {
   )
 
   return (
-    <AnimatedPopover trigger={trigger} sideOffset={0} className="w-96 p-0">
+    <AnimatedPopover
+      trigger={trigger}
+      sideOffset={0}
+      className="w-80 p-0 rounded-none border border-gray-200 shadow-none"
+    >
       <CartPopover />
     </AnimatedPopover>
   )

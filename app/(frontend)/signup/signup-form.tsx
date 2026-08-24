@@ -2,53 +2,56 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@ui/button";
+import { Checkbox } from "@ui/checkbox";
+import { Label } from "@ui/label";
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@ui/form";
 import { Separator } from "@ui/separator";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
 import { FloatingLabelInput } from "@/components/ui/floating-label-input";
+import { handleFullSignup } from "@/components/auth/auth-handlers";
+import { fullSignupSchema, type FullSignupFormData } from "@/components/auth/auth-schemas";
+import { useAuthStore } from "@/store/auth-store";
 import { User, Mail, Lock } from "lucide-react";
 
-interface ISignupForm {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
 const SignupForm = () => {
-  // Define the schema with password confirmation validation
-  const signupSchema = z
-    .object({
-      firstName: z.string().min(1, { message: "First name is required" }),
-      lastName: z.string().min(1, { message: "Last name is required" }),
-      email: z.string().email({ message: "Invalid email address" }),
-      password: z
-        .string()
-        .min(8, { message: "Password must be at least 8 characters long" }),
-      confirmPassword: z
-        .string()
-        .min(8, { message: "Password must be at least 8 characters long" }),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords don't match",
-      path: ["confirmPassword"],
-    });
+  const router = useRouter();
+  const [formError, setFormError] = useState<string | null>(null);
 
-  const form = useForm<ISignupForm>({
-    resolver: zodResolver(signupSchema as any),
+  const form = useForm<FullSignupFormData>({
+    resolver: zodResolver(fullSignupSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      acceptedTerms: undefined as unknown as true,
+    },
   });
 
-  const onSubmit = (data: ISignupForm) => {
-    console.log(data);
+  useEffect(() => {
+    const email = new URLSearchParams(window.location.search).get("email");
+    if (email) form.setValue("email", email);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onSubmit = async (data: FullSignupFormData) => {
+    setFormError(null);
+    const result = await handleFullSignup(data);
+    if (result.success && result.user) {
+      useAuthStore.getState().setUser(result.user);
+      router.push("/");
+    } else {
+      setFormError(result.message || "Registration failed");
+    }
   };
 
   return (
@@ -156,10 +159,39 @@ const SignupForm = () => {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="acceptedTerms"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center gap-2">
+                  <FormControl>
+                    <Checkbox
+                      id="acceptedTerms"
+                      checked={field.value === true}
+                      onCheckedChange={(checked) => field.onChange(checked === true)}
+                    />
+                  </FormControl>
+                  <Label htmlFor="acceptedTerms" className="text-sm text-gray-600">
+                    I accept the{" "}
+                    <Link href="/terms" className="text-primary hover:underline">
+                      Terms of Service
+                    </Link>
+                  </Label>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {formError && (
+            <p className="text-sm text-red-500 text-center">{formError}</p>
+          )}
+
           <Button
             disabled={form.formState.isSubmitting}
             type="submit"
-            variant="outline"
+            className="rounded-full bg-black text-white hover:bg-[#f5c615] hover:text-black transition-colors"
           >
             {form.formState.isSubmitting ? "Signing up..." : "Sign up"}
           </Button>

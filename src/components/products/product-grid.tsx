@@ -60,6 +60,12 @@ const ProductTile: React.FC<ProductTileProps> = ({ product }) => {
         />
       )}
 
+      {(product.shortDescription || product.description) && (
+        <p className="products-font text-sm text-gray-500 line-clamp-2 mb-8">
+          {(product.shortDescription || product.description || '').replace(/<[^>]*>/g, '')}
+        </p>
+      )}
+
       <div className="absolute bottom-0 left-0 right-0">
         <div className="flex flex-row justify-center">
           <ProductButtons product={product} show={hover} handle={product.slug} />

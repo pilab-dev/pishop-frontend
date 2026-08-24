@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic'
 const FloatingLabelInput = dynamic(
   () => import('@/components/ui/floating-label-input').then((mod) => mod.FloatingLabelInput),
   {
-    loading: () => <div className="h-12 bg-gray-200 animate-pulse rounded" />,
+    loading: () => <div className="h-12 bg-gray-200 animate-pulse" />,
   },
 )
 

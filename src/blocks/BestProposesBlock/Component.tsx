@@ -7,7 +7,7 @@ import { SectionDecor } from '@/components/ui/section-decor'
 import { BestProposesClient } from './BestProposesClient'
 
 export const BestProposesBlock: React.FC<BestProposesProps> = async (props) => {
-  const { title, tabs, primary, secondary } = props
+  const { title, tabs, primary, secondary, layout } = props
 
   const productIds = [primary?.productId, ...(secondary || []).map((s) => s.productId)].filter(
     (id): id is string => Boolean(id),
@@ -27,7 +27,7 @@ export const BestProposesBlock: React.FC<BestProposesProps> = async (props) => {
   return (
     <section className="relative overflow-hidden bg-white py-14">
       <div className="mx-auto max-w-[1280px] px-5">
-        <h2 className="mb-8 flex items-center text-3xl font-bold uppercase">
+        <h2 className="mb-8 flex items-center text-3xl font-bold uppercase font-heading">
           <SectionDecor />
           <FancyTitle label={title || 'Best Proposes'} />
         </h2>
@@ -37,6 +37,7 @@ export const BestProposesBlock: React.FC<BestProposesProps> = async (props) => {
             primary={{ product: primaryProduct as Product, icon: primary?.badgeIcon, color: primary?.badgeColor }}
             secondary={secondaryTiles}
             tabs={tabs?.map((t) => t.label)}
+            layout={layout || 'grid'}
           />
         </div>
       </div>

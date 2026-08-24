@@ -29,7 +29,7 @@ export const CartPopover = () => {
   }
 
   return (
-    <div className="w-[320px] max-h-[80vh] overflow-hidden bg-white p-6 border border-gray-100 shadow-2xl">
+    <div className="w-full max-h-[80vh] overflow-hidden bg-white p-5">
       {/* Content */}
       <div className="max-h-72 overflow-y-auto pr-2 custom-scrollbar">
         {items.length === 0 ? (
@@ -50,13 +50,13 @@ export const CartPopover = () => {
                 className="flex items-center gap-4 relative group pb-4 border-b border-gray-50 last:border-0 last:pb-0"
               >
                 {/* Product Image */}
-                <Link href={`/product/${item.product.slug}`} className="w-[70px] h-[70px] bg-gray-100 flex-shrink-0 border border-gray-200">
+                <Link href={`/product/${item.product.slug}`} className="w-[90px] h-[90px] bg-gray-100 flex-shrink-0 border border-gray-200">
                   {item.product.images[0] && (
                     <Image
                       src={item.product.images[0].url}
                       alt={item.product.name}
-                      width={70}
-                      height={70}
+                      width={90}
+                      height={90}
                       className="w-full h-full object-cover"
                     />
                   )}
@@ -94,14 +94,14 @@ export const CartPopover = () => {
             {formatCurrency(totals.total.amount, totals.total.currencyCode)}
           </p>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col">
             <Link href="/cart" className="w-full">
-              <button className="w-full py-3 border border-gray-200 text-gray-600 uppercase text-[11px] tracking-widest font-semibold hover:border-gray-800 hover:text-gray-800 transition-colors">
+              <button className="w-full py-3 border border-black text-black uppercase text-[11px] tracking-widest font-semibold hover:bg-black hover:text-white transition-colors">
                 View Cart
               </button>
             </Link>
             <Link href="/checkout" className="w-full">
-              <button className="w-full py-3 bg-black text-white uppercase text-[11px] tracking-widest font-semibold hover:bg-gray-900 transition-colors">
+              <button className="w-full py-3 bg-black text-white uppercase text-[11px] tracking-widest font-semibold hover:bg-[#f5c615] hover:text-black transition-colors">
                 Check out
               </button>
             </Link>

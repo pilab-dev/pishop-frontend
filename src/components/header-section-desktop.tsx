@@ -39,7 +39,7 @@ const CartIcon = dynamic(() => import('./cart-icon').then((mod) => ({ default: m
 
 const TopRow = () => {
   return (
-    <div className="page-gray-950 hidden sm:block">
+    <div className="bg-[#141414] hidden sm:block">
       <div className="max-w-[1280px] mx-auto px-5 py-2 flex flex-row justify-between items-center">
         <div>
           <ul className="flex flex-row text-sm space-x-3">
@@ -61,18 +61,18 @@ const TopRow = () => {
           </ul>
         </div>
 
-        <div className="flex items-center space-x-8 font-medium text-sm">
-          <div className="flex flex-row items-center space-x-2">
-            <FaFlag fontSize={14} />
-            <span>English</span>
-          </div>
-          <div className="flex flex-row items-center space-x-2">
+        <div className="flex items-center space-x-6 font-medium text-sm text-gray-300">
+          <Link href="/about" className="flex flex-row items-center space-x-2 hover:text-primary transition-colors">
             <FaWrench fontSize={14} />
             <span>Guarantee</span>
-          </div>
+          </Link>
+          <Link href="/contact" className="flex flex-row items-center space-x-2 hover:text-primary transition-colors">
+            <FaFlag fontSize={14} />
+            <span>Store location</span>
+          </Link>
           <div className="flex flex-row items-center space-x-2">
             <FaMoneyBill fontSize={14} />
-            <span>USA Dollar</span>
+            <span>USD Dollar</span>
           </div>
 
           <AuthPopover />
@@ -112,7 +112,7 @@ export const HeaderSectionDesktop = ({
           {logo && <Image src={logo.url!} alt="Logo" width={100} height={100} priority />}
         </div>
 
-        <div className="flex flex-row flex-1 space-x-8 uppercase font-bold products-font">
+        <div className="flex flex-row flex-1 space-x-8 uppercase font-bold font-heading">
           {navItems.map((item) => (
             <Link
               key={item.id}
@@ -136,7 +136,7 @@ export const HeaderSectionDesktop = ({
       </div>
 
       {/* Desktop Bottom Row */}
-      <div className="hidden sm:block page-gray-950 text-white">
+      <div className="hidden sm:block bg-[#141414] text-white">
         <div className="max-w-[1280px] uppercase mx-auto px-5 py-4 flex flex-row justify-between items-center">
           <div className="flex-1">
             <MegaMenu categoryTree={categoryTree} />

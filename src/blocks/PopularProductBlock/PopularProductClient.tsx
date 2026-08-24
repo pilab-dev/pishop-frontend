@@ -17,10 +17,6 @@ const ICONS: Record<string, LucideIcon> = {
   tv: Tv,
 }
 
-// Mirrors HotDealsSection's slideVariants (hooks/useHotDeals.ts) so category
-// switches here feel like the same motion language as the rest of the home
-// page, just sliding horizontally (tabs are laid out left-to-right) instead
-// of vertically.
 const gridVariants = {
   enter: (direction: 'left' | 'right') => ({
     x: direction === 'right' ? 40 : -40,
@@ -43,7 +39,7 @@ function ProductTile({ product }: { product: Product }) {
   return (
     <Link
       href={`/product/${product.slug}`}
-      className="group relative flex flex-col bg-white p-4 border border-gray-100 hover:shadow-lg hover:z-10 transition-shadow"
+      className="group relative flex flex-col border border-dana-border bg-white p-4 transition-shadow hover:z-10 hover:shadow-lg"
     >
       <div className="relative mb-3 aspect-square overflow-hidden bg-gray-50">
         {product.images?.[0] && (
@@ -55,7 +51,7 @@ function ProductTile({ product }: { product: Product }) {
           />
         )}
       </div>
-      <h3 className="line-clamp-2 text-sm font-semibold text-gray-900">{product.name}</h3>
+      <h3 className="line-clamp-2 font-heading text-sm font-semibold text-gray-900">{product.name}</h3>
       <p className="mt-1 font-bold text-primary">
         {formatCurrency(product.basePrice.amount, product.basePrice.currencyCode)}
       </p>
@@ -77,6 +73,7 @@ export function PopularProductClient({ categories }: { categories: PopularProduc
 
   return (
     <div>
+      {/* Category icon tabs — Dana style */}
       <div className="mb-6 flex justify-end gap-2">
         {categories.map((category, index) => {
           const Icon = ICONS[category.icon] || Headphones
@@ -89,7 +86,7 @@ export function PopularProductClient({ categories }: { categories: PopularProduc
               aria-label={category.label}
               aria-current={isActive}
               className={`relative flex h-10 w-10 items-center justify-center transition-colors ${
-                isActive ? 'bg-primary text-black' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                isActive ? 'bg-primary text-[#212121]' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
               }`}
             >
               {isActive && (
@@ -106,6 +103,7 @@ export function PopularProductClient({ categories }: { categories: PopularProduc
         })}
       </div>
 
+      {/* Product grid */}
       <div className="relative overflow-hidden">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div

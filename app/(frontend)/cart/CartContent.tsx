@@ -58,7 +58,7 @@ function CouponForm() {
       {appliedCoupons.map((coupon) => (
         <div
           key={coupon.id}
-          className="flex items-center justify-between rounded-md bg-green-50 px-3 py-2 text-sm text-green-700"
+          className="flex items-center justify-between border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700"
         >
           <span>Coupon &quot;{coupon.couponCode}&quot; applied</span>
           <Button
@@ -205,7 +205,7 @@ export function CartContent() {
                               alt={item.product.images[0].altText || item.product.name}
                               width={80}
                               height={80}
-                              className="w-20 h-20 object-cover rounded-md"
+                              className="w-20 h-20 object-cover border border-gray-200"
                             />
                           </div>
                         )}

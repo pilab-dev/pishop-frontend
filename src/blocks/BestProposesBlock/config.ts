@@ -29,11 +29,23 @@ export const BestProposesBlock: Block = {
       },
     },
     {
+      name: 'layout',
+      type: 'select',
+      defaultValue: 'grid',
+      options: [
+        { label: 'Grid (1 large + 2 small)', value: 'grid' },
+        { label: 'Carousel (horizontal scroll)', value: 'carousel' },
+      ],
+      admin: {
+        description: 'How to display the products',
+      },
+    },
+    {
       name: 'tabs',
       type: 'array',
       maxRows: 4,
       admin: {
-        description: 'Decorative tab labels shown above the section (e.g. Featured / One sale / Top rate)',
+        description: 'Tab labels shown above the section (e.g. Featured / On sale / Top rate)',
       },
       fields: [
         {
@@ -67,7 +79,7 @@ export const BestProposesBlock: Block = {
       label: 'Secondary products (stacked small tiles)',
       type: 'array',
       minRows: 0,
-      maxRows: 2,
+      maxRows: 4,
       fields: [
         productSelectField({ required: true }),
         {

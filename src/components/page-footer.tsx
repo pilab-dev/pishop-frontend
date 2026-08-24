@@ -43,9 +43,9 @@ const QuckLinks: FC<QuckLinksProps> = ({ navItems }) => {
   ]
 
   return (
-    <div className="footer-links flex flex-col gap-8 md:flex-row md:gap-16">
+      <div className="footer-links flex flex-col gap-8 md:flex-row md:gap-16">
       <div>
-        <h3 className="font-bold text-lg md:text-xl mb-5 uppercase">
+        <h3 className="font-bold font-heading text-lg md:text-xl mb-5 uppercase">
           <FancyTitle label="Quick links" />
         </h3>
         <div
@@ -65,7 +65,7 @@ const QuckLinks: FC<QuckLinksProps> = ({ navItems }) => {
       </div>
 
       <div>
-        <h3 className="font-bold text-lg md:text-xl mb-5 uppercase">
+        <h3 className="font-bold font-heading text-lg md:text-xl mb-5 uppercase">
           <FancyTitle label="Customer Care" />
         </h3>
         <div className="flex flex-row space-x-12">

@@ -20,12 +20,14 @@ import { MiniProductListBlock } from "@/blocks/MiniProductListBlock/Component";
 import { FeaturedProductBlock } from "@/blocks/FeaturedProductBlock/Component";
 import { BestProposesBlock } from "@/blocks/BestProposesBlock/Component";
 import { PopularProductBlock } from "@/blocks/PopularProductBlock/Component";
+import { ProductSliderBlock } from "@/blocks/ProductSliderBlock/Component";
 
 const blockComponents = {
   heroSlider: HeroSliderBlock,
   promoBanners: PromoBannersBlock,
   bestProposes: BestProposesBlock,
   popularProduct: PopularProductBlock,
+  productSlider: ProductSliderBlock,
   brandLogos: BrandLogosBlock,
   miniProductList: MiniProductListBlock,
   featuredProduct: FeaturedProductBlock,

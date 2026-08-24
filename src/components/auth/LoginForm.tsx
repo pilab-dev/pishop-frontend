@@ -11,11 +11,16 @@ import { Checkbox } from '../ui/checkbox'
 import { FloatingLabelInput } from '../ui/floating-label-input'
 import { Label } from '../ui/label'
 
+import type { AuthUser } from '@/lib/client'
 import { SocialButton } from './SocialButton'
 import { loginSchema, type LoginFormData } from './auth-schemas'
 import { handleLogin, handleSocialLogin } from './auth-handlers'
 
-export const LoginForm = () => {
+interface LoginFormProps {
+  onSuccess?: (user: AuthUser) => void
+}
+
+export const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false)
 
   const form = useForm<LoginFormData>({
@@ -27,6 +32,15 @@ export const LoginForm = () => {
     },
   })
 
+  const onSubmit = async (data: LoginFormData) => {
+    const result = await handleLogin(data)
+    if (result.success && result.user) {
+      onSuccess?.(result.user)
+    } else {
+      form.setError('root', { message: result.message || 'Login failed' })
+    }
+  }
+
   return (
     <div className="p-6 space-y-4">
       <div className="text-center mb-6">
@@ -35,7 +49,7 @@ export const LoginForm = () => {
       </div>
 
       {/* Social Login Buttons */}
-      <div className="space-y-3">
+      <div className="flex items-center justify-center gap-3">
         <SocialButton
           icon={
             <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
@@ -71,7 +85,7 @@ export const LoginForm = () => {
       </div>
 
       {/* Login Form */}
-      <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-1">
           <FloatingLabelInput
             id="login-email"
@@ -95,15 +109,8 @@ export const LoginForm = () => {
               type={showPassword ? 'text' : 'password'}
               label="Password"
               placeholder="Enter your password"
-              icon={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors"
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              }
+              icon={showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              onIconClick={() => setShowPassword(!showPassword)}
               {...form.register('password')}
             />
           </div>
@@ -126,9 +133,13 @@ export const LoginForm = () => {
           </Link>
         </div>
 
+        {form.formState.errors.root && (
+          <p className="text-sm text-red-500 text-center">{form.formState.errors.root.message}</p>
+        )}
+
         <Button
           type="submit"
-          className="w-full"
+          className="w-full rounded-full bg-black text-white hover:bg-[#f5c615] hover:text-black transition-colors"
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? 'Signing in...' : 'Sign In'}

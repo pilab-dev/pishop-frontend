@@ -11,13 +11,13 @@ import { formatCurrency } from '@/lib/formatCurrrency'
 const FloatingLabelInput = dynamic(
   () => import('@/components/ui/floating-label-input').then((mod) => mod.FloatingLabelInput),
   {
-    loading: () => <div className="h-12 bg-gray-200 animate-pulse rounded" />,
+    loading: () => <div className="h-12 bg-gray-200 animate-pulse" />,
   },
 )
 const FoxPostSelectCombobox = dynamic(
   () => import('@/components/ui/foxpost-select-combobox').then((mod) => mod.FoxPostSelectCombobox),
   {
-    loading: () => <div className="h-12 bg-gray-200 animate-pulse rounded" />,
+    loading: () => <div className="h-12 bg-gray-200 animate-pulse" />,
   },
 )
 
@@ -70,7 +70,7 @@ export const CheckoutShippingForm = ({
               Parcel Box Services
             </h4>
             <div className="space-y-2">
-              <label className="flex items-center space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+              <label className="flex items-center space-x-3 p-4 border cursor-pointer hover:bg-muted/50">
                 <input
                   type="radio"
                   name="shippingMethod"
@@ -89,7 +89,7 @@ export const CheckoutShippingForm = ({
                   <div className="text-sm font-medium text-green-600">Free</div>
                 </div>
               </label>
-              <label className="flex items-center space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+              <label className="flex items-center space-x-3 p-4 border cursor-pointer hover:bg-muted/50">
                 <input
                   type="radio"
                   name="shippingMethod"
@@ -117,7 +117,7 @@ export const CheckoutShippingForm = ({
               Home Delivery
             </h4>
             <div className="space-y-2">
-              <label className="flex items-center space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+              <label className="flex items-center space-x-3 p-4 border cursor-pointer hover:bg-muted/50">
                 <input
                   type="radio"
                   name="shippingMethod"
@@ -136,7 +136,7 @@ export const CheckoutShippingForm = ({
                   <div className="text-sm font-medium">{formatCurrency(1990, 'HUF')}</div>
                 </div>
               </label>
-              <label className="flex items-center space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
+              <label className="flex items-center space-x-3 p-4 border cursor-pointer hover:bg-muted/50">
                 <input
                   type="radio"
                   name="shippingMethod"

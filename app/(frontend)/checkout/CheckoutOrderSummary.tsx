@@ -11,12 +11,12 @@ import Image from 'next/image'
 
 // Dynamically import heavy components to reduce initial bundle size
 const Button = dynamic(() => import('@/components/ui/button').then((mod) => mod.Button), {
-  loading: () => <div className="h-10 bg-gray-200 animate-pulse rounded" />,
+  loading: () => <div className="h-10 bg-gray-200 animate-pulse" />,
 })
 const FloatingLabelInput = dynamic(
   () => import('@/components/ui/floating-label-input').then((mod) => mod.FloatingLabelInput),
   {
-    loading: () => <div className="h-12 bg-gray-200 animate-pulse rounded" />,
+    loading: () => <div className="h-12 bg-gray-200 animate-pulse" />,
   },
 )
 
@@ -53,14 +53,14 @@ export const CheckoutOrderSummary = ({
           <div className="space-y-3">
             {cart?.items.map((item) => (
               <div key={item.id} className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-muted rounded-md flex items-center justify-center">
+                <div className="w-12 h-12 bg-muted border border-gray-200 flex items-center justify-center">
                   {item.product.images?.[0] ? (
                     <Image
                       src={item.product.images[0].url}
                       alt={item.product.name}
                       width={48}
                       height={48}
-                      className="w-full h-full object-cover rounded-md"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <ShoppingBag className="w-6 h-6 text-muted-foreground" />
@@ -116,7 +116,7 @@ export const CheckoutOrderSummary = ({
                 {cart.appliedCoupons.map((coupon) => (
                   <div
                     key={coupon.id}
-                    className="flex items-center justify-between bg-green-50 border border-green-200 rounded-md p-2"
+                    className="flex items-center justify-between bg-green-50 border border-green-200 p-2"
                   >
                     <div className="flex-1">
                       <p className="text-sm font-medium text-green-800">{coupon.couponCode}</p>
@@ -190,7 +190,7 @@ export const CheckoutOrderSummary = ({
           </div>
 
           {/* Security Badge */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+          <div className="bg-green-50 border border-green-200 p-3">
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-4 h-4 text-green-600" />
               <span className="text-sm text-green-800 font-medium">Secure Checkout</span>

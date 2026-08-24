@@ -29,6 +29,26 @@ const getCollectionBySlug = cache(
   async (slug: string, sort?: string): Promise<{ collection: Collection; products: any[] }> => {
     const sortOption = sort ? SORT_OPTIONS[sort] : undefined
 
+    // "all" is a synthetic pseudo-collection (linked from the main "Shop" nav
+    // item) representing the full catalog rather than a real collection or
+    // category record, so it can't go through the normal lookups below.
+    if (slug === 'all') {
+      const { products, total } = await client.searchProducts({
+        sortBy: sortOption?.sortBy as never,
+        sortOrder: sortOption?.sortOrder as never,
+        pagination: { page: 1, limit: 100 },
+      })
+      return {
+        collection: {
+          id: 'all',
+          name: 'All Products',
+          slug: 'all',
+          description: `Browse all ${total} products`,
+        } as Collection,
+        products,
+      }
+    }
+
     // The mega-menu links both actual collections and categories to
     // /collections/[slug] (categories have no dedicated route), so fall back
     // to a category lookup when the slug isn't a real collection.

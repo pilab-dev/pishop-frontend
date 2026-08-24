@@ -2,7 +2,7 @@
 
 import { animated, config, useTransition } from '@react-spring/web'
 import { ReactNode, useState } from 'react'
-import { Popover, PopoverArrow, PopoverContent, PopoverTrigger } from './popover'
+import { Popover, PopoverContent, PopoverTrigger } from './popover'
 
 interface AnimatedPopoverProps {
   trigger: ReactNode
@@ -11,7 +11,8 @@ interface AnimatedPopoverProps {
   side?: 'top' | 'right' | 'bottom' | 'left'
   sideOffset?: number
   className?: string
-  arrowClassName?: string
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export const AnimatedPopover = ({
@@ -20,10 +21,13 @@ export const AnimatedPopover = ({
   align = 'end',
   side = 'bottom',
   sideOffset = 10,
-  className = 'w-96 p-0 shadow-xl border border-black',
-  arrowClassName = 'fill-white relative -top-px h-2 w-4',
+  className = 'w-80 p-0 rounded-none border border-gray-200 shadow-none',
+  open: controlledOpen,
+  onOpenChange,
 }: AnimatedPopoverProps) => {
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = controlledOpen ?? internalOpen
+  const setOpen = onOpenChange ?? setInternalOpen
 
   const transitions = useTransition(open, {
     from: { opacity: 0, transform: 'translateY(-10px) scale(0.95)' },
@@ -46,8 +50,7 @@ export const AnimatedPopover = ({
             asChild
           >
             <animated.div style={styles}>
-              <PopoverArrow className={arrowClassName} />
-              <div className="bg-white rounded-lg">{children}</div>
+              <div className="bg-white">{children}</div>
             </animated.div>
           </PopoverContent>
         ) : null,

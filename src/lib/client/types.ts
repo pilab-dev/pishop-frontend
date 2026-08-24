@@ -163,6 +163,36 @@ export interface GraphQLError {
   field?: string;
 }
 
+export interface AuthUser {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface AuthPayload {
+  success: boolean;
+  token?: string;
+  refreshToken?: string;
+  user?: AuthUser;
+  errors?: GraphQLError[];
+}
+
+export interface LoginResponse {
+  login: AuthPayload;
+}
+
+export interface RegisterResponse {
+  register: AuthPayload;
+}
+
+export interface LogoutResponse {
+  logout: {
+    success: boolean;
+    errors?: GraphQLError[];
+  };
+}
+
 export interface CreateCartResponse {
   createCart: {
     success: boolean;
