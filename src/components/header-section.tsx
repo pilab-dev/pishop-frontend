@@ -1,15 +1,16 @@
-import { Header } from "@/payload-types";
-import { getCachedGlobal } from "@/utilities/getGlobals";
-import config from "@payload-config";
-import Link from "next/link";
-import { getPayload } from "payload";
-import { FaFacebook, FaInstagram, FaTwitter, FaUser } from "react-icons/fa";
-import { TfiHeart, TfiReload, TfiShoppingCart } from "react-icons/tfi";
-import { CMSLink } from "./Link";
-import { LoginPopover } from "./login-popover";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Header } from '@/payload-types'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import config from '@payload-config'
+import Link from 'next/link'
+import { getPayload } from 'payload'
+import { FaFacebook, FaInstagram, FaTwitter, FaUser } from 'react-icons/fa'
+import { TfiHeart, TfiReload, TfiShoppingCart } from 'react-icons/tfi'
+import { CMSLink } from './Link'
+import { LoginPopover } from './login-popover'
+import { NavigationMenuLink } from './ui/navigation-menu'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 
-const payload = await getPayload({ config });
+const payload = await getPayload({ config })
 
 const TopRow = () => {
   return (
@@ -36,51 +37,63 @@ const TopRow = () => {
 
       <div className="flex space-x-1 align-center items-center font-medium">
         <FaUser className="mr-2" />
-        <Link
-          className="text-white hover:underline hover:text-primary transition"
-          href="/login"
-        >
+        <Link className="text-white hover:underline hover:text-primary transition" href="/login">
           login
         </Link>
         <span className="text-slate-400 font-normal">or</span>
-        <Link
-          className="text-white hover:underline hover:text-primary transition"
-          href="/signup"
-        >
+        <Link className="text-white hover:underline hover:text-primary transition" href="/signup">
           signup
         </Link>
       </div>
     </div>
-  );
-};
+  )
+}
+
+function ListItem({
+  title,
+  children,
+  href,
+  ...props
+}: React.ComponentPropsWithoutRef<'li'> & { href: string }) {
+  return (
+    <li {...props}>
+      <NavigationMenuLink asChild>
+        <Link href={href}>
+          <div className="text-sm leading-none font-medium">{title}</div>
+          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</p>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  )
+}
 
 export const HeaderSection = async () => {
-  const headerData: Header = await getCachedGlobal("header", 1)();
+  const headerData: Header = await getCachedGlobal('header', 1)()
 
-  // TODO: This is a temporary solution to get the pages and categories.
-  const pages = await payload.find({
-    collection: "pages",
-    select: {
-      title: true,
-      slug: true,
-    },
-    limit: 10,
-  });
+  // // TODO: This is a temporary solution to get the pages and categories.
+  // const pages = await payload.find({
+  //   collection: "pages",
+  //   select: {
+  //     title: true,
+  //     slug: true,
+  //   },
+  //   limit: 10,
+  // });
 
   const categories = await payload.find({
-    collection: "categories",
+    collection: 'categories',
     select: {
       title: true,
       slug: true,
     },
     limit: 10,
-  });
+  })
 
   if (!headerData.navItems) {
-    console.log("there are no navItems set in admin");
+    console.log('there are no navItems set in admin')
   }
 
-  const navItems = headerData.navItems || [];
+  const navItems = headerData.navItems || []
 
   return (
     <div className="top-0 z-50 w-full page-gray-800">
@@ -102,6 +115,10 @@ export const HeaderSection = async () => {
           ))}
         </ul>
 
+        <div className="absolute">
+          <div>Maci</div>
+        </div>
+
         {/* This is the search box of the header section */}
         <div className="hidden md:flex flex-row flex-1 rounded-full bg-white border-gray-700 text-gray-900 max-w-[550px]">
           <select className="bg-transparent flex-shrink ml-6 focus:outline-none">
@@ -110,7 +127,7 @@ export const HeaderSection = async () => {
             </option>
             <option value="all">All</option>
             {categories.docs.map((category) => (
-              <option key={category.slug} value={category.slug || ""}>
+              <option key={category.slug} value={category.slug || ''}>
                 {category.title}
               </option>
             ))}
@@ -142,9 +159,7 @@ export const HeaderSection = async () => {
           <ul className="footer-links flex flex-col md:flex-row gap-10 text-sm font-bold">
             {categories.docs.map((category) => (
               <li key={category.slug}>
-                <Link href={`/collections/${category.slug}`}>
-                  {category.title}
-                </Link>
+                <Link href={`/collections/${category.slug}`}>{category.title}</Link>
               </li>
             ))}
           </ul>
@@ -172,5 +187,5 @@ export const HeaderSection = async () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
